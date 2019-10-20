@@ -20,9 +20,8 @@ def update_all_surf(update_queue, surf, screen_width, screen_height):
          sprite_surf = update_queue.dequeue()
          if is_on_screen(sprite_surf, screen_width, screen_height) == True:
             sprite_surf.display(screen)
-
       except AttributeError:
-         sprite_surf.display_collboxes(surf, 200)
+         sprite_surf.display_collboxes(surf)
          pass
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
@@ -39,7 +38,7 @@ update_queue = Queue()
 
 songs = Song_player('1', ['audio/Metal man.mp3', 'audio/Quick man.mp3', 'audio/Heat man.mp3', 'audio/Cut man.mp3', 'audio/Air man.mp3'], volume=0.6)
 
-width, height = 560, 600
+width, height = 600, 600
 
 screen = pygame.display.set_mode((width, height))
 
@@ -57,13 +56,16 @@ while game_on:
 
       if isinstance(sprite_surf, Main_character) == True:
          if sprite_surf.y > width:
-            sprite_surf.move(230, 0)
+            sprite_surf.move(250, 0)
 
          sprite_surf.update_character()
          update_queue.enqueue(sprite_surf)
 
       else:
-         update_queue.enqueue_start(sprite_surf)
+         if sprite_surf.sprite != None:
+            update_queue.enqueue_start(sprite_surf)
+         else:
+            update_queue.enqueue(sprite_surf)
 
       Sprite_surface.update(sprite_surf)
    update_all_surf(update_queue, screen, width, height)

@@ -55,7 +55,6 @@ class Sprite(object):
 #--------------------------------------------------------------------
 
 class Collision_box(object):
-   all_collboxes = {}
 
    def __init__(self, ID, x, y, collision_width, collision_height, colour=(255,0,0), x_offset=0, y_offset=0):
       #--In pygame, a surface's x and y co_ordinate starts from the top left corner which I felt was inconvenient for collision boxes, so here the x and y starts at the middle of the box
@@ -73,7 +72,6 @@ class Collision_box(object):
       self.top_edge = self.y - (collision_height // 2)
       self.bottom_edge = self.y + (collision_height // 2)
       self.box = pygame.Surface((self.collision_width, self.collision_height))
-      Collision_box.all_collboxes[self.ID] = self
 
 
 
@@ -86,7 +84,6 @@ class Collision_box(object):
       pygame.draw.circle(surf, (0, 0, 0), (self.x, self.top_edge), 2)
       pygame.draw.circle(surf, (0, 0, 0), (self.x, self.bottom_edge), 2)
       pygame.draw.circle(surf, (0, 0, 0), (self.x, self.y), 2)
-
 
 
    def collision(self, x, y):

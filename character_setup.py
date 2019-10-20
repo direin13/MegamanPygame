@@ -7,21 +7,27 @@ megaman_images = load_images('megaman_sprites')
 
 m7 = load_images('m7')
 
-megaman_x = 230
+megaman_x = 250
 megaman_y = 300
 
-ryu_x = 30
+ryu_x = 700
 ryu_y = 240
 
 #----------------------------------------------------------------
 megaman_right = [megaman_images['walk_2'], megaman_images['walk_1'], megaman_images['walk_2'], megaman_images['walk_3']]
 megaman_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_right]
+
 megaman_idle_right = [megaman_images['idle'], megaman_images['idle'], megaman_images['idle'], megaman_images['idle'], megaman_images['idle'], megaman_images['idle_2']]
 megaman_idle_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_idle_right]
+megaman_idle_shoot_right = [megaman_images['idle_shoot']]
+megaman_idle_shoot_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_idle_shoot_right]
+
 megaman_step_right = [megaman_images['step']]
 megaman_step_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_step_right]
-megaman_shoot_right = [megaman_images['walk_shoot_2'], megaman_images['walk_shoot_1'], megaman_images['walk_shoot_2']]
+
+megaman_shoot_right = [megaman_images['walk_shoot_2'], megaman_images['walk_shoot_1'], megaman_images['walk_shoot_2'], megaman_images['walk_shoot_3']]
 megaman_shoot_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_shoot_right]
+
 megaman_jump_right = [megaman_images['jump']]
 megaman_jump_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_jump_right]
 
@@ -34,6 +40,8 @@ megaman_sprite = Sprite(megaman_x, megaman_y, 90, 80, [('right', megaman_right),
                                                                  ('step_left', megaman_step_left),
                                                                  ('walk_shoot_right', megaman_shoot_right),
                                                                  ('walk_shoot_left', megaman_shoot_left),
+                                                                 ('idle_shoot_right', megaman_idle_shoot_right),
+                                                                 ('idle_shoot_left', megaman_idle_shoot_left),
                                                                  ('jump_right', megaman_jump_right),
                                                                  ('jump_left', megaman_jump_left)])
 

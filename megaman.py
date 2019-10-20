@@ -4,7 +4,7 @@ from sprite import *
 pygame.init()
 
 class Megaman_object(Sprite_surface):
-   gravity_speed = 13
+   gravity_speed = 15
 
    def __init__(self, ID, x, y, sprite, coll_boxes, x_vel=1, gravity=False, direction=True):
       super().__init__(ID, x, y, sprite, coll_boxes)
@@ -85,28 +85,41 @@ class Main_character(Megaman_object):
 
       self.current_key = pygame.key.get_pressed()
       self.jump_speed = jump_speed
+      self.acc_speed = 3
+      self.decc_speed = 3
+      self.standstill = True
       self.can_jump = False
       self.run_frame_speed = run_frame_speed
       self.idle_frame_speed = idle_frame_speed
       self.can_jump = False
       self.jump_flag = 0
-      self.stagger_flag = 12
       self.move_flag = 0
       self.is_grounded = False
       self.camera = camera
       super().__init__(ID, x, y, sprite, coll_boxes, x_vel, gravity, direction)
 
-
-
    def set_direction(self):
+      #--To change the direction of self, note that direction == False means direction == Left, whereas True == Right
+
       if self.current_key[self.controls[0]] and self.current_key[self.controls[2]]:
+         #--if pressing left and right at the same time
          self.direction = self.direction
 
       elif self.current_key[self.controls[0]]:
-         self.direction = True
+         #--left
+         if self.is_grounded != True:
+            self.direction = True
+         else:
+            if self.x_vel == 0:
+               self.direction = True
 
       elif self.current_key[self.controls[2]]:
-         self.direction = False
+         #--right
+         if self.is_grounded != True:
+            self.direction = False
+         else:
+            if self.x_vel == 0:
+               self.direction = False
 
 
    def sprite_surf_check(self):
@@ -121,12 +134,12 @@ class Main_character(Megaman_object):
                   self.push_vert(sprite_surf, 'feet', 'hit_box')
                   grounded_flag += 1
 
-               if self.check_collision(sprite_surf, 'head', 'hit_box') == True:
+               elif self.check_collision(sprite_surf, 'head', 'hit_box') == True:
                   self.gravity = True
                   self.y += 1
                   self.push_vert(sprite_surf, 'head', 'hit_box')
 
-               if self.check_collision(sprite_surf, 'hit_box', 'hit_box') == True:
+               elif self.check_collision(sprite_surf, 'hit_box', 'hit_box') == True:
                   self.push_hori(sprite_surf, 'hit_box', 'hit_box')
 
             if isinstance(sprite_surf, Camera_box):
@@ -149,42 +162,89 @@ class Main_character(Megaman_object):
 
    def move(self, x=None, y=None):
       #moves the character, if co_ordinates not specified then the keys pressed will be checked
-      if x == None or y == None:
-         #--right
-         if self.current_key[self.controls[0]]:
-            if self.move_flag < self.stagger_flag and self.is_grounded == True:
-               self.move_flag += 1
-               if self.move_flag > self.stagger_flag - 3 and self.colliding_hori != True:
-                  self.x_vel = 1
-                  self.x += self.x_vel
-            else:
-               self.move_flag = self.stagger_flag
-               if self.colliding_hori != True:
-                  self.x_vel = self.max_x_vel
-                  self.x += self.x_vel
-
-         #--left
-         elif self.current_key[self.controls[2]]:
-            if self.move_flag < self.stagger_flag and self.is_grounded == True:
-               self.move_flag += 1
-               if self.move_flag > self.stagger_flag - 3 and self.colliding_hori != True:
-                  self.x_vel = 1
-                  self.x -= self.x_vel
-
-            else:
-               self.move_flag = self.stagger_flag
-               if self.colliding_hori != True:
-                  self.x_vel = self.max_x_vel
-                  self.x -= self.x_vel
-
-         else:
-            self.move_flag = 0
-            self.x_vel = 0
-            pass
-      else:
+      if x != None and y != None:
          self.x = x
          self.y = y
+         return
 
+         #--if moving right and left at the same time
+      if self.current_key[self.controls[0]] and self.current_key[self.controls[2]]:
+         if self.is_grounded == True:
+            self.deccelerate(self.decc_speed)
+         else:
+            self.x_vel = 0
+
+         if self.direction == True:
+            self.x += self.x_vel
+         else:
+            self.x -= self.x_vel
+
+      else:
+         #--if moving right
+         if self.current_key[self.controls[0]] and self.colliding_hori != True:
+            if self.is_grounded == True:
+               if self.direction == True:
+                  self.accelerate(self.acc_speed)
+                  self.x += self.x_vel
+               else:
+                  self.deccelerate(self.decc_speed)
+                  self.x -= self.x_vel
+
+            else:
+               self.x_vel = self.max_x_vel
+               self.x += self.x_vel
+
+         #--if moving left
+         elif self.current_key[self.controls[2]] and self.colliding_hori != True:
+            if self.is_grounded == True:
+               if self.direction == False:
+                  self.accelerate(self.acc_speed)
+                  self.x -= self.x_vel
+               else:
+                  self.deccelerate(self.decc_speed)
+                  self.x += self.x_vel
+
+            else:
+               self.x_vel = self.max_x_vel
+               self.x -= self.x_vel
+
+         #--if not moving right or left
+         else:
+            if self.is_grounded == True:
+               self.deccelerate(self.decc_speed)
+            else:
+               self.x_vel = 0
+
+            if self.direction == True:
+               self.x += self.x_vel
+            else:
+               self.x -= self.x_vel
+
+
+   def accelerate(self, acc_speed=0):
+      #--increases self.x_vel according to acc_speed parameter
+      if acc_speed != 0:
+         if self.move_flag < acc_speed:
+            self.move_flag += 1
+
+         elif self.move_flag >= acc_speed:
+            self.move_flag = 0
+            if self.x_vel != self.max_x_vel:
+               self.x_vel += 1
+
+
+
+
+   def deccelerate(self, decc_speed=0):
+      #--decreases self.x_vel according to acc_speed parameter
+      if decc_speed != 0:
+         if self.move_flag < decc_speed:
+            self.move_flag += 1
+
+         elif self.move_flag >= decc_speed:
+            self.move_flag = 0
+            if self.x_vel != 0:
+               self.x_vel -= 1
 
 
    def jump(self):
@@ -224,28 +284,27 @@ class Main_character(Megaman_object):
    def display(self, surf):
       if self.is_grounded == True:
          #hold right
-         if self.current_key[self.controls[0]] and self.direction == True:
-            self.sprite.update(self.run_frame_speed)
-            if self.move_flag < self.stagger_flag:
-               self.sprite.display_animation(surf, 'step_right')
-            else:
-               self.sprite.display_animation(surf, 'right')
-
-         #hold left
-         elif self.current_key[self.controls[2]] and self.direction == False:
-            self.sprite.update(self.run_frame_speed)
-            if self.move_flag < self.stagger_flag:
-               self.sprite.display_animation(surf, 'step_left')
-            else:
-               self.sprite.display_animation(surf, 'left')
-
-         #standstill
-         else:
+         if self.x_vel == 0:
             self.sprite.update(self.idle_frame_speed)
             if self.direction == True:
                self.sprite.display_animation(surf, 'idle_right')
             else:
                self.sprite.display_animation(surf, 'idle_left')
+
+         #hold left
+         else:
+            self.sprite.update(self.run_frame_speed)
+            if self.direction == True:
+               if self.x_vel == self.max_x_vel:
+                  self.sprite.display_animation(surf, 'right')
+               else:
+                  self.sprite.display_animation(surf, 'step_right')
+
+            else:
+               if self.x_vel == self.max_x_vel:
+                  self.sprite.display_animation(surf, 'left')
+               else:
+                  self.sprite.display_animation(surf, 'step_left')
 
       #jump
       else: 
