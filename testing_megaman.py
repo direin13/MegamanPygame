@@ -2,11 +2,12 @@ import pygame
 import universal_names
 from music_player import *
 from sprite import *
-from platform_setup import *
 from megaman_object import *
 from megaman import *
+import platform_setup
 import character_setup
-from mega_queue import *
+import mega_queue
+import camera_setup
 
 def display_all_surf(display_queue, surf, screen_width, screen_height):
    #displays every surf that is on the screen
@@ -32,7 +33,7 @@ clock = pygame.time.Clock()
 
 font_1 = pygame.font.SysFont(None, 20)
 
-display_queue = Queue()
+display_queue = mega_queue.Queue()
 
 songs = Song_player('1', ['audio/Air man.mp3', 'audio/Metal man.mp3', 'audio/Quick man.mp3', 'audio/Heat man.mp3', 'audio/Cut man.mp3'], volume=0.6)
 
