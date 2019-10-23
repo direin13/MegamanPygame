@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import threading
 import pygame
+import timer
 import os
 
 class Sprite(object):
@@ -22,9 +22,10 @@ class Sprite(object):
          self.current_frame = current_frame
          self.current_animation = self.active_frames[0][0]
          self.flag = 0
+      self.all_timers = timer.Timer()
 
    def display_animation(self, surf, frame_name):
-      #--displays animations--
+      #--displays animations from 'frame name' in self.active_frames--
       if self.active_frames != None:
          if self.current_animation == frame_name:
             pass
@@ -41,11 +42,8 @@ class Sprite(object):
       if self.active_frames != None:
          frame_per_update = frame_speed // len(self.all_frames[self.current_animation])
 
-         if self.flag >= frame_per_update:
-            self.flag = 0
+         if self.all_timers.countdown('update_flag', frame_per_update, loop=True) == False:
             self.current_frame += 1
-         else:
-            self.flag += 1
 
          if self.current_frame >= len(self.all_frames[self.current_animation]):
             self.current_frame = 0
@@ -100,22 +98,35 @@ class Collision_box(object):
       #--this checks if another Collison_box object is colliding with the self and returns True or False--
 
       #--is self's collision box (left, right, top or bottom edge) is inside other's collision box (between his left or right and top or bottom edge)?
-      if (self.right_edge <= other.right_edge and self.right_edge >= other.left_edge) or (self.left_edge >= other.left_edge and self.left_edge <= other.right_edge):
-         if (self.top_edge >= other.top_edge and self.top_edge <= other.bottom_edge) or (self.bottom_edge <= other.bottom_edge and self.bottom_edge >= other.top_edge):
+      if ((self.right_edge <= other.right_edge and self.right_edge >= other.left_edge) or 
+          (self.left_edge >= other.left_edge and self.left_edge <= other.right_edge)):
+
+         if ((self.top_edge >= other.top_edge and self.top_edge <= other.bottom_edge) or 
+            (self.bottom_edge <= other.bottom_edge and self.bottom_edge >= other.top_edge)):
             return True
-         elif other.x > self.left_edge and other.x < self.right_edge and other.y > self.top_edge and other.y < self.bottom_edge:
+         elif (other.x > self.left_edge and other.x < self.right_edge and 
+              other.y > self.top_edge and other.y < self.bottom_edge):
             return True
-      elif other.x > self.left_edge and other.x < self.right_edge and other.y > self.top_edge and other.y < self.bottom_edge:
+
+      elif (other.x > self.left_edge and other.x < self.right_edge and 
+           other.y > self.top_edge and other.y < self.bottom_edge):
          return True
 
       #--if not then is other's collision box inside self's collision box?
-      if (other.right_edge <= self.right_edge and other.right_edge >= self.left_edge) or (other.left_edge >= self.left_edge and other.left_edge <= self.right_edge):
-         if (other.top_edge >= self.top_edge and other.top_edge <= self.bottom_edge) or (other.bottom_edge <= self.bottom_edge and other.bottom_edge >= self.top_edge):
+      if ((other.right_edge <= self.right_edge and other.right_edge >= self.left_edge) or 
+          (other.left_edge >= self.left_edge and other.left_edge <= self.right_edge)):
+
+         if ((other.top_edge >= self.top_edge and other.top_edge <= self.bottom_edge) or 
+             (other.bottom_edge <= self.bottom_edge and other.bottom_edge >= self.top_edge)):
             return True
-         elif self.x > other.left_edge and self.x < other.right_edge and self.y > other.top_edge and self.y < other.bottom_edge:
+         elif (self.x > other.left_edge and self.x < other.right_edge and 
+               self.y > other.top_edge and self.y < other.bottom_edge):
             return True
-      elif self.x > other.left_edge and self.x < other.right_edge and self.y > other.top_edge and self.y < other.bottom_edge:
+
+      elif (self.x > other.left_edge and self.x < other.right_edge and 
+            self.y > other.top_edge and self.y < other.bottom_edge):
             return True
+
       return False
 
 
@@ -125,7 +136,7 @@ class Sprite_surface(object):
    all_sprite_surfaces = {}
    all_name_index = {}
 
-   def __init__(self, ID, x, y, sprite=None, coll_boxes=None):
+   def __init__(self, ID, x, y, sprite=None, coll_boxes=None, width=0, height=0, is_alive=True):
       if ID in Sprite_surface.all_name_index:
          Sprite_surface.all_name_index[ID] += 1
          self.ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
@@ -137,12 +148,19 @@ class Sprite_surface(object):
       self.y = y
       self.all_collboxes = {}
       self.sprite = sprite
+      if sprite == None:
+         self.width = width
+         self.height = height
+      else:
+         self.width = sprite.width
+         self.height = sprite.height
       if coll_boxes == None:
             pass
       else:
          for coll_box in coll_boxes:
             self.all_collboxes[coll_box.ID] = coll_box
       Sprite_surface.all_sprite_surfaces[self.ID] = self
+      self.is_alive = True
 
 
 
@@ -171,6 +189,15 @@ class Sprite_surface(object):
    def add_collbox(self, ID, x, y, collision_width, collision_height, x_offset=0, y_offset=0):
       box = Collision_box(ID, x, y, collision_width, collision_height, x_offset, y_offset)
       self.all_collboxes[box.ID] = box
+
+
+   def is_on_screen(self, screen_width, screen_height):
+      #checks if sprite_surf is on
+      if ((self.x < screen_width -10 and self.x + self.width > 10) and 
+         (self.y < screen_height -10 and self.y + self.width > 10)):
+         return True
+      else:
+         return False
       
 #----------------------------------------------------------------
 
@@ -179,6 +206,7 @@ class Camera(object):
       self.x = x
       self.y = y
       self.static = static
+      self.all_timers = timer.Timer()
 
    def get_pos_x(self, sprite_surf):
       if sprite_surf.x < self.x:
@@ -204,7 +232,10 @@ class Camera(object):
             if speed == None:
                sprite_surf.x += dist
             else:
-               sprite_surf.x += speed
+               if self.get_pos_x(main_sprite_surf) == 0:
+                  sprite_surf.x += speed
+               if self.get_pos_x(main_sprite_surf) == 1:
+                  sprite_surf.x -= speed
       else:
          pass
 
@@ -219,6 +250,26 @@ class Camera(object):
                sprite_surf.y += speed
       else:
          pass
+
+   def move(self, direction, speed):
+      x = 0
+      y = 0
+      if direction == 'right':
+         x = -speed
+      if direction == 'up':
+         y = speed
+      if direction == 'left':
+         x = speed
+      if direction == 'down':
+         y = -speed
+      for sprite_surf in Sprite_surface.all_sprite_surfaces.values():
+         sprite_surf.x += x
+         sprite_surf.y += y
+
+   def transition(self, direction, speed, lenght):
+      if self.all_timers.countdown('transition_flag', lenght) == True:
+         self.move(direction, speed)
+
 
 #--------------------------------------
 

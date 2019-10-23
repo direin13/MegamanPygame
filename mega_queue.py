@@ -12,6 +12,7 @@ class Queue(object):
       self.lst.append(value)
 
    def enqueue_start(self, value):
+      #append to the beginning of queue
       self.lst = [value] + self.lst
 
    def dequeue(self):
@@ -22,7 +23,11 @@ class Queue(object):
       self.lst.extend(lst)
 
    def enqueue_update_start(self, lst):
+      #update to beginning of queue
       self.lst = lst + self.lst
+
+   def is_empty(self):
+      return len(self.lst) == 0
 
    def __str__(self):
       return '{}'.format(self.lst)

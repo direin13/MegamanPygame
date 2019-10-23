@@ -1,83 +1,15 @@
 #!/usr/bin/env python
-import pygame
+import universal_names
 from sprite import *
-pygame.init()
+import pygame
+import timer
+from misc_function import *
+from p_shooter import *
+from megaman_object import *
 
-class Megaman_object(Sprite_surface):
-   gravity_speed = 15
-
-   def __init__(self, ID, x, y, sprite, coll_boxes, x_vel=1, gravity=False, direction=True):
-      super().__init__(ID, x, y, sprite, coll_boxes)
-      self.x_vel = 0
-      self.max_x_vel = x_vel
-      self.y_vel = 0
-      self.gravity = gravity
-      self.direction = direction #False == Left, True == Right
-      self.colliding_hori = False
-      self.colliding_vert = False
-
-
-   def push_hori(self, other, coll_box_self, coll_box_other):
-      #--repels self in a horizontal direction
-      if self.all_collboxes[coll_box_self].x >= other.all_collboxes[coll_box_other].x:
-         if self.direction == False:
-            self.colliding_hori = True
-         dist_betw_edges = other.all_collboxes[coll_box_other].right_edge - self.all_collboxes[coll_box_self].left_edge
-         self.x += dist_betw_edges 
-         self.update()
-         return
-
-      elif self.all_collboxes[coll_box_self].x <= other.all_collboxes[coll_box_other].x:
-         if self.direction == True:
-            self.colliding_hori = True
-         dist_betw_edges = self.all_collboxes[coll_box_self].right_edge - other.all_collboxes[coll_box_other].left_edge
-         self.x -= dist_betw_edges
-         self.update()
-         return
-
-
-   def push_vert(self, other, coll_box_self, coll_box_other):
-      #--repels self in a vertical direction
-      if self.all_collboxes[coll_box_self].y >= other.all_collboxes[coll_box_other].y:
-         self.colliding_vert = True
-         dist_betw_edges = self.all_collboxes[coll_box_self].top_edge - other.all_collboxes[coll_box_other].bottom_edge
-         self.y -= dist_betw_edges
-         self.update()
-         return
-
-      elif self.all_collboxes[coll_box_self].y <= other.all_collboxes[coll_box_other].y:
-         self.colliding_vert = True
-         dist_betw_edges = self.all_collboxes[coll_box_self].bottom_edge - other.all_collboxes[coll_box_other].top_edge
-         self.y -= dist_betw_edges
-         self.update()
-
-
-   def check_collision(self, other, coll_box_self, coll_box_other):
-      if self.all_collboxes[coll_box_self].collision_sprite(other.all_collboxes[coll_box_other]):
-         return True
-      else:
-         return False
-
-   def apply_gravity(self):
-      if -(self.y_vel) >= Megaman_object.gravity_speed:
-         self.y += Megaman_object.gravity_speed
-      else:
-         if self.y_vel >= 0:
-            self.y_vel = 0
-
-         if self.jump_flag <= 2:
-            self.jump_flag += 1
-            self.y += -(self.y_vel)
-
-         else:
-            self.jump_flag = 0
-            self.y_vel -= 2
-
-#---------------------------------------------------------------------------------------------
-
-
-class Main_character(Megaman_object):
-   def __init__(self, ID, x, y, sprite, coll_boxes, run_frame_speed, idle_frame_speed, controls=None, x_vel=1, jump_speed=1, gravity=False, direction=True, camera=None):
+class Megaman(Megaman_object):
+   def __init__(self, ID, x, y, sprite, coll_boxes, run_frame_speed, idle_frame_speed, gravity=False, controls=None, x_vel=1, jump_speed=1, direction=True, camera=None, is_alive=True):
+      super().__init__(ID, x, y, sprite, coll_boxes, gravity, x_vel, direction, is_alive)
       if controls == None:
          self.controls = [pygame.K_d, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_p, pygame.K_w]
       else:
@@ -87,16 +19,18 @@ class Main_character(Megaman_object):
       self.jump_speed = jump_speed
       self.acc_speed = 3
       self.decc_speed = 3
-      self.standstill = True
       self.can_jump = False
       self.run_frame_speed = run_frame_speed
       self.idle_frame_speed = idle_frame_speed
       self.can_jump = False
-      self.jump_flag = 0
-      self.move_flag = 0
+      self.can_shoot = True
       self.is_grounded = False
       self.camera = camera
-      super().__init__(ID, x, y, sprite, coll_boxes, x_vel, gravity, direction)
+      self.all_timers.add_ID('rise_flag', 4)
+      self.all_timers.add_ID('shooting_flag', 0)
+
+      for i in range(0, 3): #--making p_shooter bullets
+         P_shooter('P_shooter', 0, 0)
 
    def set_direction(self):
       #--To change the direction of self, note that direction == False means direction == Left, whereas True == Right
@@ -130,20 +64,22 @@ class Main_character(Megaman_object):
       for sprite_surf in Sprite_surface.all_sprite_surfaces.values():
          if sprite_surf != self:
             if isinstance(sprite_surf, Platform):
-               if self.check_collision(sprite_surf, 'feet', 'hit_box') == True and self.gravity == True:
-                  self.push_vert(sprite_surf, 'feet', 'hit_box')
+               if self.check_collision(sprite_surf, universal_names.feet, universal_names.hitbox) == True and self.gravity == True:
+                  self.push_vert(sprite_surf, universal_names.feet, universal_names.hitbox)
                   grounded_flag += 1
 
-               elif self.check_collision(sprite_surf, 'head', 'hit_box') == True:
+               elif self.check_collision(sprite_surf, universal_names.head, universal_names.hitbox) == True:
                   self.gravity = True
                   self.y += 1
-                  self.push_vert(sprite_surf, 'head', 'hit_box')
+                  self.push_vert(sprite_surf, universal_names.head, universal_names.hitbox)
 
-               elif self.check_collision(sprite_surf, 'hit_box', 'hit_box') == True:
-                  self.push_hori(sprite_surf, 'hit_box', 'hit_box')
+               elif self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
+                  self.push_hori(sprite_surf, universal_names.hitbox, universal_names.hitbox)
 
             if isinstance(sprite_surf, Camera_box):
-               if self.check_collision(sprite_surf, 'hit_box', 'hit_box') == True:
+               if self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
+                  if sprite_surf.ID.split('-')[0] == 'special_static' and self.camera != None:
+                     self.camera.transition('right', 10, 50)
                   camera_flag += 1
 
       if grounded_flag == 0:
@@ -191,8 +127,9 @@ class Main_character(Megaman_object):
                   self.x -= self.x_vel
 
             else:
-               self.x_vel = self.max_x_vel
-               self.x += self.x_vel
+               if self.colliding_hori != True:
+                  self.x_vel = self.max_x_vel
+                  self.x += self.x_vel
 
          #--if moving left
          elif self.current_key[self.controls[2]] and self.colliding_hori != True:
@@ -205,8 +142,9 @@ class Main_character(Megaman_object):
                   self.x += self.x_vel
 
             else:
-               self.x_vel = self.max_x_vel
-               self.x -= self.x_vel
+               if self.colliding_hori != True:
+                  self.x_vel = self.max_x_vel
+                  self.x -= self.x_vel
 
          #--if not moving right or left
          else:
@@ -224,33 +162,24 @@ class Main_character(Megaman_object):
    def accelerate(self, acc_speed=0):
       #--increases self.x_vel according to acc_speed parameter
       if acc_speed != 0:
-         if self.move_flag < acc_speed:
-            self.move_flag += 1
-
-         elif self.move_flag >= acc_speed:
-            self.move_flag = 0
+         if self.all_timers.countdown('move_flag', acc_speed, loop=True) == False:
             if self.x_vel != self.max_x_vel:
                self.x_vel += 1
 
 
 
-
    def deccelerate(self, decc_speed=0):
       #--decreases self.x_vel according to acc_speed parameter
-      if decc_speed != 0:
-         if self.move_flag < decc_speed:
-            self.move_flag += 1
+      if self.all_timers.countdown('move_flag', decc_speed, loop=True) == False:
+         if self.x_vel != 0:
+            self.x_vel -= 1
 
-         elif self.move_flag >= decc_speed:
-            self.move_flag = 0
-            if self.x_vel != 0:
-               self.x_vel -= 1
 
 
    def jump(self):
       if self.is_grounded == True and self.can_jump == True:
          self.gravity = False
-         self.jump_flag = 0
+         self.all_timers.replenish_timer('rise_flag')
          if self.current_key[self.controls[5]]:
             self.y_vel = self.jump_speed
             self.can_jump = False
@@ -272,79 +201,89 @@ class Main_character(Megaman_object):
       if self.y_vel <= 0:
          self.gravity = True
       else:
-         if self.jump_flag <= 2:
-            self.jump_flag += 1
+         if self.all_timers.countdown('rise_flag', 4, loop=True) == True:
             self.y -= self.y_vel
          else:
-            self.jump_flag = 0
             self.y_vel -= 2
+
+
+   def shoot(self):
+      #--shoots megaman's p_shooter
+
+      #--if you shoot
+      if self.current_key[self.controls[4]] and self.can_shoot == True and P_shooter.all_p.is_empty() == False:
+         self.can_shoot = False
+         self.all_timers.replenish_timer('shooting_flag') #the display function will countdown this timer
+
+         #--right
+         if self.direction == True:
+            P_shooter.fire(self.x + self.width//2, self.y + self.height//4, P_shooter.x_vel)
+
+         #--left
+         else:
+            P_shooter.fire(self.x + self.width//2, self.y + self.height//4, -P_shooter.x_vel)
+
+      if self.current_key[self.controls[4]] != True:
+         self.can_shoot = True
 
 
 
    def display(self, surf):
+      #--displays self's sprites depending on the circumstances i.e if he's on the ground, if he shoots etc.
+
+      shooting = self.all_timers.countdown('shooting_flag', 23) #--to get wether player has shot or not, will change the animation displayed via variable 's'
+      if shooting == False:
+         s = ''
+      else:
+         s = 'shoot_'
+
+
       if self.is_grounded == True:
-         #hold right
+
+         #--idle
          if self.x_vel == 0:
             self.sprite.update(self.idle_frame_speed)
             if self.direction == True:
-               self.sprite.display_animation(surf, 'idle_right')
+               self.sprite.display_animation(surf, '{}idle_right'.format(s))
             else:
-               self.sprite.display_animation(surf, 'idle_left')
+               self.sprite.display_animation(surf, '{}idle_left'.format(s))
 
-         #hold left
+         #--walking
          else:
             self.sprite.update(self.run_frame_speed)
             if self.direction == True:
-               if self.x_vel == self.max_x_vel:
-                  self.sprite.display_animation(surf, 'right')
-               else:
+               if self.x_vel == self.max_x_vel or (self.x_vel > 0 and shooting == True):
+                  self.sprite.display_animation(surf, '{}walk_right'.format(s))
+               if self.x_vel != self.max_x_vel and shooting == False:
                   self.sprite.display_animation(surf, 'step_right')
 
             else:
-               if self.x_vel == self.max_x_vel:
-                  self.sprite.display_animation(surf, 'left')
-               else:
+               if self.x_vel == self.max_x_vel or (self.x_vel > 0 and shooting == True):
+                  self.sprite.display_animation(surf, '{}walk_left'.format(s))
+               if self.x_vel != self.max_x_vel and shooting == False:
                   self.sprite.display_animation(surf, 'step_left')
 
       #jump
       else: 
          self.sprite.update(self.run_frame_speed)
          if self.direction == True:
-            self.sprite.display_animation(surf, 'jump_right')
+            self.sprite.display_animation(surf, '{}jump_right'.format(s))
          else:
-            self.sprite.display_animation(surf, 'jump_left')
+            self.sprite.display_animation(surf, '{}jump_left'.format(s))
 
 
 
-   def update_character(self):
+   def update(self):
       self.current_key = pygame.key.get_pressed()
       self.set_direction()
       self.sprite_surf_check()
-
-      if self.colliding_hori:
-         self.x_vel = 0
-      if self.colliding_vert:
-         self.y_vel = 0
-         pass
+      if self.camera != None and self.camera.static == False:
+         self.camera.follow_x(self)
       self.move()
+      self.shoot()
       self.colliding_hori = False
       self.colliding_vert = False
       self.jump()
       if self.gravity == True:
          self.apply_gravity()
-      self.update()
-      if self.camera != None and self.camera.static == False:
-         self.camera.follow_x(self)
-
-
-#-----------------------------------------
-
-class Platform(Megaman_object):
-   def __init__(self, ID, x, y, sprite, coll_boxes, gravity=False):
-      super().__init__(ID, x, y, sprite, coll_boxes, gravity)
-      self.jump_flag = 0
-
-   def display(self, surf, speed=1):
-      self.sprite.update(speed)
-      self.sprite.display_animation(surf, self.sprite.active_frames[0][0])
-      #self.display_collboxes(surf)
+      Sprite_surface.update(self)
