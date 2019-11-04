@@ -28,10 +28,9 @@ class Megaman(Megaman_object):
       self.camera = camera
       self.all_timers.add_ID('rise_flag', 4)
       self.all_timers.add_ID('shooting_flag', 0)
+      self.all_timers.add_ID('grounded_sound', 1)
 
-      for i in range(0, 3): #--making p_shooter bullets
-         P_shooter('P_shooter', 0, 0)
-
+      
    def set_direction(self):
       #--To change the direction of self, note that direction == False means direction == Left, whereas True == Right
 
@@ -79,13 +78,17 @@ class Megaman(Megaman_object):
             if isinstance(sprite_surf, Camera_box):
                if self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
                   if sprite_surf.ID.split('-')[0] == 'special_static' and self.camera != None:
-                     self.camera.transition('right', 10, 50)
+                     self.camera.transition('right', 10, 53)
                   camera_flag += 1
 
       if grounded_flag == 0:
          self.is_grounded = False
+         self.all_timers.replenish_timer('grounded_sound')
       else:
          self.is_grounded = True
+         if self.all_timers.check_ID('grounded_sound') > 0:
+            play_sound('grounded', universal_names.megaman_sounds, channel=0, volume=universal_names.sfx_volume)
+            self.all_timers.countdown('grounded_sound', 1)
 
       if self.camera != None:
          if camera_flag == 0:
@@ -201,7 +204,7 @@ class Megaman(Megaman_object):
       if self.y_vel <= 0:
          self.gravity = True
       else:
-         if self.all_timers.countdown('rise_flag', 4, loop=True) == True:
+         if self.all_timers.countdown('rise_flag', 5, loop=True) == True:
             self.y -= self.y_vel
          else:
             self.y_vel -= 2
@@ -214,6 +217,7 @@ class Megaman(Megaman_object):
       if self.current_key[self.controls[4]] and self.can_shoot == True and P_shooter.all_p.is_empty() == False:
          self.can_shoot = False
          self.all_timers.replenish_timer('shooting_flag') #the display function will countdown this timer
+         play_sound('p_shooter', universal_names.megaman_sounds, volume=universal_names.sfx_volume)
 
          #--right
          if self.direction == True:
@@ -221,7 +225,7 @@ class Megaman(Megaman_object):
 
          #--left
          else:
-            P_shooter.fire(self.x + self.width//2, self.y + self.height//4, -P_shooter.x_vel)
+            P_shooter.fire(self.x + self.width//3, self.y + self.height//4, -P_shooter.x_vel)
 
       if self.current_key[self.controls[4]] != True:
          self.can_shoot = True

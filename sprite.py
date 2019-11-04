@@ -16,8 +16,8 @@ class Sprite(object):
       self.active_frames = active_frames
       if active_frames != None:
          self.all_frames = {}
-         for frames in self.active_frames:
-            self.all_frames[frames[0]] = frames[1]
+         for t in self.active_frames:
+            self.all_frames[t[0]] = t[1]
 
          self.current_frame = current_frame
          self.current_animation = self.active_frames[0][0]
@@ -30,7 +30,7 @@ class Sprite(object):
          if self.current_animation == frame_name:
             pass
          else:
-            self.current_animation = frame_name
+            self.current_animation = frame_name 
             self.current_frame = 0
          frame = pygame.transform.scale(self.all_frames[frame_name][self.current_frame], (self.width, self.height))
          surf.blit(frame, (self.x, self.y))
@@ -137,17 +137,20 @@ class Sprite_surface(object):
    all_name_index = {}
 
    def __init__(self, ID, x, y, sprite=None, coll_boxes=None, width=0, height=0, is_alive=True):
-      if ID in Sprite_surface.all_name_index:
+      if ID in Sprite_surface.all_name_index: #--trying add sprite surface while avoiding duplicates
          Sprite_surface.all_name_index[ID] += 1
          self.ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
       else:
          Sprite_surface.all_name_index[ID] = 0
          self.ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
+      Sprite_surface.all_sprite_surfaces[self.ID] = self
 
       self.x = x
       self.y = y
       self.all_collboxes = {}
       self.sprite = sprite
+      self.is_alive = True
+      
       if sprite == None:
          self.width = width
          self.height = height
@@ -159,14 +162,12 @@ class Sprite_surface(object):
       else:
          for coll_box in coll_boxes:
             self.all_collboxes[coll_box.ID] = coll_box
-      Sprite_surface.all_sprite_surfaces[self.ID] = self
-      self.is_alive = True
 
 
 
-   def display_collboxes(self, screen, alpha=100):
+   def display_collboxes(self, surf, alpha=100):
       for collbox in self.all_collboxes.values():
-         collbox.display_collbox(screen, alpha)
+         collbox.display_collbox(surf, alpha)
 
 
    def update(self):
@@ -192,9 +193,9 @@ class Sprite_surface(object):
 
 
    def is_on_screen(self, screen_width, screen_height):
-      #checks if sprite_surf is on
+      #checks if sprite_surf is on the screen
       if ((self.x < screen_width -10 and self.x + self.width > 10) and 
-         (self.y < screen_height -10 and self.y + self.width > 10)):
+         (self.y < screen_height -10 and self.y + self.height > 10)):
          return True
       else:
          return False
@@ -269,6 +270,7 @@ class Camera(object):
    def transition(self, direction, speed, lenght):
       if self.all_timers.countdown('transition_flag', lenght) == True:
          self.move(direction, speed)
+
 
 
 #--------------------------------------

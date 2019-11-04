@@ -6,7 +6,7 @@ pygame.init()
 class Megaman_object(Sprite_surface):
    gravity_speed = 15
 
-   def __init__(self, ID, x, y, sprite, coll_boxes, gravity=False, x_vel=0, y_vel=0, direction=True, width=0, height=0, is_alive=True):
+   def __init__(self, ID, x, y, sprite, coll_boxes=None, gravity=False, x_vel=0, y_vel=0, direction=True, width=0, height=0, is_alive=True):
       super().__init__(ID, x, y, sprite, coll_boxes, is_alive)
       self.all_timers = timer.Timer()
       self.x_vel = 0
@@ -74,10 +74,15 @@ class Megaman_object(Sprite_surface):
          else:
             self.y_vel -= 2
 
+   def display(self, surf, speed=1):
+      self.sprite.update(speed)
+      self.sprite.display_animation(surf, self.sprite.active_frames[0][0])
+      #self.display_collboxes(surf)
+
 #-----------------------------------------
 
 class Platform(Megaman_object):
-   def __init__(self, ID, x, y, sprite, coll_boxes, gravity=False):
+   def __init__(self, ID, x, y, sprite, coll_boxes=None, gravity=False):
       super().__init__(ID, x, y, sprite, coll_boxes, gravity)
 
    def update(self):

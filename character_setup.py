@@ -59,7 +59,7 @@ megaman_head = Collision_box(universal_names.head, megaman_x, megaman_y, 43, 2, 
 #--megaman
 
 player_1 = Megaman('megaman', megaman_x, megaman_y, megaman_sprite, [megaman_hit_box, megaman_feet, megaman_head], 37, 150, gravity=True,
-                     controls=[pygame.K_RIGHT, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_z, pygame.K_x], x_vel=3, jump_speed=11, direction=True,
+                     controls=[pygame.K_RIGHT, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_z, pygame.K_x], x_vel=3, jump_speed=10, direction=True,
                      camera=camera)
 #---------------------------------------------------------------------------------------------------------------------------
 """

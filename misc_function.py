@@ -32,6 +32,7 @@ def load_sounds(directory):
    return directory_sounds
    #--the name of the file(without the file extension) return to the loaded image itself e.g all_images[name] will return the loaded image of name.wav--
 
-def play_sound(file_name, dictionary, channel=0):
-   pygame.mixer.Channel(channel).play(dictionary[file_name])
+def play_sound(file_name, dictionary, channel=0, volume=1.0, loops=0):
+   dictionary[file_name].set_volume(volume)
+   pygame.mixer.Channel(channel).play(dictionary[file_name], loops=loops)
 
