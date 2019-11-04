@@ -32,5 +32,5 @@ platform_sprite = Sprite(200, 200, 40, 40, [('platform', [cutman_tiles['platform
 ground = Platform('platform', 400, 100, platform_sprite, coll_boxes=[Collision_box(universal_names.hitbox, 0, 480, platform_sprite.width, platform_sprite.height)])
 
 platform_sprite = Sprite(200, 200, 40, 40, [('platform', [cutman_tiles['platform_1']])])
-ground = Megaman_object('fuck', 500, 300, platform_sprite)
+ground = Megaman_object('fake_platform', 500, 300, platform_sprite)
 

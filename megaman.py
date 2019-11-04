@@ -77,7 +77,7 @@ class Megaman(Megaman_object):
 
             if isinstance(sprite_surf, Camera_box):
                if self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
-                  if sprite_surf.ID.split('-')[0] == 'special_static' and self.camera != None:
+                  if sprite_surf.ID == 'special_static' and self.camera != None:
                      self.camera.transition('right', 10, 53)
                   camera_flag += 1
 

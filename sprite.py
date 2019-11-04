@@ -139,12 +139,13 @@ class Sprite_surface(object):
    def __init__(self, ID, x, y, sprite=None, coll_boxes=None, width=0, height=0, is_alive=True):
       if ID in Sprite_surface.all_name_index: #--trying add sprite surface while avoiding duplicates
          Sprite_surface.all_name_index[ID] += 1
-         self.ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
+         self.reference_ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID]) #if ID is in all_sprite_surfaces the Index will increment and be attached to the reference ID
       else:
          Sprite_surface.all_name_index[ID] = 0
-         self.ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
-      Sprite_surface.all_sprite_surfaces[self.ID] = self
+         self.reference_ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
+      Sprite_surface.all_sprite_surfaces[self.reference_ID] = self
 
+      self.ID = ID
       self.x = x
       self.y = y
       self.all_collboxes = {}
@@ -163,7 +164,9 @@ class Sprite_surface(object):
          for coll_box in coll_boxes:
             self.all_collboxes[coll_box.ID] = coll_box
 
-
+   def check_ID(self):
+      if self.reference_ID in Sprite_surface.all_sprite_surfaces:
+         return True
 
    def display_collboxes(self, surf, alpha=100):
       for collbox in self.all_collboxes.values():
