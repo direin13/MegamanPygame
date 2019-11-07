@@ -16,8 +16,6 @@ class LinkedList(object):
    def __init__(self):
       self.tail = None
 
-
-
    def remove(self):
       #removes tail from the list
       item = self.tail.item
