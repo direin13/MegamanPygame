@@ -24,15 +24,17 @@ class P_shooter(Megaman_object):
    def move(self):
       self.x += self.x_vel
 
-   def sprite_check(self):
-      for sprite_surf in Sprite_surface.all_sprite_surfaces.values():
-         if sprite_surf != self:
-            if isinstance(sprite_surf, Platform) == True:
-               if self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
-                  self.is_alive = False
-                  play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume)
-                  break
-         pass
+   def sprite_surf_check(self):
+      self.check_platform()
+
+   def check_platform(self):
+      for platform in Platform.all_sprite_surfaces.values():
+         if platform.is_on_screen(universal_names.screen_width,universal_names.screen_height) == True:
+            if self.check_collision(platform, universal_names.hitbox, universal_names.hitbox) == True:
+               self.is_alive = False
+               play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume)
+               break
+            pass
 
    def refill(self):
       if self.is_on_screen(universal_names.screen_width, universal_names.screen_height) == False:
@@ -46,7 +48,7 @@ class P_shooter(Megaman_object):
       self.refill()
       #--else
       if self.is_alive == True:
-         self.sprite_check()
+         self.sprite_surf_check()
          self.move()
       Sprite_surface.update(self)
 
@@ -60,4 +62,4 @@ class P_shooter(Megaman_object):
       p.x_vel = speed
 
 for i in range(0, 3): #--making p_shooter bullets
-         P_shooter('P_shooter', 0, 0)
+         P_shooter('p_shooter', 0, 0)

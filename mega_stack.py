@@ -22,7 +22,7 @@ class Stack(object):
       other.lst.link(self.lst)
 
    def push_update_start(self, other):
-      #push to beginning of stack
+      #push a list to beginning of stack
       for item in lst:
          self.lst.insert(item)
 

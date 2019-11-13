@@ -41,7 +41,7 @@ display_order = [background_stack, weapon_stack, character_stack] #background is
 
 display_stack = mega_stack.Stack()
 
-songs = Song_player('1', ['audio/Quick man.mp3','audio/Cut man.mp3', 'audio/Air man.mp3', 'audio/Metal man.mp3', 'audio/Heat man.mp3'], volume=0.6)
+songs = Song_player('1', ['audio/Air man.mp3', 'audio/Metal man.mp3', 'audio/Quick man.mp3','audio/Cut man.mp3', 'audio/Heat man.mp3'], volume=0.6)
 
 screen = pygame.display.set_mode((universal_names.screen_width, universal_names.screen_height))
 
@@ -62,7 +62,7 @@ while game_on:
 
       elif isinstance(sprite_surf, Megaman) == True:
          if sprite_surf.y > universal_names.screen_height:
-            sprite_surf.move(sprite_surf.x, 0)
+            sprite_surf.teleport(sprite_surf.x, 0)
          #--I want to display characters last so i put him at the beginning of queue
          character_stack.push(sprite_surf)
 

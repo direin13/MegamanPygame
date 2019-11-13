@@ -23,31 +23,32 @@ class Megaman(Megaman_object):
       self.run_frame_speed = run_frame_speed
       self.idle_frame_speed = idle_frame_speed
       self.can_jump = False
-      self.can_shoot = True
       self.is_grounded = False
       self.camera = camera
       self.all_timers.add_ID('rise_flag', 4)
       self.all_timers.add_ID('shooting_flag', 0)
       self.all_timers.add_ID('grounded_sound', 1)
+      self.all_timers.add_ID('can_shoot', 1)
+      self.all_timers.add_ID('startup_flag', 0)
+      self.all_timers.add_ID('startup_animation', 0)
 
       
    def set_direction(self):
       #--To change the direction of self, note that direction == False means direction == Left, whereas True == Right
 
-      if self.current_key[self.controls[0]] and self.current_key[self.controls[2]]:
-         #--if pressing left and right at the same time
+      if self.is_standstill():
          self.direction = self.direction
 
-      elif self.current_key[self.controls[0]]:
-         #--left
+      elif self.is_pressing(0):
+         #--right
          if self.is_grounded != True:
             self.direction = True
          else:
             if self.x_vel == 0:
                self.direction = True
 
-      elif self.current_key[self.controls[2]]:
-         #--right
+      elif self.is_pressing(2):
+         #--left
          if self.is_grounded != True:
             self.direction = False
          else:
@@ -57,38 +58,29 @@ class Megaman(Megaman_object):
 
    def sprite_surf_check(self):
       #This will check all the sprite surfaces and there relation with self and act accordingly
-      
-      grounded_flag = 0
+      self.check_platform()
+      self.check_camera()
+
+   def is_pressing(self, n):
+      #to see which key a player is pressing, 'n' refers to index in self.controls
+      return self.current_key[self.controls[n]]
+
+   def is_standstill(self):
+      return (not(self.is_pressing(0) or self.is_pressing(2)) or 
+            (self.is_pressing(0) and self.is_pressing(2)))
+
+   def is_shooting(self):
+      return self.all_timers.is_empty('shooting_flag') == False
+
+
+   def check_camera(self):
+
       camera_flag = 0
-      for sprite_surf in Sprite_surface.all_sprite_surfaces.values():
-         if sprite_surf != self:
-            if isinstance(sprite_surf, Platform):
-               if self.check_collision(sprite_surf, universal_names.feet, universal_names.hitbox) == True and self.gravity == True:
-                  self.push_vert(sprite_surf, universal_names.feet, universal_names.hitbox)
-                  grounded_flag += 1
-
-               elif self.check_collision(sprite_surf, universal_names.head, universal_names.hitbox) == True:
-                  self.gravity = True
-                  self.y += 1
-                  self.push_vert(sprite_surf, universal_names.head, universal_names.hitbox)
-
-               elif self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
-                  self.push_hori(sprite_surf, universal_names.hitbox, universal_names.hitbox)
-
-            if isinstance(sprite_surf, Camera_box):
-               if self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
-                  if sprite_surf.ID == 'special_static' and self.camera != None:
-                     self.camera.transition('right', 10, 53)
-                  camera_flag += 1
-
-      if grounded_flag == 0:
-         self.is_grounded = False
-         self.all_timers.replenish_timer('grounded_sound')
-      else:
-         self.is_grounded = True
-         if self.all_timers.check_ID('grounded_sound') > 0:
-            play_sound('grounded', universal_names.megaman_sounds, channel=0, volume=universal_names.sfx_volume)
-            self.all_timers.countdown('grounded_sound', 1)
+      for sprite_surf in Camera_box.all_sprite_surfaces.values():
+         if self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
+            if sprite_surf.ID == 'special_static' and self.camera != None:
+               self.camera.transition('right', 10, 53)
+            camera_flag += 1
 
       if self.camera != None:
          if camera_flag == 0:
@@ -96,86 +88,113 @@ class Megaman(Megaman_object):
          else:
             self.camera.static = True
 
-         
+
+   def check_platform(self):
+      #checking if megaman has collided with any ceiling
+      grounded_flag = 0
+      for platform in Platform.all_sprite_surfaces.values():
+         if platform.is_on_screen(universal_names.screen_width,universal_names.screen_height) == True:
+            if self.check_collision(platform, universal_names.feet, universal_names.hitbox) == True and self.gravity == True:
+               self.push_vert(platform, universal_names.feet, universal_names.hitbox)
+               grounded_flag += 1
+
+            elif self.check_collision(platform, universal_names.head, universal_names.hitbox) == True:
+               self.gravity = True
+               self.y += 1
+               self.push_vert(platform, universal_names.head, universal_names.hitbox)
+
+            elif self.check_collision(platform, universal_names.hitbox, universal_names.hitbox) == True:
+               self.push_hori(platform, universal_names.hitbox, universal_names.hitbox)
 
 
-   def move(self, x=None, y=None):
-      #moves the character, if co_ordinates not specified then the keys pressed will be checked
-      if x != None and y != None:
-         self.x = x
-         self.y = y
-         return
+      if grounded_flag == 0:
+         self.is_grounded = False
+         self.all_timers.replenish_timer('grounded_sound')
+      else:
+         self.is_grounded = True
+         if self.all_timers.is_empty('grounded_sound') == False:
+            play_sound('grounded', universal_names.megaman_sounds, channel=0, volume=universal_names.sfx_volume)
+            self.all_timers.countdown('grounded_sound', 1)
 
-         #--if moving right and left at the same time
-      if self.current_key[self.controls[0]] and self.current_key[self.controls[2]]:
-         if self.is_grounded == True:
-            self.deccelerate(self.decc_speed)
+   def stop(self):
+      #brings player to a halt
+      if self.is_grounded == True:
+         self.deccelerate(self.decc_speed)
+      else:
+         self.x_vel = 0
+
+      if self.direction == True:
+         self.x += self.x_vel
+      else:
+         self.x -= self.x_vel
+
+   def move_L(self):
+      if self.is_grounded == True:
+         if self.direction == False:
+            self.accelerate(self.acc_speed, self.max_x_vel)
+            self.x -= self.x_vel
          else:
-            self.x_vel = 0
+            self.deccelerate(self.decc_speed)
+            self.x += self.x_vel
 
+      else:
+         if self.colliding_hori != True:
+            self.x_vel = self.max_x_vel
+            self.x -= self.x_vel
+
+
+   def move_r(self):
+      if self.is_grounded == True:
          if self.direction == True:
+            self.accelerate(self.acc_speed, self.max_x_vel)
             self.x += self.x_vel
          else:
+            self.deccelerate(self.decc_speed)
             self.x -= self.x_vel
 
       else:
-         #--if moving right
-         if self.current_key[self.controls[0]] and self.colliding_hori != True:
-            if self.is_grounded == True:
-               if self.direction == True:
-                  self.accelerate(self.acc_speed)
-                  self.x += self.x_vel
-               else:
-                  self.deccelerate(self.decc_speed)
-                  self.x -= self.x_vel
+         if self.colliding_hori != True:
+            self.x_vel = self.max_x_vel
+            self.x += self.x_vel
 
-            else:
-               if self.colliding_hori != True:
-                  self.x_vel = self.max_x_vel
-                  self.x += self.x_vel
 
-         #--if moving left
-         elif self.current_key[self.controls[2]] and self.colliding_hori != True:
-            if self.is_grounded == True:
-               if self.direction == False:
-                  self.accelerate(self.acc_speed)
-                  self.x -= self.x_vel
-               else:
-                  self.deccelerate(self.decc_speed)
-                  self.x += self.x_vel
+   def shoot(self):
+      #--shoots megaman's p_shooter
 
-            else:
-               if self.colliding_hori != True:
-                  self.x_vel = self.max_x_vel
-                  self.x -= self.x_vel
+      #--if you shoot
+      if self.all_timers.is_empty('can_shoot') == False and P_shooter.all_p.is_empty() == False:
+         self.all_timers.countdown('can_shoot')
+         self.all_timers.replenish_timer('shooting_flag') #the display function will countdown this timer
+         play_sound('p_shooter', universal_names.megaman_sounds, volume=universal_names.sfx_volume)
 
-         #--if not moving right or left
+         #--right
+         if self.direction == True:
+            P_shooter.fire(self.x + self.width//2, self.y + self.height//4, P_shooter.x_vel)
+
+         #--left
          else:
-            if self.is_grounded == True:
-               self.deccelerate(self.decc_speed)
-            else:
-               self.x_vel = 0
-
-            if self.direction == True:
-               self.x += self.x_vel
-            else:
-               self.x -= self.x_vel
+            P_shooter.fire(self.x + self.width//3, self.y + self.height//4, -P_shooter.x_vel)
 
 
-   def accelerate(self, acc_speed=0):
-      #--increases self.x_vel according to acc_speed parameter
-      if acc_speed != 0:
-         if self.all_timers.countdown('move_flag', acc_speed, loop=True) == False:
-            if self.x_vel != self.max_x_vel:
-               self.x_vel += 1
+   def check_key_pressed(self):
 
+         #--if pressing right and left
+      if self.is_standstill() == True:
+         self.stop()
 
+         #--if pressing right
+      elif self.is_pressing(0) and self.colliding_hori != True:
+         self.move_r()
 
-   def deccelerate(self, decc_speed=0):
-      #--decreases self.x_vel according to acc_speed parameter
-      if self.all_timers.countdown('move_flag', decc_speed, loop=True) == False:
-         if self.x_vel != 0:
-            self.x_vel -= 1
+      #--if pressing left
+      elif self.is_pressing(2) and self.colliding_hori != True:
+         self.move_L()
+
+      #--if you shoot
+      if self.is_pressing(4):
+         self.shoot()
+      else:
+         self.all_timers.replenish_timer('can_shoot') #the player can shoot after he lets go of the shoot button
 
 
 
@@ -183,20 +202,43 @@ class Megaman(Megaman_object):
       if self.is_grounded == True and self.can_jump == True:
          self.gravity = False
          self.all_timers.replenish_timer('rise_flag')
-         if self.current_key[self.controls[5]]:
+         if self.is_pressing(5):
             self.y_vel = self.jump_speed
             self.can_jump = False
             self.is_grounded = False
 
-      if self.gravity == False and self.current_key[self.controls[5]]:
+      if self.gravity == False and self.is_pressing(5):
          self.rise()
       else:
          self.gravity = True
 
-      if self.current_key[self.controls[5]] != True and self.is_grounded == True:
+      if self.is_pressing(5) != True and self.is_grounded == True:
          self.can_jump = True
       else:
          self.can_jump = False
+
+
+   def startup_check(self):
+      #will return true if startup animation is valid
+      self.all_timers.countdown('startup_animation')
+
+      if self.is_standstill() and self.all_timers.is_empty('startup_flag') == False:
+         self.all_timers.countdown('startup_flag')
+         return True
+
+      elif self.is_standstill() != True and self.all_timers.is_empty('startup_flag'):
+         self.all_timers.replenish_timer('startup_flag', 1)
+         return True
+      else:
+         return False
+
+
+   def startup_animation(self, surf):
+      if self.direction == True:
+         self.sprite.display_animation(surf, 'step_right')
+
+      else:
+         self.sprite.display_animation(surf, 'step_left')
 
 
 
@@ -210,81 +252,81 @@ class Megaman(Megaman_object):
             self.y_vel -= 2
 
 
-   def shoot(self):
-      #--shoots megaman's p_shooter
 
-      #--if you shoot
-      if self.current_key[self.controls[4]] and self.can_shoot == True and P_shooter.all_p.is_empty() == False:
-         self.can_shoot = False
-         self.all_timers.replenish_timer('shooting_flag') #the display function will countdown this timer
-         play_sound('p_shooter', universal_names.megaman_sounds, volume=universal_names.sfx_volume)
+   def idle_animation(self, surf, s=''):
+      self.sprite.update(self.idle_frame_speed)
+      if self.direction == True:
+         self.sprite.display_animation(surf, '{}idle_right'.format(s))
+      else:
+         self.sprite.display_animation(surf, '{}idle_left'.format(s))
 
-         #--right
-         if self.direction == True:
-            P_shooter.fire(self.x + self.width//2, self.y + self.height//4, P_shooter.x_vel)
 
-         #--left
+
+   def walk_animation(self, surf, s=''):
+      self.sprite.update(self.run_frame_speed)
+      if self.direction == True:
+         self.sprite.display_animation(surf, '{}walk_right'.format(s))
+
+      else:
+         self.sprite.display_animation(surf, '{}walk_left'.format(s))
+
+
+
+   def ground_animation(self, surf, s=''):
+      #--displaying any ground animations
+
+      if self.all_timers.is_empty('startup_animation') != True and s == '':
+         self.startup_animation(surf)
+
+      else:
+         if self.is_standstill() == True:
+            self.idle_animation(surf, s)
          else:
-            P_shooter.fire(self.x + self.width//3, self.y + self.height//4, -P_shooter.x_vel)
+            self.walk_animation(surf, s)
 
-      if self.current_key[self.controls[4]] != True:
-         self.can_shoot = True
+
+
+   def jump_animation(self, surf, s=''):
+      self.sprite.update(self.run_frame_speed)
+      if self.direction == True:
+         self.sprite.display_animation(surf, '{}jump_right'.format(s))
+      else:
+         self.sprite.display_animation(surf, '{}jump_left'.format(s))
 
 
 
    def display(self, surf):
       #--displays self's sprites depending on the circumstances i.e if he's on the ground, if he shoots etc.
-
-      shooting = self.all_timers.countdown('shooting_flag', 23) #--to get wether player has shot or not, will change the animation displayed via variable 's'
-      if shooting == False:
-         s = ''
-      else:
+      if self.is_shooting():
          s = 'shoot_'
+      else:
+         s = ''
 
+      if self.startup_check():
+         self.all_timers.replenish_timer('startup_animation', 8)
 
       if self.is_grounded == True:
-
-         #--idle
-         if self.x_vel == 0:
-            self.sprite.update(self.idle_frame_speed)
-            if self.direction == True:
-               self.sprite.display_animation(surf, '{}idle_right'.format(s))
-            else:
-               self.sprite.display_animation(surf, '{}idle_left'.format(s))
-
-         #--walking
-         else:
-            self.sprite.update(self.run_frame_speed)
-            if self.direction == True:
-               if self.x_vel == self.max_x_vel or (self.x_vel > 0 and shooting == True):
-                  self.sprite.display_animation(surf, '{}walk_right'.format(s))
-               if self.x_vel != self.max_x_vel and shooting == False:
-                  self.sprite.display_animation(surf, 'step_right')
-
-            else:
-               if self.x_vel == self.max_x_vel or (self.x_vel > 0 and shooting == True):
-                  self.sprite.display_animation(surf, '{}walk_left'.format(s))
-               if self.x_vel != self.max_x_vel and shooting == False:
-                  self.sprite.display_animation(surf, 'step_left')
-
-      #jump
+         self.ground_animation(surf, s)
       else: 
-         self.sprite.update(self.run_frame_speed)
-         if self.direction == True:
-            self.sprite.display_animation(surf, '{}jump_right'.format(s))
-         else:
-            self.sprite.display_animation(surf, '{}jump_left'.format(s))
+         self.jump_animation(surf, s)
+
+
+
+   def teleport(self, x, y):
+      self.x = x
+      self. y = y
+      Sprite_surface.update(self)
 
 
 
    def update(self):
       self.current_key = pygame.key.get_pressed()
       self.set_direction()
+      self.all_timers.countdown('shooting_flag', 23)
       self.sprite_surf_check()
       if self.camera != None and self.camera.static == False:
          self.camera.follow_x(self)
-      self.move()
-      self.shoot()
+      self.check_key_pressed()
       self.colliding_hori = False
       self.colliding_vert = False
       self.jump()

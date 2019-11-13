@@ -17,6 +17,8 @@ screen_height = 600
 
 megaman_images = load_images('megaman_sprites')
 
+builder = load_images('enemies')
+
 megaman_sounds = load_sounds('audio/fx')
 
 sfx_volume = 0.6

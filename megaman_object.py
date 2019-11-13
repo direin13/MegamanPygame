@@ -5,9 +5,11 @@ pygame.init()
 
 class Megaman_object(Sprite_surface):
    gravity_speed = 15
+   all_sprite_surfaces = {}
 
    def __init__(self, ID, x, y, sprite, coll_boxes=None, gravity=False, x_vel=0, y_vel=0, direction=True, width=0, height=0, is_alive=True):
       super().__init__(ID, x, y, sprite, coll_boxes, is_alive)
+      Megaman_object.add_to_dict(self, ID)
       self.all_timers = timer.Timer()
       self.x_vel = 0
       self.max_x_vel = x_vel
@@ -74,6 +76,21 @@ class Megaman_object(Sprite_surface):
          else:
             self.y_vel -= 2
 
+   def accelerate(self, acc_speed=0, max_x_vel=0):
+      #--increases self.x_vel according to acc_speed parameter
+      if acc_speed != 0:
+         if self.all_timers.countdown('move_flag', acc_speed, loop=True) == False:
+            if self.x_vel != max_x_vel:
+               self.x_vel += 1
+
+
+
+   def deccelerate(self, decc_speed=0):
+      #--decreases self.x_vel according to acc_speed parameter
+      if self.all_timers.countdown('move_flag', decc_speed, loop=True) == False:
+         if self.x_vel != 0:
+            self.x_vel -= 1
+
    def display(self, surf, speed=1):
       self.sprite.update(speed)
       self.sprite.display_animation(surf, self.sprite.active_frames[0][0])
@@ -82,8 +99,12 @@ class Megaman_object(Sprite_surface):
 #-----------------------------------------
 
 class Platform(Megaman_object):
-   def __init__(self, ID, x, y, sprite, coll_boxes=None, gravity=False):
-      super().__init__(ID, x, y, sprite, coll_boxes, gravity)
+   all_sprite_surfaces = {}
+
+   def __init__(self, ID, x, y, sprite, coll_boxes=None, gravity=False, x_vel=0):
+      super().__init__(ID, x, y, sprite, coll_boxes, gravity, x_vel)
+      Platform.add_to_dict(self, ID)
+
 
    def update(self):
       if self.gravity == True:
