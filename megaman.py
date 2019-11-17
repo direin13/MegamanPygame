@@ -5,11 +5,15 @@ import pygame
 import timer
 from misc_function import *
 from p_shooter import *
-from megaman_object import *
+from megaman import *
+from enemy import *
+from character import *
 
-class Megaman(Megaman_object):
-   def __init__(self, ID, x, y, sprite, coll_boxes, run_frame_speed, idle_frame_speed, gravity=False, controls=None, x_vel=1, jump_speed=1, direction=True, camera=None, is_alive=True):
-      super().__init__(ID, x, y, sprite, coll_boxes, gravity, x_vel, direction, is_alive)
+class Megaman(Character):
+   def __init__(self, ID, x, y, sprites, coll_boxes, is_active=True, width=0, height=0, gravity=False, 
+               direction=True, max_x_vel=1, health_points=100, controls=None, jump_speed=1, camera=None):
+      
+      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, gravity, direction, max_x_vel, health_points)
       if controls == None:
          self.controls = [pygame.K_d, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_p, pygame.K_w]
       else:
@@ -20,9 +24,6 @@ class Megaman(Megaman_object):
       self.acc_speed = 3
       self.decc_speed = 3
       self.can_jump = False
-      self.run_frame_speed = run_frame_speed
-      self.idle_frame_speed = idle_frame_speed
-      self.can_jump = False
       self.is_grounded = False
       self.camera = camera
       self.all_timers.add_ID('rise_flag', 4)
@@ -31,7 +32,35 @@ class Megaman(Megaman_object):
       self.all_timers.add_ID('can_shoot', 1)
       self.all_timers.add_ID('startup_flag', 0)
       self.all_timers.add_ID('startup_animation', 0)
+      self.all_timers.add_ID('invincibility', 210)
+      self.all_timers.add_ID('invincibility_frame', 3)
+      self.all_timers.add_ID('spark_effect', 30)
+      self.all_timers.add_ID('stun', 50)
 
+
+   def is_pressing(self, n):
+      #to see which key a player is pressing, 'n' refers to index in self.controls
+      if self.stun == True:
+         return False
+      else:
+         return self.current_key[self.controls[n]]
+
+   def is_stunned(self):
+      return self.all_timers.is_empty('stun') != True
+
+   def is_standstill(self):
+      return (not(self.is_pressing(0) or self.is_pressing(2)) or 
+            (self.is_pressing(0) and self.is_pressing(2)))
+
+   def is_shooting(self):
+      return self.all_timers.is_empty('shooting_flag') == False
+   
+   def check_stun(self):
+      self.all_timers.countdown('stun')
+      if self.all_timers.is_empty('stun'):
+         self.stun = False
+      else:
+         self.knock_back(1)
       
    def set_direction(self):
       #--To change the direction of self, note that direction == False means direction == Left, whereas True == Right
@@ -60,21 +89,11 @@ class Megaman(Megaman_object):
       #This will check all the sprite surfaces and there relation with self and act accordingly
       self.check_platform()
       self.check_camera()
-
-   def is_pressing(self, n):
-      #to see which key a player is pressing, 'n' refers to index in self.controls
-      return self.current_key[self.controls[n]]
-
-   def is_standstill(self):
-      return (not(self.is_pressing(0) or self.is_pressing(2)) or 
-            (self.is_pressing(0) and self.is_pressing(2)))
-
-   def is_shooting(self):
-      return self.all_timers.is_empty('shooting_flag') == False
+      if self.invincibility == False:
+         self.check_enemy()
 
 
    def check_camera(self):
-
       camera_flag = 0
       for sprite_surf in Camera_box.all_sprite_surfaces.values():
          if self.check_collision(sprite_surf, universal_names.hitbox, universal_names.hitbox) == True:
@@ -89,13 +108,29 @@ class Megaman(Megaman_object):
             self.camera.static = True
 
 
+   def check_enemy(self):
+      for enemy in Enemy.all_sprite_surfaces.values():
+         if self.check_collision(enemy, universal_names.hitbox, universal_names.hitbox) == True and enemy.is_alive() == True:
+            self.health_points -= enemy.damage_points
+            if self.is_alive() == False:
+               break
+            else:
+               self.invincibility = True
+               self.stun = True
+               play_sound('megaman_damage', universal_names.megaman_sounds, channel=2, volume=universal_names.sfx_volume + 0.1)
+               self.all_timers.replenish_timer('spark_effect')
+               self.all_timers.replenish_timer('stun')
+               break
+
+
    def check_platform(self):
       #checking if megaman has collided with any ceiling
       grounded_flag = 0
       for platform in Platform.all_sprite_surfaces.values():
          if platform.is_on_screen(universal_names.screen_width,universal_names.screen_height) == True:
             if self.check_collision(platform, universal_names.feet, universal_names.hitbox) == True and self.gravity == True:
-               self.push_vert(platform, universal_names.feet, universal_names.hitbox)
+               if grounded_flag < 1:
+                  self.push_vert(platform, universal_names.feet, universal_names.hitbox)
                grounded_flag += 1
 
             elif self.check_collision(platform, universal_names.head, universal_names.hitbox) == True:
@@ -112,6 +147,7 @@ class Megaman(Megaman_object):
          self.all_timers.replenish_timer('grounded_sound')
       else:
          self.is_grounded = True
+         self.gravity = False
          if self.all_timers.is_empty('grounded_sound') == False:
             play_sound('grounded', universal_names.megaman_sounds, channel=0, volume=universal_names.sfx_volume)
             self.all_timers.countdown('grounded_sound', 1)
@@ -200,12 +236,9 @@ class Megaman(Megaman_object):
 
    def jump(self):
       if self.is_grounded == True and self.can_jump == True:
-         self.gravity = False
          self.all_timers.replenish_timer('rise_flag')
          if self.is_pressing(5):
             self.y_vel = self.jump_speed
-            self.can_jump = False
-            self.is_grounded = False
 
       if self.gravity == False and self.is_pressing(5):
          self.rise()
@@ -235,10 +268,10 @@ class Megaman(Megaman_object):
 
    def startup_animation(self, surf):
       if self.direction == True:
-         self.sprite.display_animation(surf, 'step_right')
+         self.display_animation(universal_names.main_sprite, surf, 'step_right')
 
       else:
-         self.sprite.display_animation(surf, 'step_left')
+         self.display_animation(universal_names.main_sprite, surf, 'step_left')
 
 
 
@@ -254,21 +287,19 @@ class Megaman(Megaman_object):
 
 
    def idle_animation(self, surf, s=''):
-      self.sprite.update(self.idle_frame_speed)
       if self.direction == True:
-         self.sprite.display_animation(surf, '{}idle_right'.format(s))
+         self.display_animation(universal_names.main_sprite, surf, '{}idle_right'.format(s))
       else:
-         self.sprite.display_animation(surf, '{}idle_left'.format(s))
+         self.display_animation(universal_names.main_sprite, surf, '{}idle_left'.format(s))
 
 
 
    def walk_animation(self, surf, s=''):
-      self.sprite.update(self.run_frame_speed)
       if self.direction == True:
-         self.sprite.display_animation(surf, '{}walk_right'.format(s))
+         self.display_animation(universal_names.main_sprite, surf, '{}walk_right'.format(s))
 
       else:
-         self.sprite.display_animation(surf, '{}walk_left'.format(s))
+         self.display_animation(universal_names.main_sprite, surf, '{}walk_left'.format(s))
 
 
 
@@ -287,13 +318,35 @@ class Megaman(Megaman_object):
 
 
    def jump_animation(self, surf, s=''):
-      self.sprite.update(self.run_frame_speed)
       if self.direction == True:
-         self.sprite.display_animation(surf, '{}jump_right'.format(s))
+         self.display_animation(universal_names.main_sprite, surf, '{}jump_right'.format(s))
       else:
-         self.sprite.display_animation(surf, '{}jump_left'.format(s))
+         self.display_animation(universal_names.main_sprite, surf, '{}jump_left'.format(s))
+
+   def diplay_effects(self, surf):
+      if self.all_timers.is_empty('spark_effect') == False:
+         self.display_animation('effects', surf, 'spark_effect')
+         self.all_timers.countdown('spark_effect')
+
+   def stun_animation(self, surf):
+      if self.direction == True:
+         self.display_animation(universal_names.main_sprite, surf, 'damage_right')
+      else:
+         self.display_animation(universal_names.main_sprite, surf, 'damage_left')
 
 
+   def display_megaman(self, surf, s=''):
+      if self.no_display == False:
+         if self.startup_check() == True:
+            self.all_timers.replenish_timer('startup_animation', 8)
+
+         if self.stun == True:
+            self.stun_animation(surf)
+
+         elif self.is_grounded == True:
+            self.ground_animation(surf, s)
+         else: 
+            self.jump_animation(surf, s)
 
    def display(self, surf):
       #--displays self's sprites depending on the circumstances i.e if he's on the ground, if he shoots etc.
@@ -302,34 +355,62 @@ class Megaman(Megaman_object):
       else:
          s = ''
 
-      if self.startup_check():
-         self.all_timers.replenish_timer('startup_animation', 8)
+      self.update_sprite(universal_names.main_sprite)
 
-      if self.is_grounded == True:
-         self.ground_animation(surf, s)
-      else: 
-         self.jump_animation(surf, s)
+      if self.invincibility == True:
+         self.diplay_effects(surf)
 
+      self.display_megaman(surf, s)
+
+
+   def invincibility_frames(self):
+      if self.all_timers.is_empty('invincibility_frame'):
+         if self.no_display == True:
+            self.no_display = False
+         else:
+            self.no_display = True
+         self.all_timers.replenish_timer('invincibility_frame')
+
+      else:
+         self.all_timers.countdown('invincibility_frame')
+
+
+   def check_invincibility(self):
+      if self.all_timers.is_empty('invincibility'):
+         self.invincibility = False
+         self.no_display = False
+         self.all_timers.replenish_timer('invincibility')
+
+      else:
+         self.all_timers.countdown('invincibility')
+         self.invincibility_frames()
 
 
    def teleport(self, x, y):
       self.x = x
       self. y = y
-      Sprite_surface.update(self)
 
 
 
    def update(self):
-      self.current_key = pygame.key.get_pressed()
-      self.set_direction()
-      self.all_timers.countdown('shooting_flag', 23)
-      self.sprite_surf_check()
-      if self.camera != None and self.camera.static == False:
-         self.camera.follow_x(self)
-      self.check_key_pressed()
-      self.colliding_hori = False
-      self.colliding_vert = False
-      self.jump()
-      if self.gravity == True:
-         self.apply_gravity()
-      Sprite_surface.update(self)
+      if self.is_active == True:
+         self.current_key = pygame.key.get_pressed()
+         self.set_direction()
+         self.all_timers.countdown('shooting_flag', 23)
+         if self.stun == True:
+            self.check_stun()
+         self.sprite_surf_check()
+         if self.invincibility == True:
+            self.check_invincibility()
+
+         if self.camera != None and self.camera.static == False:
+            self.camera.follow_x(self)
+
+         self.check_key_pressed()
+         self.jump()
+         self.colliding_hori = False
+         self.colliding_vert = False
+         if self.gravity == True:
+            self.apply_gravity()
+
+         Sprite_surface.update(self)

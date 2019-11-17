@@ -67,7 +67,7 @@ class LinkedList(object):
          ptr = ptr.next
 
    def link(self, other):
-      #iterate to the end of 'other' and make the next node equal to a 'self.head', effectively combining the the lists with minimal effort
+      #iterate to the end of 'other' and make the next node equal to a 'self.head', effectively combining the two lists
       #Note that 'other' will change become the combination of the two lists whereas 'self' will remain the unchanged
       if other.is_empty():
          other.head = self.head

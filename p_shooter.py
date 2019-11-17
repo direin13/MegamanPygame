@@ -5,41 +5,46 @@ import mega_stack
 import universal_names
 from misc_function import *
 from megaman_object import *
+from enemy import *
 
 class P_shooter(Megaman_object):
    all_p = mega_stack.Stack() #the stack acts as ammo source
-   x_vel = 8
+   x_vel = 10
 
-   def __init__(self, ID, x, y, sprite=None, coll_boxes=None, gravity=False, x_vel=0, y_vel=0, direction=True, width=1, height=1, is_alive=False):
-      sprite = Sprite(x, y, 30, 18, [('p_shooter', [universal_names.megaman_images['p_shooter']])])
+   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=False, width=30, height=18, gravity=False, direction=True, max_x_vel=0):
+      sprites = [Sprite(universal_names.main_sprite, x, y, 30, 18, [('p_shooter', [universal_names.megaman_images['p_shooter']], 1)])]
       coll_boxes = [Collision_box(universal_names.hitbox, x, y, 30, 18)]
-      super().__init__(ID, x, y, sprite, coll_boxes, gravity, x_vel, y_vel, direction, is_alive, width, height)
-      self.is_alive = is_alive
+      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, gravity, direction, max_x_vel)
+      self.is_active = is_active
+      self.damage_points = 10
       P_shooter.all_p.push(self)
 
    def display(self, surf):
-      self.sprite.update(1)
-      self.sprite.display_animation(surf, 'p_shooter')
+      self.display_animation(universal_names.main_sprite, surf, 'p_shooter')
 
    def move(self):
       self.x += self.x_vel
 
    def sprite_surf_check(self):
-      self.check_platform()
+      self.check_enemy()
 
-   def check_platform(self):
-      for platform in Platform.all_sprite_surfaces.values():
-         if platform.is_on_screen(universal_names.screen_width,universal_names.screen_height) == True:
-            if self.check_collision(platform, universal_names.hitbox, universal_names.hitbox) == True:
-               self.is_alive = False
-               play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume)
+   def damage_enemy(self, ):
+      pass
+
+   def check_enemy(self):
+      for enemy in Enemy.all_sprite_surfaces.values():
+         if enemy.is_on_screen(universal_names.screen_width,universal_names.screen_height) == True and enemy.is_active == True:
+            if self.check_collision(enemy, universal_names.hitbox, universal_names.hitbox) == True:
+               self.is_active = False
+               play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume - 0.1)
+               enemy.reduce_hp(self.damage_points)
                break
             pass
 
    def refill(self):
       if self.is_on_screen(universal_names.screen_width, universal_names.screen_height) == False:
-         self.is_alive = False
-      if self.is_alive == False:
+         self.is_active = False
+      if self.is_active == False:
          if self not in P_shooter.all_p.lst:
             P_shooter.all_p.push(self)
 
@@ -47,7 +52,7 @@ class P_shooter(Megaman_object):
       #--if p_shooter not o the screen
       self.refill()
       #--else
-      if self.is_alive == True:
+      if self.is_active == True:
          self.sprite_surf_check()
          self.move()
       Sprite_surface.update(self)
@@ -58,7 +63,7 @@ class P_shooter(Megaman_object):
       p = cls.all_p.pop()
       p.x, p.y = x, y
       Sprite_surface.update(p)
-      p.is_alive = True
+      p.is_active = True
       p.x_vel = speed
 
 for i in range(0, 3): #--making p_shooter bullets

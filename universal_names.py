@@ -11,11 +11,15 @@ feet = 'feet'
 
 head = 'head'
 
+main_sprite = 'main_sprite'
+
 screen_width = 600
 
 screen_height = 600
 
 megaman_images = load_images('megaman_sprites')
+
+effect_images = load_images('effects')
 
 builder = load_images('enemies')
 
