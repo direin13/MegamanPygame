@@ -10,7 +10,7 @@ README;
 	  up = upArrow
 	  down = downArrow
 	  action = z
-	  jump = x
+	  jump = x)
 
 -Feedback and criticism is much appreciated!
 
