@@ -1,6 +1,7 @@
 #!//usr/bin/env python
 from sprite import *
 from megaman_object import *
+from misc_function import *
 import pygame
 
 class Character(Megaman_object):
@@ -9,6 +10,7 @@ class Character(Megaman_object):
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, gravity, direction, max_x_vel)
       self.health_points = health_points
       self.invincibility = False
+      self.is_grounded = False
       self.stun = False
       self.knock_back_time = 10
       self.all_timers.add_ID('knock_back', self.knock_back_time)
@@ -19,7 +21,6 @@ class Character(Megaman_object):
       else:
          self.x += speed
 
-
    def is_alive(self):
       return self.health_points > 0
 
@@ -27,7 +28,7 @@ class Character(Megaman_object):
       self.health_points -= amount
 
    def kill(self):
-      self.is_active = False
+      self.reduce_hp(self.health_points)
 
    def restore(self, amount):
       self.health_points += amount
@@ -35,3 +36,36 @@ class Character(Megaman_object):
    def check_hp(self):
       if self.is_alive() == False:
          self.is_active = False
+
+
+   def check_ground_collision(self):
+      collision = self.check_collision_dict(Platform.all_sprite_surfaces, universal_names.feet, universal_names.hitbox, quota=1)
+      if collision.is_empty() != True:
+         platform = collision.pop()
+         self.push_vert(platform, universal_names.feet, universal_names.hitbox)
+         self.is_grounded = True
+         self.gravity = False
+
+         if self.all_timers.is_empty('grounded_sound') == False:
+            play_sound('grounded', universal_names.megaman_sounds, channel=0, volume=universal_names.sfx_volume)
+            self.all_timers.countdown('grounded_sound', 1)
+
+      else:
+         self.is_grounded = False
+         self.all_timers.replenish_timer('grounded_sound')
+
+
+   def check_ceiling_collision(self):
+      collisions = self.check_collision_dict(Platform.all_sprite_surfaces, universal_names.head, universal_names.hitbox, quota=1)
+      if collisions.is_empty() != True:
+         for ceiling in collisions:
+            self.gravity = True
+            self.y += 1
+            self.push_vert(ceiling, universal_names.head, universal_names.hitbox)
+
+
+   def check_wall_collision(self):
+      collisions = self.check_collision_dict(Platform.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox, quota=4)
+      if collisions.is_empty() != True:
+         for wall in collisions:
+            self.push_hori(wall, universal_names.hitbox, universal_names.hitbox)

@@ -22,45 +22,23 @@ camera = Camera(megaman_x, megaman_y)
 #----------------------------------------------------------------
 
 #--sprites
-megaman_right = [universal_names.megaman_images['walk_2'], universal_names.megaman_images['walk_1'], universal_names.megaman_images['walk_2'], universal_names.megaman_images['walk_3']]
-megaman_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_right]
+megaman_walk = [universal_names.megaman_images['walk_2'], universal_names.megaman_images['walk_1'], universal_names.megaman_images['walk_2'], universal_names.megaman_images['walk_3']]
+megaman_idle = [universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle_2']]
+megaman_idle_shoot = [universal_names.megaman_images['idle_shoot']]
+megaman_step = [universal_names.megaman_images['step']]
+megaman_shoot = [universal_names.megaman_images['walk_shoot_2'], universal_names.megaman_images['walk_shoot_1'], universal_names.megaman_images['walk_shoot_2'], universal_names.megaman_images['walk_shoot_3']]
+megaman_jump = [universal_names.megaman_images['jump']]
+megaman_shoot_jump = [universal_names.megaman_images['shoot_jump']]
+megaman_damage = [universal_names.megaman_images['damage']]
 
-megaman_idle_right = [universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle_2']]
-megaman_idle_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_idle_right]
-megaman_idle_shoot_right = [universal_names.megaman_images['idle_shoot']]
-megaman_idle_shoot_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_idle_shoot_right]
-
-megaman_step_right = [universal_names.megaman_images['step']]
-megaman_step_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_step_right]
-
-megaman_shoot_right = [universal_names.megaman_images['walk_shoot_2'], universal_names.megaman_images['walk_shoot_1'], universal_names.megaman_images['walk_shoot_2'], universal_names.megaman_images['walk_shoot_3']]
-megaman_shoot_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_shoot_right]
-
-megaman_jump_right = [universal_names.megaman_images['jump']]
-megaman_jump_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_jump_right]
-megaman_shoot_jump_right = [universal_names.megaman_images['shoot_jump']]
-megaman_shoot_jump_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_shoot_jump_right]
-
-megaman_damage_right = [universal_names.megaman_images['damage']]
-megaman_damage_left = [pygame.transform.flip(sprite, True, False) for sprite in megaman_damage_right]
-
-
-megaman_sprite = Sprite(universal_names.main_sprite, megaman_x, megaman_y, megaman_width, megaman_height, [('walk_right', megaman_right, m_run_speed),
-                                                       ('walk_left', megaman_left, m_run_speed),
-                                                       ('idle_right', megaman_idle_right, m_idle_speed),
-                                                       ('idle_left', megaman_idle_left, m_idle_speed),
-                                                       ('step_right', megaman_step_right, m_run_speed),
-                                                       ('step_left', megaman_step_left, m_run_speed),
-                                                       ('shoot_walk_right', megaman_shoot_right, m_run_speed),
-                                                       ('shoot_walk_left', megaman_shoot_left, m_run_speed),
-                                                       ('shoot_idle_right', megaman_idle_shoot_right, m_run_speed),
-                                                       ('shoot_idle_left', megaman_idle_shoot_left, m_run_speed),
-                                                       ('jump_right', megaman_jump_right, m_run_speed),
-                                                       ('jump_left', megaman_jump_left, m_run_speed),
-                                                       ('shoot_jump_right', megaman_shoot_jump_right, m_run_speed),
-                                                       ('shoot_jump_left', megaman_shoot_jump_left, m_run_speed),
-                                                       ('damage_right', megaman_damage_right, m_idle_speed),
-                                                       ('damage_left', megaman_damage_left, m_idle_speed)])
+megaman_sprite = Sprite(universal_names.main_sprite, megaman_x, megaman_y, megaman_width, megaman_height, [('walk', megaman_walk, m_run_speed),
+                                                       ('idle', megaman_idle, m_idle_speed),
+                                                       ('step', megaman_step, m_run_speed),
+                                                       ('shoot_walk', megaman_shoot, m_run_speed),
+                                                       ('shoot_idle', megaman_idle_shoot, m_run_speed),
+                                                       ('jump', megaman_jump, m_run_speed),
+                                                       ('shoot_jump', megaman_shoot_jump, m_run_speed),
+                                                       ('damage', megaman_damage, m_idle_speed)])
 
 effects = Sprite('effects', megaman_x, megaman_y, 90, 80, [('spark_effect', [universal_names.effect_images['spark']], 1)])
 #--collision boxes
@@ -81,28 +59,22 @@ explosion_enemy = [universal_names.effect_images['explosion_1'], universal_names
 enemy_sprite = Sprite(universal_names.main_sprite, 200, 200, 40, 30, [('idle', idle_enemy, 1),
                                                                       ('explosion', explosion_enemy, 15)])
 enemy_hit_box = Collision_box(universal_names.hitbox, 400, 290, 36, 30, (240, 240, 0), x_offset=2)
-enemy_test= Enemy('enemy_test', 400, 290, [enemy_sprite], [enemy_hit_box], width=40, height=30, health_points=10, damage_points=10)
+enemy_test= Enemy('enemy_test', 400, 290, [enemy_sprite], [enemy_hit_box], width=40, height=30, health_points=10, damage_points=30)
 
 
 #---------------------------------------------------------------------------------------------------------------------------
 """
-ryu_right = [universal_names.m7['3'], universal_names.m7['4'], universal_names.m7['5'], universal_names.m7['6'], universal_names.m7['7']]
-ryu_left = [pygame.transform.flip(sprite, True, False) for sprite in ryu_right]
-ryu_idle_right = [universal_names.m7['0'], universal_names.m7['1'], universal_names.m7['2']]
-ryu_idle_left = [pygame.transform.flip(sprite, True, False) for sprite in ryu_idle_right]
-ryu_step_right = [universal_names.m7['2']]
-ryu_step_left = [pygame.transform.flip(sprite, True, False) for sprite in ryu_step_right]
-ryu_jump_right = [universal_names.m7['4']]
-ryu_jump_left = [pygame.transform.flip(sprite, True, False) for sprite in ryu_jump_right]
+ryu = [universal_names.m7['3'], universal_names.m7['4'], universal_names.m7['5'], universal_names.m7['6'], universal_names.m7['7']]
 
-ryu_sprite = Sprite(universal_names.main_sprite, ryu_x, ryu_y, 80, 140,  [('walk_right', ryu_right, ryu_speed),
-                                             ('walk_left', ryu_left, ryu_speed),
-                                             ('idle_right', ryu_idle_right, ryu_speed),
-                                             ('idle_left', ryu_idle_left, ryu_speed),
-                                             ('step_right', ryu_step_right, ryu_speed),
-                                             ('step_left', ryu_step_left, ryu_speed),
-                                             ('jump_right', ryu_jump_right, ryu_speed),
-                                             ('jump_left', ryu_jump_left, ryu_speed)])
+ryu_idle = [universal_names.m7['0'], universal_names.m7['1'], universal_names.m7['2']]
+
+ryu_step = [universal_names.m7['2']]
+ryu_jump = [universal_names.m7['4']]
+
+ryu_sprite = Sprite(universal_names.main_sprite, ryu_x, ryu_y, 80, 140,  [('walk', ryu, ryu_speed),
+                                             ('idle', ryu_idle, ryu_speed),
+                                             ('step', ryu_step, ryu_speed),
+                                             ('jump', ryu_jump, ryu_speed)])
 
 ryu_box_1 = Collision_box(universal_names.hitbox, ryu_x, ryu_y, 80, 120, (255, 0, 0), x_offset=0)
 ryu_feet = Collision_box(universal_names.feet, ryu_x, ryu_y, 54, 2, (160, 21, 0), x_offset=13, y_offset=138)

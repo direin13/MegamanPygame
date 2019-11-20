@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import pygame
 import universal_names
+from mega_stack import *
 from sprite import *
 pygame.init()
 
@@ -10,7 +11,7 @@ class Megaman_object(Sprite_surface):
 
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, gravity=False, direction=True, max_x_vel=0):
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height)
-      Megaman_object.add_to_dict(self, ID)
+      Megaman_object.add_to_class_dict(self, ID)
       self.all_timers = timer.Timer()
       self.x_vel = 0
       self.max_x_vel = max_x_vel
@@ -30,7 +31,6 @@ class Megaman_object(Sprite_surface):
          self.x_vel = 0
          dist_betw_edges = other.collbox_dict[coll_box_other].right_edge - self.collbox_dict[coll_box_self].left_edge
          self.x += dist_betw_edges 
-         return
 
       elif self.collbox_dict[coll_box_self].x <= other.collbox_dict[coll_box_other].x:
          if self.direction == True:
@@ -38,7 +38,9 @@ class Megaman_object(Sprite_surface):
          self.x_vel = 0
          dist_betw_edges = self.collbox_dict[coll_box_self].right_edge - other.collbox_dict[coll_box_other].left_edge
          self.x -= dist_betw_edges
-         return
+
+      Sprite_surface.update(self)
+      
 
 
    def push_vert(self, other, coll_box_self, coll_box_other):
@@ -54,15 +56,9 @@ class Megaman_object(Sprite_surface):
          self.y_vel = 0
          dist_betw_edges = self.collbox_dict[coll_box_self].bottom_edge - other.collbox_dict[coll_box_other].top_edge
          self.y -= dist_betw_edges
-      
-      
 
+      Sprite_surface.update(self)
 
-   def check_collision(self, other, coll_box_self, coll_box_other):
-      if self.get_collbox(coll_box_self).collision_sprite(other.get_collbox(coll_box_other)):
-         return True
-      else:
-         return False
 
    def apply_gravity(self):
       if -(self.y_vel) >= Megaman_object.gravity_speed:
@@ -76,6 +72,7 @@ class Megaman_object(Sprite_surface):
 
          else:
             self.y_vel -= 2
+
 
    def accelerate(self, acc_speed=0, max_x_vel=0):
       #--increases self.x_vel according to acc_speed parameter
@@ -92,6 +89,49 @@ class Megaman_object(Sprite_surface):
          if self.x_vel != 0:
             self.x_vel -= 1
 
+
+   def stop(self):
+      #brings player to a halt
+      if self.is_grounded == True:
+         self.deccelerate(self.decc_speed)
+      else:
+         self.x_vel = 0
+
+      if self.direction == True:
+         self.x += self.x_vel
+      else:
+         self.x -= self.x_vel
+
+   def move_L(self):
+      if self.is_grounded == True:
+         if self.direction == False:
+            self.accelerate(self.acc_speed, self.max_x_vel)
+            self.x -= self.x_vel
+         else:
+            self.deccelerate(self.decc_speed)
+            self.x += self.x_vel
+
+      else:
+         if self.colliding_hori != True:
+            self.x_vel = self.max_x_vel
+            self.x -= self.x_vel
+
+
+   def move_r(self):
+      if self.is_grounded == True:
+         if self.direction == True:
+            self.accelerate(self.acc_speed, self.max_x_vel)
+            self.x += self.x_vel
+         else:
+            self.deccelerate(self.decc_speed)
+            self.x -= self.x_vel
+
+      else:
+         if self.colliding_hori != True:
+            self.x_vel = self.max_x_vel
+            self.x += self.x_vel
+
+
    def display(self, surf):
       self.update_sprite(universal_names.main_sprite)
       self.display_animation(universal_names.main_sprite, surf, self.get_sprite(universal_names.main_sprite, 0)[0])
@@ -104,7 +144,7 @@ class Platform(Megaman_object):
 
    def __init__(self, ID, x, y, sprites, coll_boxes=None, is_active=True, width=0, height=0, gravity=False, max_x_vel=0):
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, gravity, max_x_vel)
-      Platform.add_to_dict(self, ID)
+      Platform.add_to_class_dict(self, ID)
 
 
    def update(self):

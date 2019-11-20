@@ -7,11 +7,11 @@ class Stack(object):
       self.lst = LinkedList()
 
    def push(self, item):
-      self.lst.append(item)
+      self.lst.add(item)
 
    def push_start(self, item):
       #insert to the beginning of stack
-      self.lst.insert(item)
+      self.lst.append(item)
 
    def pop(self):
       item = self.lst.remove()
@@ -24,13 +24,17 @@ class Stack(object):
    def push_update_start(self, other):
       #push a list to beginning of stack
       for item in lst:
-         self.lst.insert(item)
+         self.lst.append(item)
 
    def is_empty(self):
       return self.lst.is_empty()
 
    def clear(self):
       self.lst.clear()
+
+   def __iter__(self):
+      while self.lst.is_empty() != True:
+         yield self.pop()
 
    def __str__(self):
       return '{}'.format(self.lst)

@@ -15,8 +15,7 @@ import camera_setup
 def display_all_surf(display_stack, surf, screen_width, screen_height):
    #displays every surf that is on the screen
 
-   while display_stack.is_empty() != True:
-      sprite_surf = display_stack.pop()
+   for sprite_surf in display_stack:
       try:
          if sprite_surf.is_on_screen(screen_width, screen_height) == True and sprite_surf.is_active == True:
             sprite_surf.display(surf)
@@ -27,6 +26,7 @@ def display_all_surf(display_stack, surf, screen_width, screen_height):
 
 
 def update_display_stack(display_order):
+   #push everythinh from display order onto display stack
    global display_stack
    for lst in display_order: #--putting sprite surfaces in order for displaying
       display_stack.push_update(lst)
@@ -70,7 +70,7 @@ pygame.mixer.init()
 
 clock = pygame.time.Clock()
 
-font_1 = pygame.font.SysFont(None, 20)
+font = pygame.font.SysFont(None, 20)
 
 background_stack, weapon_stack, character_stack = mega_stack.Stack(), mega_stack.Stack(), mega_stack.Stack()
 
@@ -78,7 +78,7 @@ display_order = [background_stack, weapon_stack, character_stack] #background is
 
 display_stack = mega_stack.Stack()
 
-songs = Song_player('1', ['audio/Air man.mp3', 'audio/Metal man.mp3', 'audio/Quick man.mp3','audio/Cut man.mp3', 'audio/Heat man.mp3'], volume=0.6)
+songs = Song_player('1', ['audio/Cut man.mp3', 'audio/Heat man.mp3', 'audio/Metal man.mp3', 'audio/Quick man.mp3', 'audio/Air man.mp3'], volume=0.6)
 
 screen = pygame.display.set_mode((universal_names.screen_width, universal_names.screen_height))
 

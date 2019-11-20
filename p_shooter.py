@@ -32,14 +32,13 @@ class P_shooter(Megaman_object):
       pass
 
    def check_enemy(self):
-      for enemy in Enemy.all_sprite_surfaces.values():
-         if enemy.is_on_screen(universal_names.screen_width,universal_names.screen_height) == True and enemy.is_active == True:
-            if self.check_collision(enemy, universal_names.hitbox, universal_names.hitbox) == True:
-               self.is_active = False
-               play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume - 0.1)
-               enemy.reduce_hp(self.damage_points)
-               break
-            pass
+      collisions = self.check_collision_dict(Enemy.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox)
+      if collisions.is_empty() != True:
+         enemy = collisions.pop()
+         enemy.reduce_hp(self.damage_points)
+         self.is_active = False
+         play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume - 0.1)
+
 
    def refill(self):
       if self.is_on_screen(universal_names.screen_width, universal_names.screen_height) == False:

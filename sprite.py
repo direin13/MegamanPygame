@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import pygame
+from mega_stack import *
 import timer
 import os
 
@@ -34,7 +35,7 @@ class Sprite(object):
    def get_frame_speed(self, frame_name):
       return self.all_frame_speed[frame_name]
 
-   def display_animation(self, surf, frame_name, x_offset=0, y_offset=0):
+   def display_animation(self, surf, frame_name, x_offset=0, y_offset=0, flip=False):
       #--displays animations from 'frame name' in self.active_frames--
       if self.active_frames != None:
          if self.current_animation == frame_name:
@@ -44,6 +45,8 @@ class Sprite(object):
             self.current_frame = 0
 
          frame = pygame.transform.scale(self.get_frames(frame_name)[self.current_frame], (self.width, self.height))
+         if flip == True:
+            frame = pygame.transform.flip(frame, True, False)
          surf.blit(frame, (self.x + x_offset, self.y + y_offset))
       else:
          print('you need "active_frames" to use display_animation()')
@@ -149,7 +152,7 @@ class Sprite_surface(object):
    all_name_index = {}
 
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0):
-      Sprite_surface.add_to_dict(self, ID)
+      Sprite_surface.add_to_class_dict(self, ID)
       self.ID = ID
       self.x = x
       self.y = y
@@ -173,7 +176,9 @@ class Sprite_surface(object):
             self.sprite_dict[sprite.ID] = sprite
 
    @classmethod
-   def add_to_dict(cls, self, ID):
+   def add_to_class_dict(cls, self, ID):
+      #will add self to specified dictionary
+
       if cls == Sprite_surface:
          if ID in Sprite_surface.all_name_index: #--trying add sprite surface while avoiding duplicates
             Sprite_surface.all_name_index[ID] += 1
@@ -183,7 +188,7 @@ class Sprite_surface(object):
             self.reference_ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
       cls.all_sprite_surfaces[self.reference_ID] = self
 
-   def check_ID(self):
+   def assert_ID(self):
       return self.reference_ID in Sprite_surface.all_sprite_surfaces
 
 
@@ -191,12 +196,6 @@ class Sprite_surface(object):
       box = Collision_box(ID, x, y, collision_width, collision_height, x_offset, y_offset)
       self.collbox_dict[box.ID] = box
       self.coll_boxes.append(box)
-
-   def add_sprite(self, ID, x, y, width, height, active_frames=None, current_frame=0):
-      sprite = Sprite(ID, x, y, width, height, active_frames, current_frame)
-      self.sprite_dict[ID] = sprite
-      self.sprites.append(sprite)
-
 
    def display_collboxes(self, surf, alpha=100):
       #displays all of selfs collision boxes
@@ -208,13 +207,35 @@ class Sprite_surface(object):
       return self.collbox_dict[coll_box]
 
 
+   def check_collision(self, other, coll_box_self, coll_box_other):
+      return self.get_collbox(coll_box_self).collision_sprite(other.get_collbox(coll_box_other))
+
+   def check_collision_dict(self, dictionary, coll_box_self, coll_box_other, quota=None):
+      #will check specified collision with every element in the dictionary
+      #if quota = n, then function will return true when n collisions are found and break, if quota = None, every sprite_surf will be check
+      all_collision = Stack()
+      for sprite_surf in dictionary.values():
+         if sprite_surf != self and sprite_surf.is_active == True and self.check_collision(sprite_surf, coll_box_self, coll_box_other) == True:
+            all_collision.push(sprite_surf)
+            if quota != None:
+               quota -= 1
+
+      return all_collision
+
+
+   def add_sprite(self, ID, x, y, width, height, active_frames=None, current_frame=0):
+      sprite = Sprite(ID, x, y, width, height, active_frames, current_frame)
+      self.sprite_dict[ID] = sprite
+      self.sprites.append(sprite)
+
+
    def update_sprite(self, sprite):
       sprite = self.get_sprite(sprite)
       frame_speed = sprite.get_frame_speed(sprite.current_animation)
       sprite.update(frame_speed)
 
-   def display_animation(self, sprite, surf, frame_name, x_offset=0, y_offset=0):
-      self.get_sprite(sprite).display_animation(surf, frame_name, x_offset, y_offset)
+   def display_animation(self, sprite, surf, frame_name, x_offset=0, y_offset=0, flip=False):
+      self.get_sprite(sprite).display_animation(surf, frame_name, x_offset, y_offset, flip)
 
 
    def get_sprite(self, sprite, row=None):
@@ -332,4 +353,4 @@ class Camera_box(Sprite_surface):
    
    def __init__(self, ID, x, y, sprite=None, coll_boxes=None):
       super().__init__(ID, x, y, sprite, coll_boxes)
-      Camera_box.add_to_dict(self, ID)
+      Camera_box.add_to_class_dict(self, ID)

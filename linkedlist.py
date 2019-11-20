@@ -25,19 +25,19 @@ class LinkedList(object):
    def clear(self):
       self.head = None
 
-   def append(self, item):
+   def add(self, item):
       #adds to the linked list
          self.head = Node(item, self.head)
 
    def is_empty(self):
       return self.head == None
 
-   def insert(self, item):
-      #appends item to the end of the linked list
+   def append(self, item):
+      #adds item to the end of the linked list
       if self.is_empty():
-         self.append(item)
+         self.add(item)
 
-      else: #loop to the end and append another node
+      else: #loop to the end and add another node
          ptr = self.head
          while ptr.next != None:
             ptr = ptr.next
