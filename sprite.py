@@ -68,29 +68,29 @@ class Sprite(object):
 
 class Collision_box(object):
 
-   def __init__(self, ID, x, y, collision_width, collision_height, colour=(255,0,0), x_offset=0, y_offset=0):
+   def __init__(self, ID, x, y, width, height, colour=(255,0,0), x_offset=0, y_offset=0):
       #--In pygame, a surface's x and y co_ordinate starts from the top left corner which I felt was inconvenient for collision boxes, so here the x and y starts at the middle of the box
 
       self.ID = ID
       self.x_offset = x_offset
       self.y_offset = y_offset
-      self.x = x + (collision_width // 2) + self.x_offset
-      self.y = y + (collision_height // 2) + self.y_offset
-      self.collision_width = collision_width
-      self.collision_height = collision_height
+      self.x = x + (width // 2) + self.x_offset
+      self.y = y + (height // 2) + self.y_offset
+      self.width = width
+      self.height = height
       self.colour = colour
-      self.left_edge = self.x - (collision_width // 2)
-      self.right_edge = self.x + (collision_width // 2)
-      self.top_edge = self.y - (collision_height // 2)
-      self.bottom_edge = self.y + (collision_height // 2)
-      self.box = pygame.Surface((self.collision_width, self.collision_height))
+      self.left_edge = self.x - (width // 2)
+      self.right_edge = self.x + (width // 2)
+      self.top_edge = self.y - (height // 2)
+      self.bottom_edge = self.y + (height // 2)
+      self.box = pygame.Surface((self.width, self.height))
 
 
 
    def display_collbox(self, surf, alpha=100):
       self.box.set_alpha(alpha)
       self.box.fill(self.colour)
-      surf.blit(self.box, (self.x - (self.collision_width//2), self.y - (self.collision_height//2)))
+      surf.blit(self.box, (self.x - (self.width//2), self.y - (self.height//2)))
       pygame.draw.circle(surf, (0, 0, 0), (self.left_edge, self.y), 2)
       pygame.draw.circle(surf, (0, 0, 0), (self.right_edge, self.y), 2)
       pygame.draw.circle(surf, (0, 0, 0), (self.x, self.top_edge), 2)
@@ -98,20 +98,8 @@ class Collision_box(object):
       pygame.draw.circle(surf, (0, 0, 0), (self.x, self.y), 2)
 
 
-   def collision(self, x, y):
-      if (x >= self.left_edge and x <= self.right_edge):
-         if (y >= self.top_edge and y <= self.bottom_edge):
-            return True
-         else:
-            pass
-      return False
-
-
-
-   def collision_sprite(self, other):
+   def box_collision(self, other):
       #--this checks if another Collison_box object is colliding with the self and returns True or False--
-
-      #--is self's collision box (left, right, top or bottom edge) is inside other's collision box (between his left or right and top or bottom edge)?
       if ((self.right_edge <= other.right_edge and self.right_edge >= other.left_edge) or 
           (self.left_edge >= other.left_edge and self.left_edge <= other.right_edge)):
 
@@ -126,23 +114,10 @@ class Collision_box(object):
            other.y > self.top_edge and other.y < self.bottom_edge):
          return True
 
-      #--if not then is other's collision box inside self's collision box?
-      if ((other.right_edge <= self.right_edge and other.right_edge >= self.left_edge) or 
-          (other.left_edge >= self.left_edge and other.left_edge <= self.right_edge)):
 
-         if ((other.top_edge >= self.top_edge and other.top_edge <= self.bottom_edge) or 
-             (other.bottom_edge <= self.bottom_edge and other.bottom_edge >= self.top_edge)):
-            return True
-         elif (self.x > other.left_edge and self.x < other.right_edge and 
-               self.y > other.top_edge and self.y < other.bottom_edge):
-            return True
 
-      elif (self.x > other.left_edge and self.x < other.right_edge and 
-            self.y > other.top_edge and self.y < other.bottom_edge):
-            return True
-
-      return False
-
+   def collision_sprite(self, other):
+      return self.box_collision(other) or other.box_collision(self)
 
 #---------------------------------------------------
 
@@ -151,7 +126,7 @@ class Sprite_surface(object):
    all_sprite_surfaces = {}
    all_name_index = {}
 
-   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0):
+   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1):
       Sprite_surface.add_to_class_dict(self, ID)
       self.ID = ID
       self.x = x
@@ -160,9 +135,10 @@ class Sprite_surface(object):
       self.coll_boxes = coll_boxes
       self.collbox_dict = {}
       self.sprite_dict = {}
-      self.is_active = True
+      self.is_active = is_active
       self.width = width
       self.height = height
+      self.display_layer = display_layer
       if coll_boxes == None:
             pass
       else:
@@ -192,8 +168,8 @@ class Sprite_surface(object):
       return self.reference_ID in Sprite_surface.all_sprite_surfaces
 
 
-   def add_collbox(self, ID, x, y, collision_width, collision_height, x_offset=0, y_offset=0):
-      box = Collision_box(ID, x, y, collision_width, collision_height, x_offset, y_offset)
+   def add_collbox(self, ID, x, y, width, height, x_offset=0, y_offset=0):
+      box = Collision_box(ID, x, y, width, height, x_offset, y_offset)
       self.collbox_dict[box.ID] = box
       self.coll_boxes.append(box)
 
@@ -213,14 +189,18 @@ class Sprite_surface(object):
    def check_collision_dict(self, dictionary, coll_box_self, coll_box_other, quota=None):
       #will check specified collision with every element in the dictionary
       #if quota = n, then function will return true when n collisions are found and break, if quota = None, every sprite_surf will be check
-      all_collision = Stack()
+      all_collisions = Stack()
       for sprite_surf in dictionary.values():
          if sprite_surf != self and sprite_surf.is_active == True and self.check_collision(sprite_surf, coll_box_self, coll_box_other) == True:
-            all_collision.push(sprite_surf)
-            if quota != None:
+            all_collisions.push(sprite_surf)
+            if quota == None:
+               pass
+            else:
                quota -= 1
+               if quota <= 0:
+                  break
 
-      return all_collision
+      return all_collisions
 
 
    def add_sprite(self, ID, x, y, width, height, active_frames=None, current_frame=0):
@@ -249,12 +229,12 @@ class Sprite_surface(object):
    def update(self):
       try:
          for coll_box in self.collbox_dict.values():
-            coll_box.x = self.x + (coll_box.collision_width // 2) + coll_box.x_offset
-            coll_box.y = self.y + (coll_box.collision_height // 2) + coll_box.y_offset
-            coll_box.left_edge = coll_box.x - (coll_box.collision_width // 2)
-            coll_box.right_edge = coll_box.x + (coll_box.collision_width // 2)
-            coll_box.top_edge = coll_box.y - (coll_box.collision_height // 2)
-            coll_box.bottom_edge = coll_box.y + (coll_box.collision_height // 2)
+            coll_box.x = self.x + (coll_box.width // 2) + coll_box.x_offset
+            coll_box.y = self.y + (coll_box.height // 2) + coll_box.y_offset
+            coll_box.left_edge = coll_box.x - (coll_box.width // 2)
+            coll_box.right_edge = coll_box.x + (coll_box.width // 2)
+            coll_box.top_edge = coll_box.y - (coll_box.height // 2)
+            coll_box.bottom_edge = coll_box.y + (coll_box.height // 2)
       except ValueError:
          pass
       try:
@@ -351,6 +331,6 @@ class Camera(object):
 class Camera_box(Sprite_surface):
    all_sprite_surfaces = {}
    
-   def __init__(self, ID, x, y, sprite=None, coll_boxes=None):
-      super().__init__(ID, x, y, sprite, coll_boxes)
+   def __init__(self, ID, x, y, sprite=None, coll_boxes=None, display_layer=1):
+      super().__init__(ID, x, y, sprite, coll_boxes, display_layer)
       Camera_box.add_to_class_dict(self, ID)

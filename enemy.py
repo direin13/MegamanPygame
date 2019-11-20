@@ -8,9 +8,9 @@ from megaman import *
 class Enemy(Character):
    all_sprite_surfaces = {}
 
-   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, 
+   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=4, 
                gravity=False, direction=True, max_x_vel=0, health_points=100, damage_points=0):
-      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, gravity, direction, max_x_vel, health_points)
+      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, direction, max_x_vel, health_points)
       self.add_to_class_dict(self, ID)
       self.damage_points = damage_points
       self.all_timers.add_ID('explosion_animation', 15)

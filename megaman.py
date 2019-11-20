@@ -10,10 +10,10 @@ from enemy import *
 from character import *
 
 class Megaman(Character):
-   def __init__(self, ID, x, y, sprites, coll_boxes, is_active=True, width=0, height=0, gravity=False, 
+   def __init__(self, ID, x, y, sprites, coll_boxes, is_active=True, width=0, height=0, display_layer=4, gravity=False, 
                direction=True, max_x_vel=1, health_points=100, controls=None, jump_speed=1, camera=None):
       
-      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, gravity, direction, max_x_vel, health_points)
+      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, direction, max_x_vel, health_points)
       if controls == None:
          self.controls = [pygame.K_d, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_p, pygame.K_w]
       else:
@@ -35,10 +35,11 @@ class Megaman(Character):
       self.all_timers.add_ID('invincibility_frame', 3)
       self.all_timers.add_ID('spark_effect', 30)
       self.all_timers.add_ID('stun', 50)
+      self.all_timers.add_ID('death_sound', 1)
 
 
    def is_pressing(self, n):
-      #to see which key a player is pressing, 'n' refers to index in self.controls
+      #'n' refers to index in self.controls
       if self.stun == True:
          return False
       else:
@@ -62,7 +63,7 @@ class Megaman(Character):
          self.knock_back(1)
       
    def set_direction(self):
-      #--To change the direction of self, note that direction == False means direction == Left, whereas True == Right
+      #--note that direction == False means direction == Left, whereas True == Right
 
       if self.is_standstill():
          self.direction = self.direction
@@ -130,7 +131,6 @@ class Megaman(Character):
 
 
    def shoot(self):
-      #--shoots megaman's p_shooter
 
       #--if you shoot
       if self.all_timers.is_empty('can_shoot') == False and P_shooter.all_p.is_empty() == False:
@@ -149,7 +149,6 @@ class Megaman(Character):
 
    def check_key_pressed(self):
 
-         #--if pressing right and left
       if self.is_standstill() == True:
          self.stop()
 
@@ -186,6 +185,16 @@ class Megaman(Character):
          self.can_jump = False
 
 
+   def rise(self):
+      if self.y_vel <= 0:
+         self.gravity = True
+      else:
+         if self.all_timers.countdown('rise_flag', 5, loop=True) == True:
+            self.y -= self.y_vel
+         else:
+            self.y_vel -= 2
+
+
    def startup_check(self):
       #will return true if startup animation is valid
       self.all_timers.countdown('startup_animation')
@@ -207,17 +216,6 @@ class Megaman(Character):
 
       else:
          self.display_animation(universal_names.main_sprite, surf, 'step', flip=True)
-
-
-
-   def rise(self):
-      if self.y_vel <= 0:
-         self.gravity = True
-      else:
-         if self.all_timers.countdown('rise_flag', 5, loop=True) == True:
-            self.y -= self.y_vel
-         else:
-            self.y_vel -= 2
 
 
 
@@ -271,7 +269,7 @@ class Megaman(Character):
 
 
    def display_megaman(self, surf, s=''):
-      if self.no_display == False:
+      if self.no_display != True:
          if self.startup_check() == True:
             self.all_timers.replenish_timer('startup_animation', 8)
 
@@ -333,9 +331,10 @@ class Megaman(Character):
          self.keys_pressed = pygame.key.get_pressed()
          self.set_direction()
          self.all_timers.countdown('shooting_flag', 23)
+         self.check_all_collisions()
          if self.stun == True:
             self.check_stun()
-         self.check_all_collisions()
+
          if self.invincibility == True:
             self.check_invincibility()
 
@@ -350,3 +349,7 @@ class Megaman(Character):
             self.apply_gravity()
 
          Sprite_surface.update(self)
+      else:
+         if self.all_timers.is_empty('death_sound') != True:
+            play_sound('death', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume + 0.1)
+            self.all_timers.countdown('death_sound')

@@ -9,8 +9,8 @@ class Megaman_object(Sprite_surface):
    gravity_speed = 15
    all_sprite_surfaces = {}
 
-   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, gravity=False, direction=True, max_x_vel=0):
-      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height)
+   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1, gravity=False, direction=True, max_x_vel=0):
+      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer)
       Megaman_object.add_to_class_dict(self, ID)
       self.all_timers = timer.Timer()
       self.x_vel = 0
@@ -46,17 +46,15 @@ class Megaman_object(Sprite_surface):
    def push_vert(self, other, coll_box_self, coll_box_other):
       #--repels self in a vertical direction
       if self.collbox_dict[coll_box_self].y >= other.collbox_dict[coll_box_other].y:
-         self.colliding_vert = True
-         self.y_vel = 0
          dist_betw_edges = self.collbox_dict[coll_box_self].top_edge - other.collbox_dict[coll_box_other].bottom_edge
-         self.y -= dist_betw_edges
+         self.y -= dist_betw_edges - 1
 
       elif self.collbox_dict[coll_box_self].y <= other.collbox_dict[coll_box_other].y:
-         self.colliding_vert = True
-         self.y_vel = 0
          dist_betw_edges = self.collbox_dict[coll_box_self].bottom_edge - other.collbox_dict[coll_box_other].top_edge
          self.y -= dist_betw_edges
 
+      self.colliding_vert = True
+      self.y_vel = 0
       Sprite_surface.update(self)
 
 
@@ -142,8 +140,8 @@ class Megaman_object(Sprite_surface):
 class Platform(Megaman_object):
    all_sprite_surfaces = {}
 
-   def __init__(self, ID, x, y, sprites, coll_boxes=None, is_active=True, width=0, height=0, gravity=False, max_x_vel=0):
-      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, gravity, max_x_vel)
+   def __init__(self, ID, x, y, sprites, coll_boxes=None, is_active=True, width=0, height=0, display_layer=2, gravity=False, max_x_vel=0):
+      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, max_x_vel)
       Platform.add_to_class_dict(self, ID)
 
 

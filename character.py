@@ -5,9 +5,9 @@ from misc_function import *
 import pygame
 
 class Character(Megaman_object):
-   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, 
+   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=4,
                gravity=False, direction=True, max_x_vel=0, health_points=100):
-      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, gravity, direction, max_x_vel)
+      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, direction, max_x_vel)
       self.health_points = health_points
       self.invincibility = False
       self.is_grounded = False
@@ -46,7 +46,7 @@ class Character(Megaman_object):
          self.is_grounded = True
          self.gravity = False
 
-         if self.all_timers.is_empty('grounded_sound') == False:
+         if self.all_timers.is_empty('grounded_sound') != True:
             play_sound('grounded', universal_names.megaman_sounds, channel=0, volume=universal_names.sfx_volume)
             self.all_timers.countdown('grounded_sound', 1)
 
@@ -56,12 +56,11 @@ class Character(Megaman_object):
 
 
    def check_ceiling_collision(self):
-      collisions = self.check_collision_dict(Platform.all_sprite_surfaces, universal_names.head, universal_names.hitbox, quota=1)
-      if collisions.is_empty() != True:
-         for ceiling in collisions:
-            self.gravity = True
-            self.y += 1
-            self.push_vert(ceiling, universal_names.head, universal_names.hitbox)
+      collision = self.check_collision_dict(Platform.all_sprite_surfaces, universal_names.head, universal_names.hitbox, quota=1)
+      if collision.is_empty() != True:
+         ceiling = collision.pop()
+         self.gravity = True
+         self.push_vert(ceiling, universal_names.head, universal_names.hitbox)
 
 
    def check_wall_collision(self):
