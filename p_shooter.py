@@ -9,7 +9,7 @@ from enemy import *
 
 class P_shooter(Megaman_object):
    all_p = mega_stack.Stack() #the stack acts as ammo source
-   x_vel = 10
+   x_vel = 8
 
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=False, width=30, height=18, display_layer=3, gravity=False, direction=True, max_x_vel=0):
       sprites = [Sprite(universal_names.main_sprite, x, y, 30, 18, [('p_shooter', [universal_names.megaman_images['p_shooter']], 1)])]

@@ -48,3 +48,7 @@ class Timer(object):
 
    def print_timer(self, ID):
       print('{}: {}'.format(ID, self.timer_states[ID]))
+
+   def __iter__(self):
+      for timer in self.all_timers.keys():
+         yield timer

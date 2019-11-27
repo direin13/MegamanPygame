@@ -14,6 +14,10 @@ class Character(Megaman_object):
       self.stun = False
       self.knock_back_time = 10
       self.all_timers.add_ID('knock_back', self.knock_back_time)
+      self.all_timers.add_ID('invincibility', 180)
+      self.all_timers.add_ID('invincibility_frame', 3)
+      self.all_timers.add_ID('spark_effect', 30)
+      self.all_timers.add_ID('stun', 50)
 
    def knock_back(self, speed):
       if self.direction == True:

@@ -8,10 +8,11 @@ pygame.init()
 class Megaman_object(Sprite_surface):
    gravity_speed = 15
    all_sprite_surfaces = {}
+   hazards = {}
 
-   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1, gravity=False, direction=True, max_x_vel=0):
+   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1, gravity=False, direction=True, max_x_vel=1):
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer)
-      Megaman_object.add_to_class_dict(self, ID)
+      Megaman_object.add_to_class_dict(self, Megaman_object.all_sprite_surfaces, ID)
       self.all_timers = timer.Timer()
       self.x_vel = 0
       self.max_x_vel = max_x_vel
@@ -100,34 +101,15 @@ class Megaman_object(Sprite_surface):
       else:
          self.x -= self.x_vel
 
-   def move_L(self):
-      if self.is_grounded == True:
-         if self.direction == False:
-            self.accelerate(self.acc_speed, self.max_x_vel)
-            self.x -= self.x_vel
-         else:
-            self.deccelerate(self.decc_speed)
-            self.x += self.x_vel
-
-      else:
-         if self.colliding_hori != True:
-            self.x_vel = self.max_x_vel
-            self.x -= self.x_vel
+   def move(self, x_vel=0, y_vel=0):
+      self.x += x_vel
+      self.y += y_vel
 
 
-   def move_r(self):
-      if self.is_grounded == True:
-         if self.direction == True:
-            self.accelerate(self.acc_speed, self.max_x_vel)
-            self.x += self.x_vel
-         else:
-            self.deccelerate(self.decc_speed)
-            self.x -= self.x_vel
+   def teleport(self, x, y):
+      self.x = x
+      self.y = y
 
-      else:
-         if self.colliding_hori != True:
-            self.x_vel = self.max_x_vel
-            self.x += self.x_vel
 
 
    def display(self, surf):
@@ -142,7 +124,7 @@ class Platform(Megaman_object):
 
    def __init__(self, ID, x, y, sprites, coll_boxes=None, is_active=True, width=0, height=0, display_layer=2, gravity=False, max_x_vel=0):
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, max_x_vel)
-      Platform.add_to_class_dict(self, ID)
+      Platform.add_to_class_dict(self, Platform.all_sprite_surfaces, ID)
 
 
    def update(self):

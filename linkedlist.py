@@ -44,6 +44,21 @@ class LinkedList(object):
 
          ptr.next = Node(item, None)
 
+   def link(self, other):
+      #iterate to the end of 'other' and make the next node equal to a 'self.head', effectively combining the two lists
+      #Note that 'other' will change become the combination of the two lists whereas 'self' will remain the unchanged
+      if other.is_empty():
+         other.head = self.head
+
+      elif self.is_empty():
+         self.head = other.head
+
+      else:
+         ptr = other.head
+         while ptr.next != None:
+            ptr = ptr.next
+         ptr.next = Node(self.head.item, self.head.next)
+
    def recursive_len(self, ptr):
       if ptr == None:
          return 0
@@ -65,18 +80,3 @@ class LinkedList(object):
       while ptr != None:
          yield ptr.item
          ptr = ptr.next
-
-   def link(self, other):
-      #iterate to the end of 'other' and make the next node equal to a 'self.head', effectively combining the two lists
-      #Note that 'other' will change become the combination of the two lists whereas 'self' will remain the unchanged
-      if other.is_empty():
-         other.head = self.head
-
-      elif self.is_empty():
-         self.head = other.head
-
-      else:
-         ptr = other.head
-         while ptr.next != None:
-            ptr = ptr.next
-         ptr.next = Node(self.head.item, self.head.next)

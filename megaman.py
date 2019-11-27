@@ -8,6 +8,7 @@ from p_shooter import *
 from megaman import *
 from enemy import *
 from character import *
+import megaman_death_orb
 
 class Megaman(Character):
    def __init__(self, ID, x, y, sprites, coll_boxes, is_active=True, width=0, height=0, display_layer=4, gravity=False, 
@@ -31,11 +32,9 @@ class Megaman(Character):
       self.all_timers.add_ID('can_shoot', 1)
       self.all_timers.add_ID('startup_flag', 0)
       self.all_timers.add_ID('startup_animation', 0)
-      self.all_timers.add_ID('invincibility', 180)
-      self.all_timers.add_ID('invincibility_frame', 3)
-      self.all_timers.add_ID('spark_effect', 30)
-      self.all_timers.add_ID('stun', 50)
       self.all_timers.add_ID('death_sound', 1)
+      self.all_timers.add_ID('death', 30)
+      megaman_death_orb.init(self)
 
 
    def is_pressing(self, n):
@@ -84,6 +83,47 @@ class Megaman(Character):
             if self.x_vel == 0:
                self.direction = False
 
+   def stop(self):
+      #brings player to a halt
+      if self.is_grounded == True:
+         self.deccelerate(self.decc_speed)
+      else:
+         self.x_vel = 0
+
+      if self.direction == True:
+         self.x += self.x_vel
+      else:
+         self.x -= self.x_vel
+
+   def move_L(self):
+      if self.is_grounded == True:
+         if self.direction == False:
+            self.accelerate(self.acc_speed, self.max_x_vel)
+            self.x -= self.x_vel
+         else:
+            self.deccelerate(self.decc_speed)
+            self.x += self.x_vel
+
+      else:
+         if self.colliding_hori != True:
+            self.x_vel = self.max_x_vel
+            self.x -= self.x_vel
+
+
+   def move_r(self):
+      if self.is_grounded == True:
+         if self.direction == True:
+            self.accelerate(self.acc_speed, self.max_x_vel)
+            self.x += self.x_vel
+         else:
+            self.deccelerate(self.decc_speed)
+            self.x -= self.x_vel
+
+      else:
+         if self.colliding_hori != True:
+            self.x_vel = self.max_x_vel
+            self.x += self.x_vel
+
 
    def check_camera_collision(self):
       if self.camera == None:
@@ -101,15 +141,15 @@ class Megaman(Character):
             self.camera.static = False
 
 
-   def check_enemy_collision(self):
-      collision = self.check_collision_dict(Enemy.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox, quota=1)
+   def check_hazard_collision(self):
+      collision = self.check_collision_dict(Megaman_object.hazards, universal_names.hitbox, universal_names.hitbox, quota=1)
       if collision.is_empty() != True:
-         enemy = collision.pop()
-         self.damage_megaman(enemy)
+         hazard = collision.pop()
+         self.damage_megaman(hazard)
 
-   def damage_megaman(self, enemy):
-      if enemy.is_alive() == True:
-         self.reduce_hp(enemy.damage_points)
+   def damage_megaman(self, hazard):
+      if hazard.is_alive() == True:
+         self.reduce_hp(hazard.damage_points)
          if self.is_alive() == False:
             pass
          else:
@@ -127,7 +167,7 @@ class Megaman(Character):
       self.check_wall_collision()
       self.check_camera_collision()
       if self.invincibility == False:
-         self.check_enemy_collision()
+         self.check_hazard_collision()
 
 
    def shoot(self):
@@ -320,17 +360,11 @@ class Megaman(Character):
          self.invincibility_frames()
 
 
-   def teleport(self, x, y):
-      self.x = x
-      self. y = y
-
-
-
    def update(self):
       if self.is_alive() == True:
          self.keys_pressed = pygame.key.get_pressed()
          self.set_direction()
-         self.all_timers.countdown('shooting_flag', 23)
+         self.all_timers.countdown('shooting_flag', 20)
          self.check_all_collisions()
          if self.stun == True:
             self.check_stun()
@@ -350,6 +384,15 @@ class Megaman(Character):
 
          Sprite_surface.update(self)
       else:
-         if self.all_timers.is_empty('death_sound') != True:
-            play_sound('death', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume + 0.1)
-            self.all_timers.countdown('death_sound')
+         if self.all_timers.is_empty('death') == True:
+            self.is_active = False
+            if self.all_timers.is_empty('death_sound') != True:
+               megaman_death_orb.set_orb_active()
+               play_sound('death', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume + 0.1)
+               self.all_timers.countdown('death_sound')
+
+         megaman_death_orb.spawn_orbs(self)
+         megaman_death_orb.move_orbs()
+         self.all_timers.countdown('death')
+
+

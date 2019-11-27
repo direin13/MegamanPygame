@@ -127,7 +127,7 @@ class Sprite_surface(object):
    all_name_index = {}
 
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1):
-      Sprite_surface.add_to_class_dict(self, ID)
+      Sprite_surface.add_to_class_dict(self, Sprite_surface.all_sprite_surfaces, ID)
       self.ID = ID
       self.x = x
       self.y = y
@@ -152,7 +152,7 @@ class Sprite_surface(object):
             self.sprite_dict[sprite.ID] = sprite
 
    @classmethod
-   def add_to_class_dict(cls, self, ID):
+   def add_to_class_dict(cls, self, dictionary, ID):
       #will add self to specified dictionary
 
       if cls == Sprite_surface:
@@ -162,7 +162,7 @@ class Sprite_surface(object):
          else:
             Sprite_surface.all_name_index[ID] = 0
             self.reference_ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
-      cls.all_sprite_surfaces[self.reference_ID] = self
+      dictionary[self.reference_ID] = self
 
    def assert_ID(self):
       return self.reference_ID in Sprite_surface.all_sprite_surfaces
@@ -333,4 +333,4 @@ class Camera_box(Sprite_surface):
    
    def __init__(self, ID, x, y, sprite=None, coll_boxes=None, display_layer=1):
       super().__init__(ID, x, y, sprite, coll_boxes, display_layer)
-      Camera_box.add_to_class_dict(self, ID)
+      Camera_box.add_to_class_dict(self, Camera_box.all_sprite_surfaces, ID)
