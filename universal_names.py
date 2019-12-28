@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from misc_function import *
 import pygame
+from camera import *
 pygame.mixer.pre_init(22100, -16, 2, 64)
 
 #--various variable that are used throughout game--
@@ -28,3 +29,6 @@ megaman_sounds = load_sounds('audio/fx')
 sfx_volume = 0.6
 
 m7 = load_images('m7')
+
+camera_x, camera_y = 250, 200
+camera = Camera(camera_x, camera_y)

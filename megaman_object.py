@@ -6,13 +6,13 @@ from sprite import *
 pygame.init()
 
 class Megaman_object(Sprite_surface):
-   gravity_speed = 15
-   all_sprite_surfaces = {}
-   hazards = {}
+   gravity_speed = 17
+   all_sprite_surfaces = []
+   hazards = []
 
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1, gravity=False, direction=True, max_x_vel=1):
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer)
-      Megaman_object.add_to_class_dict(self, Megaman_object.all_sprite_surfaces, ID)
+      Megaman_object.add_to_class_lst(self, Megaman_object.all_sprite_surfaces, ID)
       self.all_timers = timer.Timer()
       self.x_vel = 0
       self.max_x_vel = max_x_vel
@@ -29,14 +29,14 @@ class Megaman_object(Sprite_surface):
       if self.collbox_dict[coll_box_self].x >= other.collbox_dict[coll_box_other].x:
          if self.direction == False:
             self.colliding_hori = True
-         self.x_vel = 0
+            self.x_vel = 0
          dist_betw_edges = other.collbox_dict[coll_box_other].right_edge - self.collbox_dict[coll_box_self].left_edge
          self.x += dist_betw_edges 
 
       elif self.collbox_dict[coll_box_self].x <= other.collbox_dict[coll_box_other].x:
          if self.direction == True:
             self.colliding_hori = True
-         self.x_vel = 0
+            self.x_vel = 0
          dist_betw_edges = self.collbox_dict[coll_box_self].right_edge - other.collbox_dict[coll_box_other].left_edge
          self.x -= dist_betw_edges
 
@@ -60,6 +60,9 @@ class Megaman_object(Sprite_surface):
 
 
    def apply_gravity(self):
+      if self.colliding_vert == True:
+         return
+      
       if -(self.y_vel) >= Megaman_object.gravity_speed:
          self.y += Megaman_object.gravity_speed
       else:
@@ -117,14 +120,27 @@ class Megaman_object(Sprite_surface):
       self.display_animation(universal_names.main_sprite, surf, self.get_sprite(universal_names.main_sprite, 0)[0])
       #self.display_collboxes(surf)
 
+   def follow(self, x=None, y=None, x_vel=0, y_vel=0):
+      if self.x != x and x != None:
+         if self.x < x:
+            self.x += x_vel
+         elif self.x > x:
+            self.x -= x_vel
+
+      if self.y != y and y != None:
+         if self.y < y:
+            self.y += y_vel
+         elif self.y > y:
+            self.y -= y_vel
+
 #-----------------------------------------
 
 class Platform(Megaman_object):
-   all_sprite_surfaces = {}
+   all_sprite_surfaces = []
 
    def __init__(self, ID, x, y, sprites, coll_boxes=None, is_active=True, width=0, height=0, display_layer=2, gravity=False, max_x_vel=0):
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, max_x_vel)
-      Platform.add_to_class_dict(self, Platform.all_sprite_surfaces, ID)
+      Platform.add_to_class_lst(self, Platform.all_sprite_surfaces, ID)
 
 
    def update(self):

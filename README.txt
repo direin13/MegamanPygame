@@ -1,15 +1,15 @@
 README;
 ========================================================
--I'm trying to make an entire megaman level from scratch! I have until the 1st of december 2019.
- So far I've made some platforms, the physics of megaman, shooting and a camera.
+-I'm trying to make an entire megaman level from scratch!
 
--Open 'game.py' to see the results so far.
+-Update: .Camera transitions added, go past the end of the screen to transition
+	 .Health bar added
+
+-Open 'game.py' to run and see the results so far.
 
 -controls(right = rightArrow
 	  left = leftArrow
-	  up = upArrow
-	  down = downArrow
-	  action = z
+	  shoot = z
 	  jump = x)
 
 -Feedback and criticism is much appreciated!

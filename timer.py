@@ -6,24 +6,24 @@ class Timer(object):
       self.timer_states = {}
       self.all_timers = {}
 
-   def add_ID(self, ID, speed):
+   def add_ID(self, ID, amount):
       #--this will add a new ID into the dictionaries, be wary of ID name choices, as they can be overwritten
-      self.all_timers[ID] = speed
-      self.timer_states[ID] = speed
+      self.all_timers[ID] = amount
+      self.timer_states[ID] = amount
 
-   def countdown(self, ID, speed=None, loop=False):
+   def countdown(self, ID, amount=None, countdown_speed=1, loop=False):
       #--will subtract 1 from the ID in the dictionary and return True if ID reaches 0 to imitate a real timer, can loop timer
       if ID not in self.all_timers:
-         self.add_ID(ID, speed)
+         self.add_ID(ID, amount)
 
-      if speed == None:
-         speed = self.all_timers[ID]
+      if amount == None:
+         amount = self.all_timers[ID]
       else:
-         self.all_timers[ID] = speed
-         if self.timer_states[ID] > speed:
-            self.timer_states[ID] = speed
+         self.all_timers[ID] = amount
+         if self.timer_states[ID] > amount:
+            self.timer_states[ID] = amount
 
-      self.timer_states[ID] -= 1
+      self.timer_states[ID] -= countdown_speed
       if self.timer_states[ID] >= 0:
          return True
       else:

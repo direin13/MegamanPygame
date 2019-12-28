@@ -2,7 +2,7 @@
 import pygame
 from mega_stack import *
 import timer
-import os
+import universal_names
 
 class Sprite(object):
 
@@ -123,26 +123,24 @@ class Collision_box(object):
 
 class Sprite_surface(object):
    #--this is an object that has a sprite and set of of collision boxes attached to it
-   all_sprite_surfaces = {}
+   all_sprite_surfaces = []
    all_name_index = {}
 
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1):
-      Sprite_surface.add_to_class_dict(self, Sprite_surface.all_sprite_surfaces, ID)
+      Sprite_surface.add_to_class_lst(self, Sprite_surface.all_sprite_surfaces, ID)
       self.ID = ID
       self.x = x
       self.y = y
-      self.sprites = sprites
-      self.coll_boxes = coll_boxes
-      self.collbox_dict = {}
-      self.sprite_dict = {}
       self.is_active = is_active
       self.width = width
       self.height = height
       self.display_layer = display_layer
+      self.collbox_dict = {}
+      self.sprite_dict = {}
       if coll_boxes == None:
             pass
       else:
-         for coll_box in coll_boxes:
+         for coll_box in coll_boxes: #adding all the coll boxes and sprites to respective dictionaries
             self.collbox_dict[coll_box.ID] = coll_box
 
       if sprites == None:
@@ -152,8 +150,8 @@ class Sprite_surface(object):
             self.sprite_dict[sprite.ID] = sprite
 
    @classmethod
-   def add_to_class_dict(cls, self, dictionary, ID):
-      #will add self to specified dictionary
+   def add_to_class_lst(cls, self, lst, ID):
+      #will add self to specified lst
 
       if cls == Sprite_surface:
          if ID in Sprite_surface.all_name_index: #--trying add sprite surface while avoiding duplicates
@@ -162,16 +160,8 @@ class Sprite_surface(object):
          else:
             Sprite_surface.all_name_index[ID] = 0
             self.reference_ID = '{}-{}'.format(ID, Sprite_surface.all_name_index[ID])
-      dictionary[self.reference_ID] = self
+      lst.append(self)
 
-   def assert_ID(self):
-      return self.reference_ID in Sprite_surface.all_sprite_surfaces
-
-
-   def add_collbox(self, ID, x, y, width, height, x_offset=0, y_offset=0):
-      box = Collision_box(ID, x, y, width, height, x_offset, y_offset)
-      self.collbox_dict[box.ID] = box
-      self.coll_boxes.append(box)
 
    def display_collboxes(self, surf, alpha=100):
       #displays all of selfs collision boxes
@@ -186,12 +176,15 @@ class Sprite_surface(object):
    def check_collision(self, other, coll_box_self, coll_box_other):
       return self.get_collbox(coll_box_self).collision_sprite(other.get_collbox(coll_box_other))
 
-   def check_collision_dict(self, dictionary, coll_box_self, coll_box_other, quota=None):
-      #will check specified collision with every element in the dictionary
-      #if quota = n, then function will return true when n collisions are found and break, if quota = None, every sprite_surf will be check
+   def check_collision_lst(self, lst, coll_box_self, coll_box_other, quota=None):
+      #will check specified collision with every element in the lst
+      #if quota = n, then function will return true when n collisions are found and break, if quota = None, every element in list will be check
       all_collisions = Stack()
-      for sprite_surf in dictionary.values():
-         if sprite_surf != self and sprite_surf.is_active == True and self.check_collision(sprite_surf, coll_box_self, coll_box_other) == True:
+      for sprite_surf in lst:
+         if (sprite_surf.is_on_screen(universal_names.screen_width, universal_names.screen_height) 
+            and sprite_surf != self and sprite_surf.is_active == True 
+            and self.check_collision(sprite_surf, coll_box_self, coll_box_other) == True):
+
             all_collisions.push(sprite_surf)
             if quota == None:
                pass
@@ -203,32 +196,28 @@ class Sprite_surface(object):
       return all_collisions
 
 
-   def add_sprite(self, ID, x, y, width, height, active_frames=None, current_frame=0):
-      sprite = Sprite(ID, x, y, width, height, active_frames, current_frame)
-      self.sprite_dict[ID] = sprite
-      self.sprites.append(sprite)
 
-
-   def update_sprite(self, sprite):
+   def update_sprite(self, sprite): # Use to move onto next sprite frame
       sprite = self.get_sprite(sprite)
       frame_speed = sprite.get_frame_speed(sprite.current_animation)
       sprite.update(frame_speed)
 
-   def display_animation(self, sprite, surf, frame_name, x_offset=0, y_offset=0, flip=False):
-      self.get_sprite(sprite).display_animation(surf, frame_name, x_offset, y_offset, flip)
+   def display_animation(self, sprite_obj, surf, frame_name, x_offset=0, y_offset=0, flip=False):
+      self.get_sprite(sprite_obj).display_animation(surf, frame_name, x_offset, y_offset, flip)
 
 
-   def get_sprite(self, sprite, row=None):
+   def get_sprite(self, sprite_obj, row=None):
       #returns specified sprite group, if row is specified then self.active_frames will be searched by index
-      if row == None:
-         return self.sprite_dict[sprite]
+
+      if row == None: #row is specified row in list of all frames
+         return self.sprite_dict[sprite_obj]
       else:
-         return self.sprite_dict[sprite].active_frames[row]
+         return self.sprite_dict[sprite_obj].active_frames[row]
 
 
    def update(self):
       try:
-         for coll_box in self.collbox_dict.values():
+         for coll_box in self.collbox_dict.values(): #Updating the collision box and sprites to follow self
             coll_box.x = self.x + (coll_box.width // 2) + coll_box.x_offset
             coll_box.y = self.y + (coll_box.height // 2) + coll_box.y_offset
             coll_box.left_edge = coll_box.x - (coll_box.width // 2)
@@ -246,91 +235,21 @@ class Sprite_surface(object):
 
 
    def is_on_screen(self, screen_width, screen_height):
-      #checks if sprite_surf is on the screen
-      if ((self.x < screen_width -10 and self.x + self.width > 10) and 
+      if ((self.x < screen_width -10 and self.x + self.width > 10) and
          (self.y < screen_height -10 and self.y + self.height > 10)):
          return True
-      else:
+      else: #check if main coll box on screen
+         try:
+            x = self.collbox_dict[universal_names.hitbox].x
+            y = self.collbox_dict[universal_names.hitbox].y
+            width = self.collbox_dict[universal_names.hitbox].width
+            height = self.collbox_dict[universal_names.hitbox].height
+
+            if (x - width//2 < screen_width and x + width//2 > 0) and (y - height//2 < screen_height and y + height//2 > 0):
+               return True
+         except KeyError:
+            pass
+
          return False
       
 #----------------------------------------------------------------
-
-class Camera(object):
-   def __init__(self, x, y, static=True):
-      self.x = x
-      self.y = y
-      self.static = static
-      self.all_timers = timer.Timer()
-
-   def get_pos_x(self, sprite_surf):
-      if sprite_surf.x < self.x:
-         return 0
-      elif sprite_surf.x > self.x:
-         return 1
-      else:
-         return 2
-
-   def get_pos_y(self, sprite_surf):
-      if sprite_surf.y < self.y:
-         return 0
-      elif sprite_surf.y > self.y:
-         return 1
-      else:
-         return 2
-
-   def follow_x(self, main_sprite_surf, speed=None):
-      dist = self.x - main_sprite_surf.x
-
-      if self.get_pos_x(main_sprite_surf) != 2 and self.static == False:
-         for sprite_surf in Sprite_surface.all_sprite_surfaces.values():
-            if speed == None:
-               sprite_surf.x += dist
-            else:
-               if self.get_pos_x(main_sprite_surf) == 0:
-                  sprite_surf.x += speed
-               if self.get_pos_x(main_sprite_surf) == 1:
-                  sprite_surf.x -= speed
-      else:
-         pass
-
-   def follow_y(self, main_sprite_surf, speed=None):
-      dist = self.y - main_sprite_surf.y
-
-      if self.get_pos_y(main_sprite_surf) != 2 and self.static == False:
-         for sprite_surf in Sprite_surface.all_sprite_surfaces.values():
-            if speed == None:
-               sprite_surf.y += dist
-            else:
-               sprite_surf.y += speed
-      else:
-         pass
-
-   def move(self, direction, speed):
-      x = 0
-      y = 0
-      if direction == 'right':
-         x = -speed
-      if direction == 'up':
-         y = speed
-      if direction == 'left':
-         x = speed
-      if direction == 'down':
-         y = -speed
-      for sprite_surf in Sprite_surface.all_sprite_surfaces.values():
-         sprite_surf.x += x
-         sprite_surf.y += y
-
-   def transition(self, direction, speed, lenght):
-      if self.all_timers.countdown('transition_flag', lenght) == True:
-         self.move(direction, speed)
-
-
-
-#--------------------------------------
-
-class Camera_box(Sprite_surface):
-   all_sprite_surfaces = {}
-   
-   def __init__(self, ID, x, y, sprite=None, coll_boxes=None, display_layer=1):
-      super().__init__(ID, x, y, sprite, coll_boxes, display_layer)
-      Camera_box.add_to_class_dict(self, Camera_box.all_sprite_surfaces, ID)

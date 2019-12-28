@@ -9,11 +9,11 @@ from enemy import *
 
 class P_shooter(Megaman_object):
    all_p = mega_stack.Stack() #the stack acts as ammo source
-   x_vel = 8
+   x_vel = 9
 
-   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=False, width=30, height=18, display_layer=3, gravity=False, direction=True, max_x_vel=0):
-      sprites = [Sprite(universal_names.main_sprite, x, y, 30, 18, [('p_shooter', [universal_names.megaman_images['p_shooter']], 1)])]
-      coll_boxes = [Collision_box(universal_names.hitbox, x, y, 30, 18)]
+   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=False, width=28, height=16, display_layer=3, gravity=False, direction=True, max_x_vel=0):
+      sprites = [Sprite(universal_names.main_sprite, x, y, width, height, [('p_shooter', [universal_names.megaman_images['p_shooter']], 1)])]
+      coll_boxes = [Collision_box(universal_names.hitbox, x, y, width, height)]
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, direction, max_x_vel)
       self.is_active = is_active
       self.damage_points = 10
@@ -32,7 +32,7 @@ class P_shooter(Megaman_object):
       pass
 
    def check_enemy(self):
-      collisions = self.check_collision_dict(Enemy.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox)
+      collisions = self.check_collision_lst(Enemy.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox)
       if collisions.is_empty() != True:
          enemy = collisions.pop()
          enemy.reduce_hp(self.damage_points)

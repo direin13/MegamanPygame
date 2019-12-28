@@ -22,7 +22,7 @@ ground = Platform('platform', 600, 400, [platform_sprite], coll_boxes=[Collision
                   width=160, height=40)
 
 platform_sprite = Sprite(universal_names.main_sprite, 200, 200, 160, 40, [('platform', [cutman_tiles['platform_1_x4']], 1)])
-ground = Platform('platform', 900, 400, [platform_sprite], coll_boxes=[Collision_box(universal_names.hitbox, 0, 480, platform_sprite.width, platform_sprite.height)],
+ground = Platform('platform', 760, 400, [platform_sprite], coll_boxes=[Collision_box(universal_names.hitbox, 0, 480, platform_sprite.width, platform_sprite.height)],
                   width=160, height=40)
 
 #----------------------------
@@ -35,6 +35,7 @@ platform_sprite = Sprite(universal_names.main_sprite, 200, 200, 40, 40, [('platf
 ground = Platform('platform', 270, 200, [platform_sprite], coll_boxes=[Collision_box(universal_names.hitbox, 0, 480, platform_sprite.width, platform_sprite.height)],
                   width=40, height=40)
 
+
 platform_sprite = Sprite(universal_names.main_sprite, 200, 200, 40, 40, [('platform', [cutman_tiles['platform_1']], 1)])
-ground = Platform('platform', 400, 100, [platform_sprite], coll_boxes=[Collision_box(universal_names.hitbox, 0, 480, platform_sprite.width, platform_sprite.height)],
+ground = Platform('platform', 100, 100, [platform_sprite], coll_boxes=[Collision_box(universal_names.hitbox, 0, 480, platform_sprite.width, platform_sprite.height)],
                   width=40, height=40)
