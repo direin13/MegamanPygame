@@ -12,8 +12,6 @@ from timeit import default_timer as timer
 
 #--Game--
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
-
 pygame.init()
 pygame.font.init()
 pygame.mixer.init()
