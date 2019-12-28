@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import mega_stack
 
-#displayer layer will determine where each sprite surface is displayed, layers go from 0-N (back-front)
+#displayer layer will determine where each sprite surface is displayed, layers go from 0-5 (back-front)
 all_layers = []
 display_stack = mega_stack.Stack()
 
@@ -34,10 +34,11 @@ def display_all_sprite_surf(surf, screen_width, screen_height, display_collboxes
    update_display_stack()
    for sprite_surf in display_stack:
       try:
-         if sprite_surf.is_on_screen(screen_width, screen_height) == True and sprite_surf.is_active == True:
+         if sprite_surf.is_on_screen(screen_width, screen_height) and sprite_surf.is_active:
             sprite_surf.display(surf)
       except AttributeError:
          #sprite_surf.display_collboxes(surf)
          pass
       if display_collboxes == True:
-         sprite_surf.display_collboxes(surf, alpha)
+         if sprite_surf.is_on_screen(screen_width, screen_height):
+            sprite_surf.display_collboxes(surf, alpha)

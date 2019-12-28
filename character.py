@@ -20,16 +20,19 @@ class Character(Megaman_object):
       self.all_timers.add_ID('stun', 50)
 
    def knock_back(self, speed):
+      self.x_vel = speed
       if self.direction == True:
-         self.x -= speed
+         self.x -= self.x_vel
       else:
-         self.x += speed
+         self.x += self.x_vel
 
    def is_alive(self):
       return self.health_points > 0
 
    def reduce_hp(self, amount):
       self.health_points -= amount
+      if self.health_points < 0:
+         self.health_points = 0
 
    def kill(self):
       self.reduce_hp(self.health_points)
@@ -43,7 +46,7 @@ class Character(Megaman_object):
 
 
    def check_ground_collision(self):
-      collision = self.check_collision_dict(Platform.all_sprite_surfaces, universal_names.feet, universal_names.hitbox, quota=1)
+      collision = self.check_collision_lst(Platform.all_sprite_surfaces, universal_names.feet, universal_names.hitbox, quota=1)
       if collision.is_empty() != True:
          platform = collision.pop()
          self.push_vert(platform, universal_names.feet, universal_names.hitbox)
@@ -60,7 +63,7 @@ class Character(Megaman_object):
 
 
    def check_ceiling_collision(self):
-      collision = self.check_collision_dict(Platform.all_sprite_surfaces, universal_names.head, universal_names.hitbox, quota=1)
+      collision = self.check_collision_lst(Platform.all_sprite_surfaces, universal_names.head, universal_names.hitbox, quota=1)
       if collision.is_empty() != True:
          ceiling = collision.pop()
          self.gravity = True
@@ -68,7 +71,7 @@ class Character(Megaman_object):
 
 
    def check_wall_collision(self):
-      collisions = self.check_collision_dict(Platform.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox, quota=4)
+      collisions = self.check_collision_lst(Platform.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox, quota=4)
       if collisions.is_empty() != True:
          for wall in collisions:
             self.push_hori(wall, universal_names.hitbox, universal_names.hitbox)

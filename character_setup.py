@@ -7,7 +7,7 @@ from megaman_object import *
 from megaman import *
 
 megaman_x = 250
-megaman_y = 300
+megaman_y = 250
 megaman_width = 90
 megaman_height = 80
 m_idle_speed = 150
@@ -17,7 +17,6 @@ ryu_x = -100
 ryu_y = 240
 ryu_speed = 70
 
-camera = Camera(megaman_x, megaman_y)
 
 #----------------------------------------------------------------
 
@@ -51,7 +50,8 @@ megaman_head = Collision_box(universal_names.head, megaman_x, megaman_y, 43, 2, 
 
 player_1 = Megaman('megaman', megaman_x, megaman_y, [megaman_sprite, effects], [megaman_hit_box, megaman_feet, megaman_head], gravity=True,
                     controls=[pygame.K_RIGHT, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_z, pygame.K_x], max_x_vel=3, jump_speed=10, direction=True,
-                    camera=camera, width=megaman_width, height=megaman_height, health_points=100)
+                    width=megaman_width, height=megaman_height)
+
 #---------------------------------------------------------------------------------------------------------------------------
 
 idle_enemy = [universal_names.builder['1']]
@@ -61,6 +61,13 @@ enemy_sprite = Sprite(universal_names.main_sprite, 200, 200, 40, 30, [('idle', i
 enemy_hit_box = Collision_box(universal_names.hitbox, 400, 290, 36, 30, (240, 240, 0), x_offset=2)
 enemy_test= Enemy('enemy_test', 400, 290, [enemy_sprite], [enemy_hit_box], width=40, height=30, health_points=10, damage_points=30)
 
+
+idle_enemy2 = [universal_names.builder['1']]
+explosion_enemy2 = [universal_names.effect_images['explosion_1'], universal_names.effect_images['explosion_2'], universal_names.effect_images['explosion_3']]
+enemy_sprite2 = Sprite(universal_names.main_sprite, 200, 200, 40, 30, [('idle', idle_enemy2, 1),
+                                                                      ('explosion', explosion_enemy2, 15)])
+enemy_hit_box2 = Collision_box(universal_names.hitbox, 400, 290, 36, 30, (240, 240, 0), x_offset=2)
+enemy_test2= Enemy('enemy_test', 270, 170, [enemy_sprite2], [enemy_hit_box2], width=40, height=30, health_points=10, damage_points=30)
 
 #---------------------------------------------------------------------------------------------------------------------------
 """

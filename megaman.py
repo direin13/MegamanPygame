@@ -8,11 +8,13 @@ from p_shooter import *
 from megaman import *
 from enemy import *
 from character import *
+from bar import *
 import megaman_death_orb
+import camera
 
 class Megaman(Character):
-   def __init__(self, ID, x, y, sprites, coll_boxes, is_active=True, width=0, height=0, display_layer=4, gravity=False, 
-               direction=True, max_x_vel=1, health_points=100, controls=None, jump_speed=1, camera=None):
+   def __init__(self, ID, x, y, sprites, coll_boxes, is_active=True, width=0, height=0, display_layer=3, gravity=False, 
+               direction=True, max_x_vel=1, health_points=200, controls=None, jump_speed=1):
       
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, direction, max_x_vel, health_points)
       if controls == None:
@@ -25,7 +27,7 @@ class Megaman(Character):
       self.acc_speed = 3
       self.decc_speed = 3
       self.can_jump = False
-      self.camera = camera
+      self.health_bar = Bar('megaman_health', x=30, y=20, points=self.health_points, colour=(255, 223, 131))
       self.all_timers.add_ID('rise_flag', 4)
       self.all_timers.add_ID('shooting_flag', 0)
       self.all_timers.add_ID('grounded_sound', 1)
@@ -34,12 +36,12 @@ class Megaman(Character):
       self.all_timers.add_ID('startup_animation', 0)
       self.all_timers.add_ID('death_sound', 1)
       self.all_timers.add_ID('death', 30)
-      megaman_death_orb.init(self)
+      megaman_death_orb.init(self) #These orbs are shot out when megaman dies
 
 
    def is_pressing(self, n):
       #'n' refers to index in self.controls
-      if self.stun == True:
+      if self.stun is True:
          return False
       else:
          return self.keys_pressed[self.controls[n]]
@@ -105,9 +107,8 @@ class Megaman(Character):
             self.x += self.x_vel
 
       else:
-         if self.colliding_hori != True:
-            self.x_vel = self.max_x_vel
-            self.x -= self.x_vel
+         self.x_vel = self.max_x_vel
+         self.x -= self.x_vel
 
 
    def move_r(self):
@@ -120,29 +121,12 @@ class Megaman(Character):
             self.x -= self.x_vel
 
       else:
-         if self.colliding_hori != True:
-            self.x_vel = self.max_x_vel
-            self.x += self.x_vel
-
-
-   def check_camera_collision(self):
-      if self.camera == None:
-         return
-
-      else:
-         collisions = self.check_collision_dict(Camera_box.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox)
-         if collisions.is_empty() != True:
-            for camera_box in collisions:
-               if camera_box.ID == 'special_static':
-                  self.camera.transition('right', 10, 53)
-            self.camera.static = True
-
-         else:
-            self.camera.static = False
+         self.x_vel = self.max_x_vel
+         self.x += self.x_vel
 
 
    def check_hazard_collision(self):
-      collision = self.check_collision_dict(Megaman_object.hazards, universal_names.hitbox, universal_names.hitbox, quota=1)
+      collision = self.check_collision_lst(Megaman_object.hazards, universal_names.hitbox, universal_names.hitbox, quota=1)
       if collision.is_empty() != True:
          hazard = collision.pop()
          self.damage_megaman(hazard)
@@ -150,6 +134,7 @@ class Megaman(Character):
    def damage_megaman(self, hazard):
       if hazard.is_alive() == True:
          self.reduce_hp(hazard.damage_points)
+         self.health_bar.points -= hazard.damage_points
          if self.is_alive() == False:
             pass
          else:
@@ -162,12 +147,12 @@ class Megaman(Character):
 
    def check_all_collisions(self):
       #This will check all the sprite surfaces and there relation with self and act accordingly
-      self.check_ground_collision()
-      self.check_ceiling_collision()
-      self.check_wall_collision()
-      self.check_camera_collision()
-      if self.invincibility == False:
-         self.check_hazard_collision()
+      if camera.camera_transitioning() != True:
+         self.check_ground_collision()
+         self.check_ceiling_collision()
+         self.check_wall_collision()
+         if self.invincibility == False:
+            self.check_hazard_collision()
 
 
    def shoot(self):
@@ -180,46 +165,49 @@ class Megaman(Character):
 
          #--right
          if self.direction == True:
-            P_shooter.fire(self.x + self.width//2, self.y + self.height//4, P_shooter.x_vel)
+            P_shooter.fire(self.x + self.width - 15, self.y + self.height//4, P_shooter.x_vel)
 
          #--left
          else:
-            P_shooter.fire(self.x + self.width//3, self.y + self.height//4, -P_shooter.x_vel)
+            P_shooter.fire(self.x + 4, self.y + self.height//4, -P_shooter.x_vel)
 
 
    def check_key_pressed(self):
-
       if self.is_standstill() == True:
-         self.stop()
+         if self.stun != True:
+            self.stop()
 
          #--if pressing right
-      elif self.is_pressing(0) and self.colliding_hori != True:
+      elif self.is_pressing(0) and self.colliding_hori != True and camera.camera_transitioning() != True:
          self.move_r()
 
       #--if pressing left
-      elif self.is_pressing(2) and self.colliding_hori != True:
+      elif self.is_pressing(2) and self.colliding_hori != True and camera.camera_transitioning() != True:
          self.move_L()
 
       #--if you shoot
-      if self.is_pressing(4):
+      if self.is_pressing(4) and camera.camera_transitioning() != True:
          self.shoot()
       else:
          self.all_timers.replenish_timer('can_shoot') #the player can shoot after he lets go of the shoot button
 
+      if camera.camera_transitioning() != True:
+         self.jump()
+
 
 
    def jump(self):
-      if self.is_grounded == True and self.can_jump == True:
+      if self.is_grounded is True and self.can_jump is True:
          self.all_timers.replenish_timer('rise_flag')
-         if self.is_pressing(5):
+         if self.is_pressing(5) and camera.camera_transitioning() != True:
             self.y_vel = self.jump_speed
 
-      if self.gravity == False and self.is_pressing(5):
+      if self.gravity is False and self.is_pressing(5):
          self.rise()
       else:
          self.gravity = True
 
-      if self.is_pressing(5) != True and self.is_grounded == True:
+      if self.is_pressing(5) != True and self.is_grounded is True:
          self.can_jump = True
       else:
          self.can_jump = False
@@ -279,7 +267,7 @@ class Megaman(Character):
    def ground_animation(self, surf, s=''):
       #--displaying any ground animations
 
-      if self.all_timers.is_empty('startup_animation') != True and s == '':
+      if self.all_timers.is_empty('startup_animation') is not True and s == '':
          self.startup_animation(surf)
 
       else:
@@ -297,7 +285,7 @@ class Megaman(Character):
          self.display_animation(universal_names.main_sprite, surf, '{}jump'.format(s), flip=True)
 
    def diplay_effects(self, surf):
-      if self.all_timers.is_empty('spark_effect') == False:
+      if self.all_timers.is_empty('spark_effect') is False:
          self.display_animation('effects', surf, 'spark_effect')
          self.all_timers.countdown('spark_effect')
 
@@ -309,14 +297,14 @@ class Megaman(Character):
 
 
    def display_megaman(self, surf, s=''):
-      if self.no_display != True:
-         if self.startup_check() == True:
+      if self.no_display is False:
+         if self.startup_check() is True:
             self.all_timers.replenish_timer('startup_animation', 8)
 
-         if self.stun == True:
+         if self.stun is True:
             self.stun_animation(surf)
 
-         elif self.is_grounded == True:
+         elif self.is_grounded is True:
             self.ground_animation(surf, s)
          else: 
             self.jump_animation(surf, s)
@@ -328,10 +316,10 @@ class Megaman(Character):
       else:
          s = ''
 
-      if self.is_alive():
+      if self.is_alive() and camera.transition_start_end() != True:
          self.update_sprite(universal_names.main_sprite)
 
-      if self.invincibility == True:
+      if self.invincibility is True:
          self.diplay_effects(surf)
 
       self.display_megaman(surf, s)
@@ -339,7 +327,7 @@ class Megaman(Character):
 
    def invincibility_frames(self):
       if self.all_timers.is_empty('invincibility_frame'):
-         if self.no_display == True:
+         if self.no_display is True:
             self.no_display = False
          else:
             self.no_display = True
@@ -361,32 +349,32 @@ class Megaman(Character):
 
 
    def update(self):
-      if self.is_alive() == True:
-         self.keys_pressed = pygame.key.get_pressed()
+      if self.is_alive() is True:
+         if camera.camera_transitioning() != True:
+            self.keys_pressed = pygame.key.get_pressed() #if the camera is not transitioning the I can catch input
+
          self.set_direction()
          self.all_timers.countdown('shooting_flag', 20)
          self.check_all_collisions()
-         if self.stun == True:
+
+         if self.stun is True:
             self.check_stun()
 
-         if self.invincibility == True:
+         if self.invincibility is True:
             self.check_invincibility()
 
-         if self.camera != None and self.camera.static == False:
-            self.camera.follow_x(self)
-
          self.check_key_pressed()
-         self.jump()
-         self.colliding_hori = False
-         self.colliding_vert = False
-         if self.gravity == True:
+         
+         if self.gravity is True and camera.camera_transitioning() != True:
             self.apply_gravity()
 
          Sprite_surface.update(self)
+         self.colliding_hori = False
+         self.colliding_vert = False
       else:
-         if self.all_timers.is_empty('death') == True:
+         if self.all_timers.is_empty('death') is True:
             self.is_active = False
-            if self.all_timers.is_empty('death_sound') != True:
+            if self.all_timers.is_empty('death_sound') is not True:
                megaman_death_orb.set_orb_active()
                play_sound('death', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume + 0.1)
                self.all_timers.countdown('death_sound')
