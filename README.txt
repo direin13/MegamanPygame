@@ -4,13 +4,17 @@ README;
 
 -Update: .Camera transitions added, go past the end of the screen to transition
 	 .Health bar added
+	 .Respawns and added
+	 .8 bit text style system added
 
 -Open 'game.py' to run and see the results so far.
 
--controls(right = rightArrow
+-controls:right = rightArrow
 	  left = leftArrow
 	  shoot = z
-	  jump = x)
+	  jump = x
+	  pause/unpause = p/o
+	  debug/nodebug = d/s
 
 -Feedback and criticism is much appreciated!
 

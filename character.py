@@ -2,6 +2,7 @@
 from sprite import *
 from megaman_object import *
 from misc_function import *
+import camera
 import pygame
 
 class Character(Megaman_object):
@@ -18,13 +19,21 @@ class Character(Megaman_object):
       self.all_timers.add_ID('invincibility_frame', 3)
       self.all_timers.add_ID('spark_effect', 30)
       self.all_timers.add_ID('stun', 50)
+      self.all_timers.add_ID('grounded_sound', 0)
 
    def knock_back(self, speed):
-      self.x_vel = speed
-      if self.direction == True:
-         self.x -= self.x_vel
-      else:
-         self.x += self.x_vel
+      if camera.camera_transitioning() != True and universal_names.game_pause != True:
+         self.x_vel = speed
+         if self.direction == True:
+            self.x -= self.x_vel
+         else:
+            self.x += self.x_vel
+
+   def spawn(self):
+      xdist = self.spawn_point[0] - self.x
+      ydist = self.spawn_point[1] - self.y
+      self.x, self.y = self.x + xdist, self.y + ydist
+
 
    def is_alive(self):
       return self.health_points > 0
@@ -55,11 +64,11 @@ class Character(Megaman_object):
 
          if self.all_timers.is_empty('grounded_sound') != True:
             play_sound('grounded', universal_names.megaman_sounds, channel=0, volume=universal_names.sfx_volume)
-            self.all_timers.countdown('grounded_sound', 1)
+            self.all_timers.countdown('grounded_sound')
 
       else:
          self.is_grounded = False
-         self.all_timers.replenish_timer('grounded_sound')
+         self.all_timers.replenish_timer('grounded_sound', 1)
 
 
    def check_ceiling_collision(self):

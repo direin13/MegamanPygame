@@ -35,9 +35,10 @@ class P_shooter(Megaman_object):
       collisions = self.check_collision_lst(Enemy.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox)
       if collisions.is_empty() != True:
          enemy = collisions.pop()
-         enemy.reduce_hp(self.damage_points)
-         self.is_active = False
-         play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume - 0.1)
+         if enemy.is_alive():
+            enemy.reduce_hp(self.damage_points)
+            self.is_active = False
+            play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume - 0.1)
 
 
    def refill(self):
@@ -51,7 +52,7 @@ class P_shooter(Megaman_object):
       #--if p_shooter not o the screen
       self.refill()
       #--else
-      if self.is_active == True:
+      if self.is_active == True and universal_names.game_pause == False:
          self.sprite_surf_check()
          self.move()
       Sprite_surface.update(self)
@@ -64,6 +65,3 @@ class P_shooter(Megaman_object):
       Sprite_surface.update(p)
       p.is_active = True
       p.x_vel = speed
-
-for i in range(0, 3): #--making p_shooter bullets
-         P_shooter('p_shooter', 0, 0)

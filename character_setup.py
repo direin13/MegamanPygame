@@ -7,7 +7,7 @@ from megaman_object import *
 from megaman import *
 
 megaman_x = 250
-megaman_y = 250
+megaman_y = 350
 megaman_width = 90
 megaman_height = 80
 m_idle_speed = 150

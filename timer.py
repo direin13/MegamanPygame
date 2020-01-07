@@ -46,6 +46,9 @@ class Timer(object):
    def is_empty(self, ID):
       return self.timer_states[ID] == 0
 
+   def is_full(self, ID):
+      return self.all_timers[ID] == self.timer_states[ID]
+
    def print_timer(self, ID):
       print('{}: {}'.format(ID, self.timer_states[ID]))
 

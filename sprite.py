@@ -129,6 +129,7 @@ class Sprite_surface(object):
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1):
       Sprite_surface.add_to_class_lst(self, Sprite_surface.all_sprite_surfaces, ID)
       self.ID = ID
+      self.spawn_point = [x, y]
       self.x = x
       self.y = y
       self.is_active = is_active
@@ -198,9 +199,10 @@ class Sprite_surface(object):
 
 
    def update_sprite(self, sprite): # Use to move onto next sprite frame
-      sprite = self.get_sprite(sprite)
-      frame_speed = sprite.get_frame_speed(sprite.current_animation)
-      sprite.update(frame_speed)
+      if universal_names.game_pause != True:
+         sprite = self.get_sprite(sprite)
+         frame_speed = sprite.get_frame_speed(sprite.current_animation)
+         sprite.update(frame_speed)
 
    def display_animation(self, sprite_obj, surf, frame_name, x_offset=0, y_offset=0, flip=False):
       self.get_sprite(sprite_obj).display_animation(surf, frame_name, x_offset, y_offset, flip)

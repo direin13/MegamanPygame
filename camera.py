@@ -29,6 +29,10 @@ class Camera(object):
       for obj in Sprite_surface.all_sprite_surfaces:
          if x == True and xdist != 0 and self.all_timers.is_empty('x_static') and isinstance(obj, bar.Bar) != True:
             obj.x += xdist
+            if obj != self.sprite_surf:
+               obj.spawn_point[0] += xdist
+      if x == True and xdist != 0 and self.all_timers.is_empty('x_static'):
+         universal_names.world_location[0] -= xdist
 
 
 
@@ -52,6 +56,11 @@ class Camera(object):
          if isinstance(obj, bar.Bar) != True:
             obj.x += x
             obj.y += y
+            if obj != self.sprite_surf:
+               obj.spawn_point[0] += x
+               obj.spawn_point[1] += y
+      universal_names.world_location[0] -= x
+      universal_names.world_location[1] -= y
 
    def update_position(self):
       if self.is_active != True:
@@ -89,15 +98,16 @@ class Transition_box(Sprite_surface): #Use to transition the full screen in a di
 
       coll_boxes = [Collision_box(universal_names.hitbox, 300, 400, width, height, colour=(200, 255, 100))]
       super().__init__(ID, x, y, None, coll_boxes, display_layer)
-      Camera_box.add_to_class_lst(self, Transition_box.all_transition_box, ID)
+      Transition_box.add_to_class_lst(self, Transition_box.all_transition_box, ID)
       self.all_timers = timer.Timer()
+      self.original_direction = direction
       self.direction = direction
       if direction == 'left' or direction == 'right':
          Transition_box.all_timers.add_ID(ID, universal_names.screen_width) #Timer for how long the transition should be
       else:
          Transition_box.all_timers.add_ID(ID, universal_names.screen_height)
 
-   def switch_direction(self):
+   def switch_dir(self):
       if self.direction == 'left':
          self.direction = 'right'
 
@@ -136,9 +146,11 @@ def transition_screen(camera):
    tbox = Transition_box.current_box
    if Transition_box.all_timers.is_empty('transition_start') != True:
       Transition_box.all_timers.countdown('transition_start') #Wait for a little pause before transitioning
+      universal_names.game_pause = True
 
    else:
       if Transition_box.all_timers.is_empty(tbox.ID) != True: #If timer is not empty keep transitioning
+         universal_names.game_pause = False
          camera.move(Transition_box.transition_speed, tbox.direction)
 
          if tbox.direction == 'right':  #move megaman
@@ -154,15 +166,17 @@ def transition_screen(camera):
       else:
          if Transition_box.all_timers.is_empty('transition_end') != True:
             Transition_box.all_timers.countdown('transition_end') #wait for a little pause again before finishing transition
+            universal_names.game_pause = True
          else:
+            universal_names.game_pause = False
             Transition_box.in_transition_mode = False
-            tbox.switch_direction()
+            tbox.switch_dir()
             Transition_box.all_timers.replenish_timer('transition_start')
             Transition_box.all_timers.replenish_timer('transition_end')
 
 
 def update(camera):
-   if check_camerabox_collision(camera.sprite_surf) != True and Transition_box.in_transition_mode != True:
+   if check_camerabox_collision(camera.sprite_surf) != True and Transition_box.in_transition_mode != True and camera.sprite_surf.is_active:
       camera.follow(camera.sprite_surf)
    check_transitionbox_collision(camera.sprite_surf)
    if Transition_box.current_box != None and Transition_box.in_transition_mode == True:

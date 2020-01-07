@@ -19,7 +19,7 @@ def init(sprite_surf):
               universal_names.effect_images['death_orb_4']]
    for i in range(0, 12):
       orb_sprite = Sprite(universal_names.main_sprite, 200, 200, 40, 40, [('orb', orb_animation, 20)])
-      orb = Megaman_object('orb', sprite_surf.x, sprite_surf.y, sprites=[orb_sprite], width=40, height=40, display_layer=5, is_active=False)
+      orb = Megaman_object('orb', sprite_surf.x, sprite_surf.y, sprites=[orb_sprite], width=40, height=40, display_layer=4, is_active=False)
       all_orbs.append(orb)
    orb_timers.add_ID('wave_1', 30)
    orb_timers.add_ID('wave_2', 60)
@@ -50,7 +50,7 @@ def reset():
 
    for orb in all_orbs:
       orb.is_active = False
-   spawned = False
+   spawned = True
    for timer in orb_timers:
       orb_timers.replenish_timer(timer)
 
