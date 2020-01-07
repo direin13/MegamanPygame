@@ -14,8 +14,6 @@ import timer
 import bar
 import bit_text
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
-
 pygame.init()
 pygame.font.init()
 pygame.mixer.init()
