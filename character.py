@@ -55,7 +55,7 @@ class Character(Megaman_object):
 
 
    def check_ground_collision(self):
-      collision = self.check_collision_lst(Platform.all_sprite_surfaces, universal_names.feet, universal_names.hitbox, quota=1)
+      collision = self.check_collision_lst(Megaman_object.platforms, universal_names.feet, universal_names.hitbox, quota=1)
       if collision.is_empty() != True:
          platform = collision.pop()
          self.push_vert(platform, universal_names.feet, universal_names.hitbox)
@@ -72,7 +72,7 @@ class Character(Megaman_object):
 
 
    def check_ceiling_collision(self):
-      collision = self.check_collision_lst(Platform.all_sprite_surfaces, universal_names.head, universal_names.hitbox, quota=1)
+      collision = self.check_collision_lst(Megaman_object.platforms, universal_names.head, universal_names.hitbox, quota=1)
       if collision.is_empty() != True:
          ceiling = collision.pop()
          self.gravity = True
@@ -80,7 +80,7 @@ class Character(Megaman_object):
 
 
    def check_wall_collision(self):
-      collisions = self.check_collision_lst(Platform.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox, quota=4)
+      collisions = self.check_collision_lst(Megaman_object.platforms, universal_names.hitbox, universal_names.hitbox, quota=4)
       if collisions.is_empty() != True:
          for wall in collisions:
             self.push_hori(wall, universal_names.hitbox, universal_names.hitbox)

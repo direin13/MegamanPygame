@@ -34,7 +34,7 @@ def display_all_sprite_surf(surf, screen_width, screen_height, display_collboxes
    update_display_stack()
    for sprite_surf in display_stack:
       try:
-         if sprite_surf.is_on_screen(screen_width, screen_height) and sprite_surf.is_active:
+         if sprite_surf.is_active:
             sprite_surf.display(surf)
       except AttributeError:
          #sprite_surf.display_collboxes(surf)

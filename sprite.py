@@ -72,6 +72,7 @@ class Collision_box(object):
       #--In pygame, a surface's x and y co_ordinate starts from the top left corner which I felt was inconvenient for collision boxes, so here the x and y starts at the middle of the box
 
       self.ID = ID
+      self.is_active = True
       self.x_offset = x_offset
       self.y_offset = y_offset
       self.x = x + (width // 2) + self.x_offset

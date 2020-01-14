@@ -14,6 +14,8 @@ import timer
 import bar
 import bit_text
 
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
+
 pygame.init()
 pygame.font.init()
 pygame.mixer.init()
@@ -23,13 +25,13 @@ display_layer.init() #layer 1 displayed first, then 2, then 3 etc.
 game_timers = timer.Timer()
 game_timers.add_ID('ready', 20)
 game_timers.add_ID('reset', 350)
-game_timers.add_ID('jump_to_start', 180)
+game_timers.add_ID('jump_to_start', 190)
 
 clock = pygame.time.Clock()
 
 font = pygame.font.SysFont(None, 20)
 
-songs = music_player.Song_player('1', ['audio/Snake man.mp3'], volume=0.4)
+songs = music_player.Song_player('1', ['audio/Cut man.mp3'], volume=0.6)
 
 screen = pygame.display.set_mode((universal_names.screen_width, universal_names.screen_height))
 
@@ -80,7 +82,7 @@ def jump_to_start(sprite_surf, text=''):
    game_timers.countdown('jump_to_start')
 
 
-#--------------------------------------------------------------------------------GAME-----------------------------------------------------------
+#--------------------------------------------------------------------------------GAME-----------------------------------------------------------------------------
 
 display_collbox = False
 
@@ -89,15 +91,23 @@ start = False
 game = True
 
 while game:
-   screen.fill((0,0,0))
+   screen.fill((50,50,50))
    for e in pygame.event.get():
       if e.type == pygame.QUIT:
          game = False
 
    k = pygame.key.get_pressed()
-   if k[pygame.K_p]: #pause game
+   if k[pygame.K_p] and start == True and megaman.is_alive() and not(camera.camera_transitioning()): #pause game
+      if universal_names.game_pause == False:
+         play_sound('pause', universal_names.megaman_sounds, channel=2, volume=universal_names.sfx_volume + 0.1)
+         songs.toggle()
       universal_names.game_pause = True
-   elif k[pygame.K_o]:
+      bit_text.display_text(screen, (500, 20), 'ii', 3, 4)
+
+   elif k[pygame.K_o] and megaman.is_alive() and not(camera.camera_transitioning()): #unpause
+      if universal_names.game_pause == True:
+         play_sound('pause', universal_names.megaman_sounds, channel=2, volume=universal_names.sfx_volume + 0.1)
+         songs.toggle()
       universal_names.game_pause = False
 
    if k[pygame.K_d]: #displays all collision boxes for helping with debug
@@ -110,8 +120,9 @@ while game:
          megaman = sprite_surf
          universal_names.camera.sprite_surf = megaman
 
+      if sprite_surf.is_on_screen(universal_names.screen_width, universal_names.screen_height):
+         display_layer.push_onto_layer(sprite_surf)
       sprite_surf.update()
-      display_layer.push_onto_layer(sprite_surf)
 
 
    if megaman.y > universal_names.screen_height + 550:

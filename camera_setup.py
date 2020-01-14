@@ -2,9 +2,9 @@ from camera import *
 import universal_names
 from megaman import *
 
-camera_box_1 = Camera_box('static', -95, -50, 280, 1000)
+camera_box_1 = Camera_box('static', -95, -300, 280, 1500)
 
-camera_box_1 = Camera_box('static', -390, -50, 280, 1000)
+camera_box_1 = Camera_box('static', -390, -300, 280, 1500)
 
 camera_box_2 = Camera_box('static', 482, -50, 280, 1000)
 

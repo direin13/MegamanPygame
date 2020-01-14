@@ -8,6 +8,7 @@ pygame.init()
 class Megaman_object(Sprite_surface):
    gravity_speed = 17
    all_sprite_surfaces = []
+   platforms = []
    hazards = []
 
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1, gravity=False, direction=True, max_x_vel=1):
@@ -140,20 +141,3 @@ class Megaman_object(Sprite_surface):
 
 #-----------------------------------------
 
-class Platform(Megaman_object):
-   all_sprite_surfaces = []
-
-   def __init__(self, ID, x, y, sprites, coll_boxes=None, is_active=True, width=0, height=0, display_layer=2, gravity=False, max_x_vel=0):
-      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, max_x_vel)
-      Platform.add_to_class_lst(self, Platform.all_sprite_surfaces, ID)
-
-
-   def update(self):
-      if self.gravity == True:
-         self.apply_gravity()
-      Sprite_surface.update(self)
-
-   def display(self, surf):
-      self.update_sprite(universal_names.main_sprite)
-      self.display_animation(universal_names.main_sprite, surf, 'platform')
-      #self.display_collboxes(surf)

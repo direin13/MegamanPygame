@@ -27,7 +27,7 @@ def display_text(surf, coordinates, string, width=1, height=1, colour=(255,255,2
 
    for char in all_chars:
       y = coordinates[1]
-      for array in letters[char]: # going through every array in characters and making a rectangle at each number in the array
+      for array in letters[char.lower()]: # going through every array in characters and making a rectangle at each number in the array
          if len(array) != 0:
             for i in range(len(array)):
                x = coordinates[0] + (array[i] * width) + pos
