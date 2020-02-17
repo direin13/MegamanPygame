@@ -107,6 +107,8 @@ class Megaman_object(Sprite_surface):
          self.x -= self.x_vel
 
    def move(self, x_vel=0, y_vel=0):
+      self.x_vel = x_vel
+      self.y_vel = y_vel
       self.x += x_vel
       self.y += y_vel
 
@@ -118,10 +120,11 @@ class Megaman_object(Sprite_surface):
 
 
    def display(self, surf):
-      if universal_names.game_pause == False:
-         self.update_sprite(universal_names.main_sprite)
-      self.display_animation(universal_names.main_sprite, surf, self.get_sprite(universal_names.main_sprite, self.row)[0])
-      #self.display_collboxes(surf)
+      if self.sprite_dict != None:
+         if universal_names.game_pause == False:
+            self.update_sprite(universal_names.main_sprite)
+         self.display_animation(universal_names.main_sprite, surf, self.get_sprite(universal_names.main_sprite, self.row)[0])
+         #self.display_collboxes(surf)
 
    def follow(self, x=None, y=None, x_vel=0, y_vel=0):
       if self.x != x and x != None:

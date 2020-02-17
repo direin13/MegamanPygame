@@ -18,6 +18,8 @@ game_reset = False
 
 game_pause = False
 
+debug = False
+
 screen_width = 600
 
 screen_height = 600
@@ -26,6 +28,8 @@ checkpoint = [0, 0] #change this to change checkpoint
 world_location = [0, 0] #This will basically tell the game how to get back to the checkpoint
 
 megaman_images = load_images('megaman_sprites')
+
+background_images = load_images('background')
 
 effect_images = load_images('effects')
 

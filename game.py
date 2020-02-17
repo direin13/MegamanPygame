@@ -1,7 +1,9 @@
 import universal_names
 import pygame
+import game_setup
 from megaman import *
 import music_player
+import debug_mode
 import sprite
 import camera
 import platform_setup
@@ -31,13 +33,16 @@ clock = pygame.time.Clock()
 
 font = pygame.font.SysFont(None, 20)
 
-songs = music_player.Song_player('1', ['audio/Cut man.mp3'], volume=0.6)
+songs = music_player.Song_player('1', ['audio/Concrete man.mp3'], volume=0.6)
 
 screen = pygame.display.set_mode((universal_names.screen_width, universal_names.screen_height))
 
+checkpoint_1 = [(3594,1200), (340,367)]
+
+checkpoint_2 = [(4200,3600), (340,367)]
 
 
-def jump_to_start(sprite_surf, text=''):
+def jump_to_start(sprite_surf):
    global game_timers
    global screen
    global songs
@@ -46,7 +51,7 @@ def jump_to_start(sprite_surf, text=''):
       songs.play_list(130, fade_time=3)
       screen.fill((0,0,0))
       universal_names.game_reset = True
-      xdist = universal_names.world_location[0] - universal_names.checkpoint[0] #distance from checkpoint and current location
+      xdist = universal_names.world_location[0] - universal_names.checkpoint[0] #distance to checkpoint and current location
       ydist = universal_names.world_location[1] - universal_names.checkpoint[1]
       for s in Sprite_surface.all_sprite_surfaces: #move everything back
          if not(isinstance(s, bar.Bar)) and s != sprite_surf:
@@ -65,7 +70,7 @@ def jump_to_start(sprite_surf, text=''):
       if game_timers.is_empty('ready'):
          game_timers.replenish_timer('ready')
       elif game_timers.check_ID('ready') > game_timers.all_timers['ready'] // 2:
-         bit_text.display_text(screen, (240, 140), text, 3, 3)
+         bit_text.display_text(screen, (240, 140), 'ready', 3, 3)
       game_timers.countdown('ready')
 
    elif not sprite_surf.is_alive() or not sprite_surf.is_active:
@@ -84,6 +89,11 @@ def jump_to_start(sprite_surf, text=''):
 
 #--------------------------------------------------------------------------------GAME-----------------------------------------------------------------------------
 
+for sprite_surf in sprite.Sprite_surface.all_sprite_surfaces: 
+      if sprite_surf == character_setup.player_1:
+         megaman = sprite_surf
+         universal_names.camera.sprite_surf = megaman
+
 display_collbox = False
 
 start = False
@@ -91,11 +101,6 @@ start = False
 game = True
 
 while game:
-   screen.fill((50,50,50))
-   for e in pygame.event.get():
-      if e.type == pygame.QUIT:
-         game = False
-
    k = pygame.key.get_pressed()
    if k[pygame.K_p] and start == True and megaman.is_alive() and not(camera.camera_transitioning()): #pause game
       if universal_names.game_pause == False:
@@ -110,54 +115,76 @@ while game:
          songs.toggle()
       universal_names.game_pause = False
 
-   if k[pygame.K_d]: #displays all collision boxes for helping with debug
+   if k[pygame.K_v]: #displays all collision boxes for helping with debug
       display_collbox = True
-   elif k[pygame.K_s]:
+      universal_names.debug = True
+   elif k[pygame.K_c]:
       display_collbox = False
+      universal_names.debug = False
+
+
+   #print(universal_names.world_location)
+   screen.fill((0,0,0))
+   for e in pygame.event.get():
+      if e.type == pygame.QUIT:
+         game = False
 
    for sprite_surf in sprite.Sprite_surface.all_sprite_surfaces: #Updating every sprite in the game
-      if sprite_surf == character_setup.player_1:
-         megaman = sprite_surf
-         universal_names.camera.sprite_surf = megaman
 
       if sprite_surf.is_on_screen(universal_names.screen_width, universal_names.screen_height):
-         display_layer.push_onto_layer(sprite_surf)
+         display_layer.push_onto_layer(sprite_surf, sprite_surf.display_layer)
       sprite_surf.update()
-
-
-   if megaman.y > universal_names.screen_height + 550:
-      megaman.kill()
-      megaman.health_bar.points -= megaman.health_bar.points
 
    camera.update(universal_names.camera) #adjusts all sprite surf according to the comera's position
 
    display_layer.display_all_sprite_surf(screen, universal_names.screen_width, universal_names.screen_height, display_collboxes=display_collbox)
 
 
-   if megaman.is_alive() and start == True:
+   if universal_names.debug == True:
+      megaman.is_active = True
+      debug_mode.debug(screen)
       songs.play_list(130, fade_time=3)
-
-   elif start == True: #When megaman dies
-      if universal_names.game_reset == False:
-         songs.stop()
-
-      reset_time = game_timers.check_ID('reset')
-
-      if game_timers.is_empty('reset'):
-         megaman_death_orb.reset()
-         jump_to_start(megaman, 'ready')
-
-      elif reset_time < 100: #when the screen turns black
-         screen.fill((0,0,0))
-         megaman_death_orb.reset()
-         for c in enemy.Enemy.all_sprite_surfaces:
-            c.is_active = False
-      game_timers.countdown('reset')
-
    else:
-      jump_to_start(megaman, 'ready')
-      if megaman.is_active:
-         start = True
+      universal_names.camera.sprite_surf = megaman
+      if megaman.is_alive() and start == True:
+         songs.play_list(130, fade_time=3)
+         if megaman.y > universal_names.screen_height + 550:
+            megaman.health_points -= megaman.health_points #death
+            megaman.health_bar.points -= megaman.health_bar.points
+
+      elif start == True: #When megaman dies
+         if universal_names.game_reset == False:
+            songs.stop()
+
+         reset_time = game_timers.check_ID('reset')
+
+         if game_timers.is_empty('reset'):
+            megaman_death_orb.reset()
+            jump_to_start(megaman)
+
+         elif reset_time < 100: #when the screen turns black
+            screen.fill((0,0,0))
+            megaman_death_orb.reset()
+            for c in enemy.Enemy.all_sprite_surfaces:
+               c.is_active = False
+         game_timers.countdown('reset')
+
+      else:
+         jump_to_start(megaman)
+         if megaman.is_active:
+            start = True
+
+   if universal_names.world_location[1] == 1200: #checkpoint 1
+      new_checkpoint_x, new_checkpoint_y = checkpoint_1[0][0], checkpoint_1[0][1]
+      new_megaman_x, new_megaman_y = checkpoint_1[1][0], checkpoint_1[1][1]
+      universal_names.checkpoint = [new_checkpoint_x, new_checkpoint_y]
+      megaman.spawn_point = [new_megaman_x, new_megaman_y]
+
+   elif universal_names.world_location[0] == 4200: #checkpoint 2
+      new_checkpoint_x, new_checkpoint_y = checkpoint_2[0][0], checkpoint_2[0][1]
+      new_megaman_x, new_megaman_y = checkpoint_2[1][0], checkpoint_2[1][1]
+      universal_names.checkpoint = [new_checkpoint_x, new_checkpoint_y]
+      megaman.spawn_point = [new_megaman_x, new_megaman_y]
 
 
    pygame.display.update()

@@ -6,17 +6,17 @@ all_layers = []
 display_stack = mega_stack.Stack()
 
 
-def init(n_of_layers=5):
+def init(n_of_layers=6):
    global all_layers
 
    for i in range(0, n_of_layers):
       all_layers.append(mega_stack.Stack())
 
 
-def push_onto_layer(sprite_surf):
+def push_onto_layer(sprite_surf, layer):
    global all_layers
 
-   all_layers[sprite_surf.display_layer - 1].push(sprite_surf)
+   all_layers[layer].push(sprite_surf)
 
 
 def update_display_stack():
@@ -32,6 +32,7 @@ def display_all_sprite_surf(surf, screen_width, screen_height, display_collboxes
    global display_stack
 
    update_display_stack()
+   x = 0
    for sprite_surf in display_stack:
       try:
          if sprite_surf.is_active:

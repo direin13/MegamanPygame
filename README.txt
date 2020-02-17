@@ -2,10 +2,7 @@ README;
 ========================================================
 -I'm trying to make an entire megaman level from scratch!
 
--Update: .Camera transitions added, go past the end of the screen to transition
-	 .Health bar added
-	 .Respawns and added
-	 .8 bit text style system added
+-Update: .background finished
 
 -Open 'game.py' to run and see the results so far.
 
@@ -14,7 +11,7 @@ README;
 	  shoot = z
 	  jump = x
 	  pause/unpause = p/o
-	  debug/nodebug = d/s
+	  debug/nodebug = v/c
 
 -Feedback and criticism is much appreciated!
 

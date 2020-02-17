@@ -5,7 +5,7 @@ import mega_stack
 import universal_names
 from misc_function import *
 from megaman_object import *
-from enemy import *
+import enemy
 
 class P_shooter(Megaman_object):
    all_p = mega_stack.Stack() #the stack acts as ammo source
@@ -32,11 +32,11 @@ class P_shooter(Megaman_object):
       pass
 
    def check_enemy(self):
-      collisions = self.check_collision_lst(Enemy.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox)
+      collisions = self.check_collision_lst(enemy.Enemy.all_sprite_surfaces, universal_names.hitbox, universal_names.hitbox)
       if collisions.is_empty() != True:
-         enemy = collisions.pop()
-         if enemy.is_alive():
-            enemy.reduce_hp(self.damage_points)
+         e = collisions.pop()
+         if e.is_alive():
+            e.reduce_hp(self.damage_points)
             self.is_active = False
             play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume - 0.1)
 

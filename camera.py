@@ -15,24 +15,35 @@ class Camera(object):
       self.sprite_surf = sprite_surf
       self.is_active = True
 
-   def follow(self, sprite_surf, x=True, y=False):
+   def follow(self, sprite_surf):
       self.is_active = True
       self.sprite_surf = sprite_surf
       xdist = self.x - self.sprite_surf.x
+      ydist = self.y - self.sprite_surf.y
 
-      if self.sprite_surf.x_vel == 0:
+      if self.sprite_surf.x_vel == 0 and universal_names.debug != True:
          self.all_timers.replenish_timer('x_static')
       else:
          self.all_timers.countdown('x_static')
 
 
       for obj in Sprite_surface.all_sprite_surfaces:
-         if x == True and xdist != 0 and self.all_timers.is_empty('x_static') and isinstance(obj, bar.Bar) != True:
+         if xdist != 0 and self.all_timers.is_empty('x_static') and isinstance(obj, bar.Bar) != True:
             obj.x += xdist
-            if obj != self.sprite_surf:
+            if obj.ID != 'megaman':
                obj.spawn_point[0] += xdist
-      if x == True and xdist != 0 and self.all_timers.is_empty('x_static'):
+
+      if universal_names.debug  == True:
+         for obj in Sprite_surface.all_sprite_surfaces:
+            if ydist != 0 and isinstance(obj, bar.Bar) != True:
+               obj.y += ydist
+               if obj.ID != 'megaman':
+                  obj.spawn_point[1] += ydist
+               
+      if xdist != 0 and self.all_timers.is_empty('x_static'):
          universal_names.world_location[0] -= xdist
+      if universal_names.debug == True:
+         universal_names.world_location[1] -= ydist
 
 
 
@@ -72,8 +83,8 @@ class Camera(object):
 class Camera_box(Sprite_surface):
    all_camera_box = []
    
-   def __init__(self, ID, x, y, width, height, display_layer=1):
-      coll_boxes = [Collision_box(universal_names.hitbox, 300, 400, width, height)]
+   def __init__(self, ID, x, y, width, height, display_layer=1, colour=(62, 48, 255)):
+      coll_boxes = [Collision_box(universal_names.hitbox, 300, 400, width, height, colour=colour)]
       super().__init__(ID, x, y, None, coll_boxes, display_layer)
       Camera_box.add_to_class_lst(self, Camera_box.all_camera_box, ID)
 
@@ -154,9 +165,9 @@ def transition_screen(camera):
          camera.move(Transition_box.transition_speed, tbox.direction)
 
          if tbox.direction == 'right':  #move megaman
-            camera.sprite_surf.follow(x=tbox.collbox_dict[universal_names.hitbox].x, x_vel=2)
+            camera.sprite_surf.follow(x=tbox.collbox_dict[universal_names.hitbox].x + 30, x_vel=2)
          elif tbox.direction == 'left':
-            camera.sprite_surf.follow(x=(tbox.collbox_dict[universal_names.hitbox].x - camera.sprite_surf.width), x_vel=2)
+            camera.sprite_surf.follow(x=(tbox.collbox_dict[universal_names.hitbox].x - camera.sprite_surf.width - 30), x_vel=2)
          elif tbox.direction == 'up':
             camera.sprite_surf.follow(y=(tbox.collbox_dict[universal_names.hitbox].y - camera.sprite_surf.height), y_vel=2)
          else:
@@ -176,11 +187,14 @@ def transition_screen(camera):
 
 
 def update(camera):
-   if check_camerabox_collision(camera.sprite_surf) != True and Transition_box.in_transition_mode != True and camera.sprite_surf.is_active:
+   if len(camera.sprite_surf.collbox_dict) != 0:
+      if check_camerabox_collision(camera.sprite_surf) != True and Transition_box.in_transition_mode != True and camera.sprite_surf.is_active:
+         camera.follow(camera.sprite_surf)
+      check_transitionbox_collision(camera.sprite_surf)
+      if Transition_box.current_box != None and Transition_box.in_transition_mode == True:
+         transition_screen(camera)
+   else:
       camera.follow(camera.sprite_surf)
-   check_transitionbox_collision(camera.sprite_surf)
-   if Transition_box.current_box != None and Transition_box.in_transition_mode == True:
-      transition_screen(camera)
    camera.update_position()
 
 

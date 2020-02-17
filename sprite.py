@@ -146,7 +146,7 @@ class Sprite_surface(object):
             self.collbox_dict[coll_box.ID] = coll_box
 
       if sprites == None:
-         pass
+         self.sprite_dict = None
       else:
          for sprite in sprites:
             self.sprite_dict[sprite.ID] = sprite
@@ -253,6 +253,6 @@ class Sprite_surface(object):
          except KeyError:
             pass
 
-         return False
+      return False
       
 #----------------------------------------------------------------

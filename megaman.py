@@ -14,17 +14,59 @@ import megaman_death_orb
 import camera
 
 class Megaman(Character):
-   def __init__(self, ID, x, y, sprites, coll_boxes, is_active=False, width=0, height=0, display_layer=3, gravity=False, 
-               direction=True, max_x_vel=1, health_points=100, controls=None, jump_speed=1):
+   def __init__(self, ID, x, y, controls=None):
+
+      width = 90
+      height = 80
+      display_layer = 3
+      max_x_vel = 3
+      health_points = 100
+      is_active = False
+      gravity = False
+      m_run_speed = 37
+      m_idle_speed = 150
+      direction = True
+
+      megaman_walk = [universal_names.megaman_images['walk_2'], universal_names.megaman_images['walk_1'], universal_names.megaman_images['walk_2'],
+                      universal_names.megaman_images['walk_3']]
+      megaman_idle = [universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle'],
+                      universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle_2']]
+
+      megaman_idle_shoot = [universal_names.megaman_images['idle_shoot']]
+      megaman_step = [universal_names.megaman_images['step']]
+      megaman_shoot = [universal_names.megaman_images['walk_shoot_2'], universal_names.megaman_images['walk_shoot_1'],
+                       universal_names.megaman_images['walk_shoot_2'], universal_names.megaman_images['walk_shoot_3']]
+
+      megaman_jump = [universal_names.megaman_images['jump']]
+      megaman_shoot_jump = [universal_names.megaman_images['shoot_jump']]
+      megaman_damage = [universal_names.megaman_images['damage']]
+
+      megaman_sprite = Sprite(universal_names.main_sprite, x, y, width, height, [('walk', megaman_walk, m_run_speed),
+                                                             ('idle', megaman_idle, m_idle_speed),
+                                                             ('step', megaman_step, m_run_speed),
+                                                             ('shoot_walk', megaman_shoot, m_run_speed),
+                                                             ('shoot_idle', megaman_idle_shoot, m_run_speed),
+                                                             ('jump', megaman_jump, m_run_speed),
+                                                             ('shoot_jump', megaman_shoot_jump, m_run_speed),
+                                                             ('damage', megaman_damage, m_idle_speed)])
+
+      effects = Sprite('effects', x, y, width, height, [('spark_effect', [universal_names.effect_images['spark']], 1)])
+
+      #--collision boxes
+      megaman_hit_box = Collision_box(universal_names.hitbox, x, y, 55, 59, (240, 240, 0), x_offset=17)
+      megaman_feet = Collision_box(universal_names.feet, x, y, 41, 3, (240, 21, 0), x_offset=26, y_offset=61)
+      megaman_head = Collision_box(universal_names.head, x, y, 43, 2, (200, 21, 0), x_offset=24, y_offset=-3)
       
-      super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer, gravity, direction, max_x_vel, health_points)
+      super().__init__(ID, x, y, [megaman_sprite, effects], [megaman_hit_box, megaman_feet, megaman_head], is_active, width, height,
+                       display_layer, gravity, direction, max_x_vel, health_points)
+
       if controls == None:
          self.controls = [pygame.K_d, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_p, pygame.K_w]
       else:
          self.controls = controls #--right, up, left, down, action, jump--
 
       self.keys_pressed = pygame.key.get_pressed()
-      self.jump_speed = jump_speed
+      self.jump_speed = 10
       self.acc_speed = 3
       self.decc_speed = 3
       self.can_jump = False
@@ -213,6 +255,7 @@ class Megaman(Character):
    def jump(self):
       if self.is_grounded is True and self.can_jump is True:
          self.all_timers.replenish_timer('rise_flag')
+         self.y_vel = 10
          if self.is_pressing(5) and camera.camera_transitioning() != True:
             self.y_vel = self.jump_speed
 
@@ -412,7 +455,7 @@ class Megaman(Character):
 
 
    def respawn(self):
-      if self.respawn_obj.y < self.spawn_point[1] - 35:
+      if self.respawn_obj.y < self.spawn_point[1] - 15:
          self.respawn_obj.row = 0
          self.respawn_obj.x = self.spawn_point[0]
          self.respawn_obj.is_active = True
@@ -420,7 +463,7 @@ class Megaman(Character):
       else:
          if self.all_timers.is_empty('respawn_animation') != True:
             self.respawn_obj.row = 1
-            self.respawn_obj.x, self.respawn_obj.y = self.spawn_point[0], self.spawn_point[1] - 35
+            self.respawn_obj.x, self.respawn_obj.y = self.spawn_point[0], self.spawn_point[1] - 15
             self.all_timers.countdown('respawn_animation')
          else:
             play_sound('megaman_spawn', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume + 0.1)

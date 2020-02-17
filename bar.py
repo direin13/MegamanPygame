@@ -9,10 +9,10 @@ class Bar(megaman_object.Megaman_object):
       self.scale_factor = (6, 3) #[0] = width, [1] = height
       width = 4
       height = 56
-      bar_sprite = sprite.Sprite(universal_names.main_sprite, x, y, width * self.scale_factor[0], height * self.scale_factor[1], 
+      bar_outline = sprite.Sprite(universal_names.main_sprite, x, y, width * self.scale_factor[0], height * self.scale_factor[1], 
                                  [(universal_names.main_sprite, [universal_names.effect_images['bar']], 1)])
 
-      super().__init__(ID, x, y, [bar_sprite], None, True, width, height)
+      super().__init__(ID, x, y, [bar_outline], None, True, width, height)
       self.display_layer = 5
       self.points = points
       self.original_points = points
@@ -29,7 +29,7 @@ class Bar(megaman_object.Megaman_object):
          a.append(n)
       self.colour2 = (a[0], a[1], a[2])
 
-      self.bar_incrate = round(points/height) #This is the rate at which I add or minus a bar of energy. e.g If rate was 5, then every +-5 points I add or minus a bar
+      self.bar_decrate = round(points/height) #This is the rate at which I add or minus a bar of energy. e.g If rate was 5, then every +-5 points I add or minus a bar
 
 
    def display(self, surf):
@@ -44,9 +44,9 @@ class Bar(megaman_object.Megaman_object):
             self.rect_height = self.height
             height_accum = 0
 
-         else: #This formula will give me the height my rectangle(health bar energy) has to be to match the original points - current points percentage
+         else: #This formula will give me the height the rectangle(health bar energy) has to be to match the original points - current points percentage
             points_diff = self.original_points - self.points
-            height_accum = round(points_diff / self.bar_incrate)
+            height_accum = round(points_diff / self.bar_decrate)
             self.rect_height = self.height - height_accum
 
          y = self.y + (height_accum * self.scale_factor[1])
