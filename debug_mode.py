@@ -56,7 +56,7 @@ def debug(screen):
          point_dist[0] += -cursor_speed
 
    #to check for change of speed
-   for i in range(48, 58):
+   for i in range(48, 58): #48-57==key 0-9
       if keys[i]:
          cursor_speed = i - 48
 

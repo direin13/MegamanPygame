@@ -6,7 +6,7 @@ import universal_names
 
 class Bar(megaman_object.Megaman_object):
    def __init__(self, ID, x, y, points, colour=(255,0,0)):
-      self.scale_factor = (6, 3) #[0] = width, [1] = height
+      self.scale_factor = [6, 3] #[0] = width, [1] = height
       width = 4
       height = 56
       bar_outline = sprite.Sprite(universal_names.main_sprite, x, y, width * self.scale_factor[0], height * self.scale_factor[1], 
@@ -49,14 +49,14 @@ class Bar(megaman_object.Megaman_object):
             height_accum = round(points_diff / self.bar_decrate)
             self.rect_height = self.height - height_accum
 
-         y = self.y + (height_accum * self.scale_factor[1])
+         rect_y = self.y + (height_accum * self.scale_factor[1])
          width = self.rect_width * self.scale_factor[0]
          height = self.rect_height * self.scale_factor[1]
 
          pygame.draw.rect(surf, (0, 0, 0), (self.x, self.y, self.width * self.scale_factor[0], self.height * self.scale_factor[1])) # black box in at the back
          if height_accum < self.original_points:
-            pygame.draw.rect(surf, self.colour1, (self.x, y, width, height)) #this is the rectangle within the bar that represents the points
-            pygame.draw.rect(surf, self.colour2, (self.x + (width//3) + 1, y, width // 4, height)) #this is second rectangle with rectangle 1
+            pygame.draw.rect(surf, self.colour1, (self.x, rect_y, width, height)) #this is the rectangle within the bar that represents the points
+            pygame.draw.rect(surf, self.colour2, (self.x + (width//3) + 1, rect_y, width // 4, height)) #this is second rectangle with rectangle 1
 
          megaman_object.Megaman_object.display(self, surf) #Blackbox outline that surrounds the rectangle health
 

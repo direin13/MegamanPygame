@@ -6,6 +6,7 @@ import pygame
 from character import *
 from megaman import *
 import camera
+import p_shooter
 
 class Enemy(Character):
    all_sprite_surfaces = []
@@ -27,6 +28,11 @@ class Enemy(Character):
          self.health_points = self.health_points_copy
          self.all_timers.replenish_timer('explosion_animation')
          self.can_spawn = False
+
+   def check_bullet_contact(self, quota=None):
+      collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_names.hitbox, universal_names.hitbox, quota=quota)
+      #print(collisions)
+      return collisions
 
    def update(self):
       if camera.camera_transitioning() == True:
@@ -69,7 +75,7 @@ class Met(Enemy):
       damage_points = 20
       gravity = False
       is_active = True
-      idle_enemy = [universal_names.builder['1']]
+      idle_enemy = [universal_names.enemies['met_2']]
       explosion_enemy = [universal_names.effect_images['explosion_1'], universal_names.effect_images['explosion_2'], universal_names.effect_images['explosion_3']]
       met = Sprite(universal_names.main_sprite, 200, 200, 40, 30, [('idle', idle_enemy, 1),
                                                                             ('explosion', explosion_enemy, 15)])
@@ -87,6 +93,13 @@ class Met(Enemy):
          self.display_animation(universal_names.main_sprite, surf, 'explosion')
 
    def update(self):
+      pshooter_collisions = self.check_bullet_contact(quota=1)
+      if pshooter_collisions.is_empty() != True and self.is_alive():
+         p = pshooter_collisions.pop()
+         self.reduce_hp(p.damage_points)
+         p.is_active = False
+         play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume - 0.1)
+
       Enemy.update(self)
 
 

@@ -71,7 +71,8 @@ class Megaman_object(Sprite_surface):
          if self.y_vel >= 0:
             self.y_vel = 0
 
-         if self.all_timers.countdown('y_accel_flag', 4, loop=True) == True:
+         self.all_timers.countdown('y_accel_flag', 4, loop=True)
+         if self.all_timers.is_empty('y_accel_flag') != True:
             self.y += -(self.y_vel)
 
          else:
@@ -81,7 +82,8 @@ class Megaman_object(Sprite_surface):
    def accelerate(self, acc_speed=0, max_x_vel=0):
       #--increases self.x_vel according to acc_speed parameter
       if acc_speed != 0:
-         if self.all_timers.countdown('move_flag', acc_speed, loop=True) == False:
+         self.all_timers.countdown('move_flag', acc_speed, loop=True)
+         if self.all_timers.is_empty('move_flag'):
             if self.x_vel != max_x_vel:
                self.x_vel += 1
 
@@ -89,7 +91,8 @@ class Megaman_object(Sprite_surface):
 
    def deccelerate(self, decc_speed=0):
       #--decreases self.x_vel according to acc_speed parameter
-      if self.all_timers.countdown('move_flag', decc_speed, loop=True) == False:
+      self.all_timers.countdown('move_flag', decc_speed, loop=True)
+      if self.all_timers.is_empty('move_flag'):
          if self.x_vel != 0:
             self.x_vel -= 1
 
@@ -119,10 +122,9 @@ class Megaman_object(Sprite_surface):
 
 
 
-   def display(self, surf):
+   def display(self, surf, loop=True, game_pause=True):
       if self.sprite_dict != None:
-         if universal_names.game_pause == False:
-            self.update_sprite(universal_names.main_sprite)
+         self.update_sprite(universal_names.main_sprite, auto_reset=loop, game_pause=game_pause)
          self.display_animation(universal_names.main_sprite, surf, self.get_sprite(universal_names.main_sprite, self.row)[0])
          #self.display_collboxes(surf)
 

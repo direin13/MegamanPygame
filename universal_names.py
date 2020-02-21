@@ -33,7 +33,9 @@ background_images = load_images('background')
 
 effect_images = load_images('effects')
 
-builder = load_images('enemies')
+prop_images = load_images('props')
+
+enemies = load_images('enemies')
 
 megaman_sounds = load_sounds('audio/fx')
 

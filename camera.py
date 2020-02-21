@@ -201,8 +201,14 @@ def update(camera):
 def camera_transitioning():
    return Transition_box.in_transition_mode
 
-def transition_start_end(): #returns true if transition phase is at the begining or end points
+def transition_start(): #returns true if transition phase is at the begining
    if camera_transitioning():
-      return Transition_box.all_timers.is_empty('transition_start') != True or Transition_box.all_timers.is_empty(Transition_box.current_box.ID)
+      return Transition_box.all_timers.is_empty('transition_start') != True
+   else:
+      return False
+
+def transition_end():
+   if camera_transitioning():
+      return Transition_box.all_timers.is_empty(Transition_box.current_box.ID)
    else:
       return False

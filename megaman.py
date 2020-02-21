@@ -214,7 +214,7 @@ class Megaman(Character):
    def shoot(self):
 
       #--if you shoot
-      if self.all_timers.is_empty('can_shoot') == False and P_shooter.all_p.is_empty() == False:
+      if self.all_timers.is_empty('can_shoot') == False and P_shooter.all_p_stack.is_empty() != True:
          self.all_timers.countdown('can_shoot')
          self.all_timers.replenish_timer('shooting_flag') #the display function will countdown this timer
          play_sound('p_shooter', universal_names.megaman_sounds, volume=universal_names.sfx_volume)
@@ -274,7 +274,8 @@ class Megaman(Character):
       if self.y_vel <= 0:
          self.gravity = True
       else:
-         if self.all_timers.countdown('rise_flag', 5, loop=True) == True:
+         self.all_timers.countdown('rise_flag', 5, loop=True)
+         if self.all_timers.is_empty('rise_flag') != True:
             self.y -= self.y_vel
          else:
             self.y_vel -= 2
@@ -316,10 +317,10 @@ class Megaman(Character):
 
    def walk_animation(self, surf, s=''):
       if self.direction == True:
-         self.display_animation(universal_names.main_sprite, surf, '{}walk'.format(s))
+         self.display_animation(universal_names.main_sprite, surf, '{}walk'.format(s), resume=True)
 
       else:
-         self.display_animation(universal_names.main_sprite, surf, '{}walk'.format(s), flip=True)
+         self.display_animation(universal_names.main_sprite, surf, '{}walk'.format(s), flip=True, resume=True)
 
 
 
@@ -411,7 +412,7 @@ class Megaman(Character):
 
 
    def update(self):
-      if self.is_alive() is True and self.is_active:
+      if self.is_alive() and self.is_active:
          if camera.camera_transitioning() != True and universal_names.game_pause != True:
             self.keys_pressed = pygame.key.get_pressed() #if the camera is not transitioning the I can catch input
 
@@ -438,7 +439,7 @@ class Megaman(Character):
 
       elif self.is_alive() != True:
          self.keys_pressed = None
-         if self.all_timers.is_empty('death') is True:
+         if self.all_timers.is_empty('death'):
             universal_names.game_pause = False
             self.is_active = False
             if self.all_timers.is_empty('death_sound') is not True:

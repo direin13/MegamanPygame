@@ -40,16 +40,16 @@ def display_text(surf, coordinates, string, width=1, height=1, colour=(255,255,2
    global letters
 
    all_chars = list(string)
-   pos = 0 #the offeset where character will be drawn
+   x_pos_offset = 0 #where each character will be drawn
 
    for char in all_chars:
       y = coordinates[1]
-      for array in letters[char.lower()]: # going through every array in characters and making a rectangle at each number in the array
-         if len(array) != 0:
-            for i in range(len(array)):
-               x = coordinates[0] + (array[i] * width) + pos
+      for pixel_array in letters[char.lower()]: # going through every pixel_array in characters and making a rectangle at each number in the pixel_array
+         if len(pixel_array) != 0:
+            for i in range(len(pixel_array)):
+               x = coordinates[0] + (pixel_array[i] * width) + x_pos_offset
                pygame.draw.rect(surf, colour, (x, y, width, height))
          y += 1 * height
-      pos += 8 * width
+      x_pos_offset += 8 * width
 
 

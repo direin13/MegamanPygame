@@ -24,15 +24,11 @@ class Timer(object):
             self.timer_states[ID] = amount
 
       self.timer_states[ID] -= countdown_speed
-      if self.timer_states[ID] >= 0:
-         return True
-      else:
+      if self.timer_states[ID] < 0:
          if loop == False:
             self.timer_states[ID] = 0
-            return False
          else:
             self.timer_states[ID] = self.all_timers[ID]
-            return False
 
    def replenish_timer(self, ID, n=None):
       if n == None:

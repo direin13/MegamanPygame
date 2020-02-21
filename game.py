@@ -6,11 +6,9 @@ import music_player
 import debug_mode
 import sprite
 import camera
-import platform_setup
 import character_setup
 import enemy
 import megaman_death_orb
-import camera_setup
 import display_layer
 import timer
 import bar
@@ -33,13 +31,13 @@ clock = pygame.time.Clock()
 
 font = pygame.font.SysFont(None, 20)
 
-songs = music_player.Song_player('1', ['audio/Concrete man.mp3'], volume=0.6)
+songs = music_player.Song_player('1', ['audio/Snake man.mp3'], volume=0.6)
 
 screen = pygame.display.set_mode((universal_names.screen_width, universal_names.screen_height))
 
 checkpoint_1 = [(3594,1200), (340,367)]
 
-checkpoint_2 = [(4200,3600), (340,367)]
+checkpoint_2 = [(4200,3600), (250,359)]
 
 
 def jump_to_start(sprite_surf):
@@ -59,9 +57,11 @@ def jump_to_start(sprite_surf):
             s.y += ydist
             s.spawn_point[0] += xdist
             s.spawn_point[1] += ydist
+            
       universal_names.world_location[0] -= xdist
       universal_names.world_location[1] -= ydist
       sprite_surf.respawn_obj.y = sprite_surf.spawn_point[1] - universal_names.screen_height + 100 # set sprite_surf's falling spawn animation above screen
+      
       for t_box in camera.Transition_box.all_transition_box:
          t_box.direction = t_box.original_direction
 
@@ -101,6 +101,11 @@ start = False
 game = True
 
 while game:
+   screen.fill((0,0,0))
+   for e in pygame.event.get():
+      if e.type == pygame.QUIT:
+         game = False
+
    k = pygame.key.get_pressed()
    if k[pygame.K_p] and start == True and megaman.is_alive() and not(camera.camera_transitioning()): #pause game
       if universal_names.game_pause == False:
@@ -124,11 +129,6 @@ while game:
 
 
    #print(universal_names.world_location)
-   screen.fill((0,0,0))
-   for e in pygame.event.get():
-      if e.type == pygame.QUIT:
-         game = False
-
    for sprite_surf in sprite.Sprite_surface.all_sprite_surfaces: #Updating every sprite in the game
 
       if sprite_surf.is_on_screen(universal_names.screen_width, universal_names.screen_height):
@@ -137,7 +137,7 @@ while game:
 
    camera.update(universal_names.camera) #adjusts all sprite surf according to the comera's position
 
-   display_layer.display_all_sprite_surf(screen, universal_names.screen_width, universal_names.screen_height, display_collboxes=display_collbox)
+   display_layer.display_all_sprite_surf(screen, display_collboxes=display_collbox)
 
 
    if universal_names.debug == True:
@@ -180,7 +180,7 @@ while game:
       universal_names.checkpoint = [new_checkpoint_x, new_checkpoint_y]
       megaman.spawn_point = [new_megaman_x, new_megaman_y]
 
-   elif universal_names.world_location[0] == 4200: #checkpoint 2
+   elif universal_names.world_location[0] >= 4200: #checkpoint 2
       new_checkpoint_x, new_checkpoint_y = checkpoint_2[0][0], checkpoint_2[0][1]
       new_megaman_x, new_megaman_y = checkpoint_2[1][0], checkpoint_2[1][1]
       universal_names.checkpoint = [new_checkpoint_x, new_checkpoint_y]
