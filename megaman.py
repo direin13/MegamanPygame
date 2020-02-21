@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import universal_names
+import universal_var
 from sprite import *
 import pygame
 import timer
@@ -27,21 +27,21 @@ class Megaman(Character):
       m_idle_speed = 150
       direction = True
 
-      megaman_walk = [universal_names.megaman_images['walk_2'], universal_names.megaman_images['walk_1'], universal_names.megaman_images['walk_2'],
-                      universal_names.megaman_images['walk_3']]
-      megaman_idle = [universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle'],
-                      universal_names.megaman_images['idle'], universal_names.megaman_images['idle'], universal_names.megaman_images['idle_2']]
+      megaman_walk = [universal_var.megaman_images['walk_2'], universal_var.megaman_images['walk_1'], universal_var.megaman_images['walk_2'],
+                      universal_var.megaman_images['walk_3']]
+      megaman_idle = [universal_var.megaman_images['idle'], universal_var.megaman_images['idle'], universal_var.megaman_images['idle'],
+                      universal_var.megaman_images['idle'], universal_var.megaman_images['idle'], universal_var.megaman_images['idle_2']]
 
-      megaman_idle_shoot = [universal_names.megaman_images['idle_shoot']]
-      megaman_step = [universal_names.megaman_images['step']]
-      megaman_shoot = [universal_names.megaman_images['walk_shoot_2'], universal_names.megaman_images['walk_shoot_1'],
-                       universal_names.megaman_images['walk_shoot_2'], universal_names.megaman_images['walk_shoot_3']]
+      megaman_idle_shoot = [universal_var.megaman_images['idle_shoot']]
+      megaman_step = [universal_var.megaman_images['step']]
+      megaman_shoot = [universal_var.megaman_images['walk_shoot_2'], universal_var.megaman_images['walk_shoot_1'],
+                       universal_var.megaman_images['walk_shoot_2'], universal_var.megaman_images['walk_shoot_3']]
 
-      megaman_jump = [universal_names.megaman_images['jump']]
-      megaman_shoot_jump = [universal_names.megaman_images['shoot_jump']]
-      megaman_damage = [universal_names.megaman_images['damage']]
+      megaman_jump = [universal_var.megaman_images['jump']]
+      megaman_shoot_jump = [universal_var.megaman_images['shoot_jump']]
+      megaman_damage = [universal_var.megaman_images['damage']]
 
-      megaman_sprite = Sprite(universal_names.main_sprite, x, y, width, height, [('walk', megaman_walk, m_run_speed),
+      megaman_sprite = Sprite(universal_var.main_sprite, x, y, width, height, [('walk', megaman_walk, m_run_speed),
                                                              ('idle', megaman_idle, m_idle_speed),
                                                              ('step', megaman_step, m_run_speed),
                                                              ('shoot_walk', megaman_shoot, m_run_speed),
@@ -50,12 +50,12 @@ class Megaman(Character):
                                                              ('shoot_jump', megaman_shoot_jump, m_run_speed),
                                                              ('damage', megaman_damage, m_idle_speed)])
 
-      effects = Sprite('effects', x, y, width, height, [('spark_effect', [universal_names.effect_images['spark']], 1)])
+      effects = Sprite('effects', x, y, width, height, [('spark_effect', [universal_var.effect_images['spark']], 1)])
 
       #--collision boxes
-      megaman_hit_box = Collision_box(universal_names.hitbox, x, y, 55, 59, (240, 240, 0), x_offset=17)
-      megaman_feet = Collision_box(universal_names.feet, x, y, 41, 3, (240, 21, 0), x_offset=26, y_offset=61)
-      megaman_head = Collision_box(universal_names.head, x, y, 43, 2, (200, 21, 0), x_offset=24, y_offset=-3)
+      megaman_hit_box = Collision_box(universal_var.hitbox, x, y, 55, 59, (240, 240, 0), x_offset=17)
+      megaman_feet = Collision_box(universal_var.feet, x, y, 41, 3, (240, 21, 0), x_offset=26, y_offset=61)
+      megaman_head = Collision_box(universal_var.head, x, y, 43, 2, (200, 21, 0), x_offset=24, y_offset=-3)
       
       super().__init__(ID, x, y, [megaman_sprite, effects], [megaman_hit_box, megaman_feet, megaman_head], is_active, width, height,
                        display_layer, gravity, direction, max_x_vel, health_points)
@@ -73,8 +73,8 @@ class Megaman(Character):
       self.health_points_copy = self.health_points
       self.health_bar = Bar('megaman_health', x=30, y=20, points=self.health_points, colour=(255, 223, 131))
 
-      respawn_sprite = Sprite(universal_names.main_sprite, 0, 0, self.width, self.height, [('drop_down', [universal_names.effect_images['spawn_1']], 15),
-                              ('spawn', [universal_names.effect_images['spawn_2'], universal_names.effect_images['spawn_3'], universal_names.effect_images['spawn_1']], 15)])
+      respawn_sprite = Sprite(universal_var.main_sprite, 0, 0, self.width, self.height, [('drop_down', [universal_var.effect_images['spawn_1']], 15),
+                              ('spawn', [universal_var.effect_images['spawn_2'], universal_var.effect_images['spawn_3'], universal_var.effect_images['spawn_1']], 15)])
       self.respawn_obj = megaman_object.Megaman_object('respawn', 0, 0, [respawn_sprite], None, is_active=False, display_layer=3)
       self.all_timers.add_ID('respawn_animation', 15)
 
@@ -110,7 +110,7 @@ class Megaman(Character):
       return self.all_timers.is_empty('shooting_flag') == False
    
    def check_stun(self):
-      if universal_names.game_pause != True:
+      if universal_var.game_pause != True:
          self.all_timers.countdown('stun') #Knock back until timer is finished
 
       if self.all_timers.is_empty('stun'):
@@ -181,7 +181,7 @@ class Megaman(Character):
 
 
    def check_hazard_collision(self):
-      collision = self.check_collision_lst(Megaman_object.hazards, universal_names.hitbox, universal_names.hitbox, quota=1)
+      collision = self.check_collision_lst(Megaman_object.hazards, universal_var.hitbox, universal_var.hitbox, quota=1)
       if collision.is_empty() != True:
          hazard = collision.pop()
          self.damage_megaman(hazard)
@@ -196,7 +196,7 @@ class Megaman(Character):
             self.y_vel = 0
             self.invincibility = True
             self.stun = True
-            play_sound('megaman_damage', universal_names.megaman_sounds, channel=2, volume=universal_names.sfx_volume + 0.1)
+            play_sound('megaman_damage', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.1)
             self.all_timers.replenish_timer('spark_effect')
             self.all_timers.replenish_timer('stun')
 
@@ -217,7 +217,7 @@ class Megaman(Character):
       if self.all_timers.is_empty('can_shoot') == False and P_shooter.all_p_stack.is_empty() != True:
          self.all_timers.countdown('can_shoot')
          self.all_timers.replenish_timer('shooting_flag') #the display function will countdown this timer
-         play_sound('p_shooter', universal_names.megaman_sounds, volume=universal_names.sfx_volume)
+         play_sound('p_shooter', universal_var.megaman_sounds, volume=universal_var.sfx_volume)
 
          #--right
          if self.direction == True:
@@ -283,11 +283,11 @@ class Megaman(Character):
 
    def startup_check(self):
       #will return true if startup animation is valid
-      if universal_names.game_pause == False:
+      if universal_var.game_pause == False:
          self.all_timers.countdown('startup_animation')
 
       if self.is_standstill() and self.all_timers.is_empty('startup_flag') == False:
-         if universal_names.game_pause == False:
+         if universal_var.game_pause == False:
             self.all_timers.countdown('startup_flag')
          return True
 
@@ -300,27 +300,27 @@ class Megaman(Character):
 
    def startup_animation(self, surf):
       if self.direction == True:
-         self.display_animation(universal_names.main_sprite, surf, 'step')
+         self.display_animation(universal_var.main_sprite, surf, 'step')
 
       else:
-         self.display_animation(universal_names.main_sprite, surf, 'step', flip=True)
+         self.display_animation(universal_var.main_sprite, surf, 'step', flip=True)
 
 
 
    def idle_animation(self, surf, s=''):
       if self.direction == True:
-         self.display_animation(universal_names.main_sprite, surf, '{}idle'.format(s))
+         self.display_animation(universal_var.main_sprite, surf, '{}idle'.format(s))
       else:
-         self.display_animation(universal_names.main_sprite, surf, '{}idle'.format(s), flip=True)
+         self.display_animation(universal_var.main_sprite, surf, '{}idle'.format(s), flip=True)
 
 
 
    def walk_animation(self, surf, s=''):
       if self.direction == True:
-         self.display_animation(universal_names.main_sprite, surf, '{}walk'.format(s), resume=True)
+         self.display_animation(universal_var.main_sprite, surf, '{}walk'.format(s), resume=True)
 
       else:
-         self.display_animation(universal_names.main_sprite, surf, '{}walk'.format(s), flip=True, resume=True)
+         self.display_animation(universal_var.main_sprite, surf, '{}walk'.format(s), flip=True, resume=True)
 
 
 
@@ -340,21 +340,21 @@ class Megaman(Character):
 
    def jump_animation(self, surf, s=''):
       if self.direction == True:
-         self.display_animation(universal_names.main_sprite, surf, '{}jump'.format(s))
+         self.display_animation(universal_var.main_sprite, surf, '{}jump'.format(s))
       else:
-         self.display_animation(universal_names.main_sprite, surf, '{}jump'.format(s), flip=True)
+         self.display_animation(universal_var.main_sprite, surf, '{}jump'.format(s), flip=True)
 
    def diplay_effects(self, surf):
       if self.all_timers.is_empty('spark_effect') is False:
          self.display_animation('effects', surf, 'spark_effect')
-         if universal_names.game_pause == False:
+         if universal_var.game_pause == False:
             self.all_timers.countdown('spark_effect')
 
    def stun_animation(self, surf):
       if self.direction == True:
-         self.display_animation(universal_names.main_sprite, surf, 'damage')
+         self.display_animation(universal_var.main_sprite, surf, 'damage')
       else:
-         self.display_animation(universal_names.main_sprite, surf, 'damage', flip=True)
+         self.display_animation(universal_var.main_sprite, surf, 'damage', flip=True)
 
 
    def display_megaman(self, surf, s=''):
@@ -378,7 +378,7 @@ class Megaman(Character):
          s = ''
 
       if self.is_alive():
-         self.update_sprite(universal_names.main_sprite)
+         self.update_sprite(universal_var.main_sprite)
 
       if self.invincibility is True:
          self.diplay_effects(surf)
@@ -395,7 +395,7 @@ class Megaman(Character):
          self.all_timers.replenish_timer('invincibility_frame')
 
       else:
-         if universal_names.game_pause != True:
+         if universal_var.game_pause != True:
             self.all_timers.countdown('invincibility_frame')
 
 
@@ -406,18 +406,18 @@ class Megaman(Character):
          self.all_timers.replenish_timer('invincibility')
 
       else:
-         if universal_names.game_pause != True:
+         if universal_var.game_pause != True:
             self.all_timers.countdown('invincibility')
          self.invincibility_frames()
 
 
    def update(self):
       if self.is_alive() and self.is_active:
-         if camera.camera_transitioning() != True and universal_names.game_pause != True:
+         if camera.camera_transitioning() != True and universal_var.game_pause != True:
             self.keys_pressed = pygame.key.get_pressed() #if the camera is not transitioning the I can catch input
 
          self.set_direction()
-         if universal_names.game_pause == False:
+         if universal_var.game_pause == False:
             self.all_timers.countdown('shooting_flag', 20)
          self.check_all_collisions()
 
@@ -427,7 +427,7 @@ class Megaman(Character):
          if self.invincibility is True:
             self.check_invincibility()
 
-         if universal_names.game_pause != True:
+         if universal_var.game_pause != True:
             self.check_key_pressed()
          
          if self.gravity is True and camera.camera_transitioning() != True:
@@ -440,17 +440,17 @@ class Megaman(Character):
       elif self.is_alive() != True:
          self.keys_pressed = None
          if self.all_timers.is_empty('death'):
-            universal_names.game_pause = False
+            universal_var.game_pause = False
             self.is_active = False
             if self.all_timers.is_empty('death_sound') is not True:
                megaman_death_orb.set_orb_active()
-               play_sound('death', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume + 0.1)
+               play_sound('death', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume + 0.1)
                self.all_timers.countdown('death_sound')
 
          else:
             self.all_timers.countdown('death')
             megaman_death_orb.spawn_orbs(self)
-            universal_names.game_pause = True
+            universal_var.game_pause = True
 
          megaman_death_orb.move_orbs()
 
@@ -467,7 +467,7 @@ class Megaman(Character):
             self.respawn_obj.x, self.respawn_obj.y = self.spawn_point[0], self.spawn_point[1] - 15
             self.all_timers.countdown('respawn_animation')
          else:
-            play_sound('megaman_spawn', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume + 0.1)
+            play_sound('megaman_spawn', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume + 0.1)
             self.respawn_obj.is_active = False
             self.health_points = self.health_points_copy
             self.health_bar.points = self.health_points_copy

@@ -49,7 +49,7 @@ def display_text(surf, coordinates, string, width=1, height=1, colour=(255,255,2
             for i in range(len(pixel_array)):
                x = coordinates[0] + (pixel_array[i] * width) + x_pos_offset
                pygame.draw.rect(surf, colour, (x, y, width, height))
-         y += 1 * height
+         y += height
       x_pos_offset += 8 * width
 
 

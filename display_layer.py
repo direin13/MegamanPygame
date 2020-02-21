@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import mega_stack
-import universal_names
+import universal_var
 
 #displayer layer will determine where each sprite surface is displayed, layers go from 0-5 (back-front)
 all_layers = []
@@ -36,5 +36,5 @@ def display_all_sprite_surf(surf, display_collboxes=False, collbox_alpha=100):
          #sprite_surf.display_collboxes(surf)
          pass
       if display_collboxes == True:
-         if sprite_surf.is_on_screen(universal_names.screen_width, universal_names.screen_height):
+         if sprite_surf.is_on_screen(universal_var.screen_width, universal_var.screen_height):
             sprite_surf.display_collboxes(surf, collbox_alpha)

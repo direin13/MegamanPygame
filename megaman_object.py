@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import pygame
-import universal_names
+import universal_var
 from mega_stack import *
 from sprite import *
 pygame.init()
@@ -62,7 +62,7 @@ class Megaman_object(Sprite_surface):
 
 
    def apply_gravity(self):
-      if self.colliding_vert == True or universal_names.game_pause == True:
+      if self.colliding_vert == True or universal_var.game_pause == True:
          return
       
       if -(self.y_vel) >= Megaman_object.gravity_speed:
@@ -124,8 +124,8 @@ class Megaman_object(Sprite_surface):
 
    def display(self, surf, loop=True, game_pause=True):
       if self.sprite_dict != None:
-         self.update_sprite(universal_names.main_sprite, auto_reset=loop, game_pause=game_pause)
-         self.display_animation(universal_names.main_sprite, surf, self.get_sprite(universal_names.main_sprite, self.row)[0])
+         self.update_sprite(universal_var.main_sprite, auto_reset=loop, game_pause=game_pause)
+         self.display_animation(universal_var.main_sprite, surf, self.get_sprite(universal_var.main_sprite, self.row)[0])
          #self.display_collboxes(surf)
 
    def follow(self, x=None, y=None, x_vel=0, y_vel=0):

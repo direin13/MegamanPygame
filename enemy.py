@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import universal_names
+import universal_var
 from sprite import *
 import pygame
 from character import *
@@ -22,7 +22,7 @@ class Enemy(Character):
 
    def respawn(self): #restoring everything
       x, y = self.spawn_point[0], self.spawn_point[1]
-      if (x > 0 and x < universal_names.screen_width) and (y > 0 and y < universal_names.screen_height):
+      if (x > 0 and x < universal_var.screen_width) and (y > 0 and y < universal_var.screen_height):
          self.x, self.y = x - self.width//2, y - self.height//2
 
          self.health_points = self.health_points_copy
@@ -30,7 +30,7 @@ class Enemy(Character):
          self.can_spawn = False
 
    def check_bullet_contact(self, quota=None):
-      collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_names.hitbox, universal_names.hitbox, quota=quota)
+      collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=quota)
       #print(collisions)
       return collisions
 
@@ -39,11 +39,11 @@ class Enemy(Character):
          self.is_active = False
          self.health_points = 0
          self.can_spawn = True
-      elif universal_names.game_pause == True:
+      elif universal_var.game_pause == True:
          pass
       else:
 
-         if self.is_on_screen(universal_names.screen_width, universal_names.screen_height) and universal_names.game_reset != True:
+         if self.is_on_screen(universal_var.screen_width, universal_var.screen_height) and universal_var.game_reset != True:
             if self.is_alive():
                self.is_active = True
                self.move(-1, 0)
@@ -59,7 +59,7 @@ class Enemy(Character):
             if self.can_spawn == True:
                self.respawn()
 
-            elif (x < 0 or x > universal_names.screen_width) or (y < 0 or y > universal_names.screen_height): #if spawn point is off screen
+            elif (x < 0 or x > universal_var.screen_width) or (y < 0 or y > universal_var.screen_height): #if spawn point is off screen
                self.can_spawn = True
 
          if self.all_timers.is_empty('explosion_animation'): #explosion when enemy dies
@@ -75,11 +75,11 @@ class Met(Enemy):
       damage_points = 20
       gravity = False
       is_active = True
-      idle_enemy = [universal_names.enemies['met_2']]
-      explosion_enemy = [universal_names.effect_images['explosion_1'], universal_names.effect_images['explosion_2'], universal_names.effect_images['explosion_3']]
-      met = Sprite(universal_names.main_sprite, 200, 200, 40, 30, [('idle', idle_enemy, 1),
+      idle_enemy = [universal_var.enemies['met_2']]
+      explosion_enemy = [universal_var.effect_images['explosion_1'], universal_var.effect_images['explosion_2'], universal_var.effect_images['explosion_3']]
+      met = Sprite(universal_var.main_sprite, 200, 200, 40, 30, [('idle', idle_enemy, 1),
                                                                             ('explosion', explosion_enemy, 15)])
-      met_hit_box = Collision_box(universal_names.hitbox, 400, 290, 36, 30, (240, 240, 0), x_offset=2)
+      met_hit_box = Collision_box(universal_var.hitbox, 400, 290, 36, 30, (240, 240, 0), x_offset=2)
 
       super().__init__(ID, x, y, [met], [met_hit_box], is_active, 40, 30, display_layer, gravity, direction, max_x_vel, health_points, damage_points)
       Enemy.add_to_class_lst(self, Enemy.all_sprite_surfaces, ID)
@@ -89,8 +89,8 @@ class Met(Enemy):
       if self.is_alive():
          Megaman_object.display(self, surf)
       else:
-         self.update_sprite(universal_names.main_sprite)
-         self.display_animation(universal_names.main_sprite, surf, 'explosion')
+         self.update_sprite(universal_var.main_sprite)
+         self.display_animation(universal_var.main_sprite, surf, 'explosion')
 
    def update(self):
       pshooter_collisions = self.check_bullet_contact(quota=1)
@@ -98,7 +98,7 @@ class Met(Enemy):
          p = pshooter_collisions.pop()
          self.reduce_hp(p.damage_points)
          p.is_active = False
-         play_sound('impact_p', universal_names.megaman_sounds, channel=1, volume=universal_names.sfx_volume - 0.1)
+         play_sound('impact_p', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.1)
 
       Enemy.update(self)
 
@@ -107,10 +107,10 @@ class Lasor(Megaman_object):
    def __init__(self, ID, x, y, start_offset, x_vel):
       width = 1400
       height = 42
-      img = Sprite(universal_names.main_sprite, 0, 0, width, height, [('idle', [universal_names.effect_images['lasor']], 1)])
+      img = Sprite(universal_var.main_sprite, 0, 0, width, height, [('idle', [universal_var.effect_images['lasor']], 1)])
       sprites = [img]
       is_active = False
-      coll_boxes = [Collision_box(universal_names.hitbox, 0, 0, width, height, (240, 240, 0))]
+      coll_boxes = [Collision_box(universal_var.hitbox, 0, 0, width, height, (240, 240, 0))]
       display_layer = 2
       gravity = False
       direction = False
@@ -136,18 +136,18 @@ class Lasor(Megaman_object):
       self.lasor_sound = True
 
    def update(self):
-      if camera.camera_transitioning() == True or universal_names.game_pause == True or universal_names.debug == True:
+      if camera.camera_transitioning() == True or universal_var.game_pause == True or universal_var.debug == True:
          pass
       else:
-         if (self.y + self.height > 0) and (self.y < universal_names.screen_height):
+         if (self.y + self.height > 0) and (self.y < universal_var.screen_height):
             self.all_timers.countdown('start_offset')
 
          if self.all_timers.is_empty('start_offset'):
             self.is_active = True
-            if (self.x_vel >= 0 and self.x + self.width <= universal_names.screen_width) or (self.x_vel < 0 and self.x > 0):
+            if (self.x_vel >= 0 and self.x + self.width <= universal_var.screen_width) or (self.x_vel < 0 and self.x > 0):
                self.move(self.x_vel)
             if self.lasor_sound == True:
-               play_sound('lasor', universal_names.megaman_sounds, channel=3, volume=universal_names.sfx_volume)
+               play_sound('lasor', universal_var.megaman_sounds, channel=3, volume=universal_var.sfx_volume)
                self.lasor_sound = False
 
       Sprite_surface.update(self)

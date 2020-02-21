@@ -2,7 +2,7 @@
 import pygame
 from mega_stack import *
 import timer
-import universal_names
+import universal_var
 
 class Sprite(object):
 
@@ -189,7 +189,7 @@ class Sprite_surface(object):
       #if quota = n, then function will return break and true when n collisions are found, if quota = None, every element in list will be check
       all_collisions = Stack()
       for sprite_surf in lst:
-         if (sprite_surf.is_on_screen(universal_names.screen_width, universal_names.screen_height) 
+         if (sprite_surf.is_on_screen(universal_var.screen_width, universal_var.screen_height) 
             and sprite_surf != self and sprite_surf.is_active == True 
             and self.collision(sprite_surf, coll_box_self, coll_box_other) == True):
 
@@ -206,7 +206,7 @@ class Sprite_surface(object):
 
 
    def update_sprite(self, sprite, auto_reset=True, game_pause=True): # Use to move onto next sprite frame
-      if not(game_pause and universal_names.game_pause):
+      if not(game_pause and universal_var.game_pause):
          sprite = self.get_sprite(sprite)
          sprite.update(auto_reset)
 
@@ -248,10 +248,10 @@ class Sprite_surface(object):
          return True
       else: #check if main coll box on screen
          try:
-            x = self.collbox_dict[universal_names.hitbox].x
-            y = self.collbox_dict[universal_names.hitbox].y
-            width = self.collbox_dict[universal_names.hitbox].width
-            height = self.collbox_dict[universal_names.hitbox].height
+            x = self.collbox_dict[universal_var.hitbox].x
+            y = self.collbox_dict[universal_var.hitbox].y
+            width = self.collbox_dict[universal_var.hitbox].width
+            height = self.collbox_dict[universal_var.hitbox].height
 
             if (x - width//2 < screen_width and x + width//2 > 0) and (y - height//2 < screen_height and y + height//2 > 0):
                return True

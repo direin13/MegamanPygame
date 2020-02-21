@@ -2,7 +2,7 @@
 import pygame
 from sprite import *
 from megaman_object import *
-import universal_names
+import universal_var
 import timer
 
 all_orbs = []
@@ -15,10 +15,10 @@ def init(sprite_surf):
    global all_orbs
    global orb_timers
 
-   orb_animation = [universal_names.effect_images['death_orb_1'], universal_names.effect_images['death_orb_2'], universal_names.effect_images['death_orb_3'],
-              universal_names.effect_images['death_orb_4']]
+   orb_animation = [universal_var.effect_images['death_orb_1'], universal_var.effect_images['death_orb_2'], universal_var.effect_images['death_orb_3'],
+              universal_var.effect_images['death_orb_4']]
    for i in range(0, 12):
-      orb_sprite = Sprite(universal_names.main_sprite, 200, 200, 40, 40, [('orb', orb_animation, 20)])
+      orb_sprite = Sprite(universal_var.main_sprite, 200, 200, 40, 40, [('orb', orb_animation, 20)])
       orb = Megaman_object('orb', sprite_surf.x, sprite_surf.y, sprites=[orb_sprite], width=40, height=40, display_layer=4, is_active=False)
       all_orbs.append(orb)
    orb_timers.add_ID('wave_1', 30)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sprite
 import megaman_object
-import universal_names
+import universal_var
 import enemy
 import camera
 import gate
@@ -48,8 +48,8 @@ enemies = [
 n = 0
 for lst in background:
    x, y, width, height = lst[0][0], lst[1][1], lst[1][0], lst[1][1]
-   frames = [universal_names.background_images[i] for i in lst[2][0]]
-   s = sprite.Sprite(universal_names.main_sprite, x, y, width, height, 
+   frames = [universal_var.background_images[i] for i in lst[2][0]]
+   s = sprite.Sprite(universal_var.main_sprite, x, y, width, height, 
       active_frames=[('map_{}'.format(n), frames, lst[2][1])])
    obj = megaman_object.Megaman_object('map_{}'.format(n), lst[0][0], lst[0][1], sprites=[s], coll_boxes=None, width=lst[1][0], height=lst[1][1], display_layer=0)
    n += 1
@@ -58,7 +58,7 @@ for lst in background:
 for lst in coll_boxes:
    x, y, width, height = lst[0][0], lst[0][1], lst[1][0], lst[1][1]
    objType = lst[2]
-   c = [sprite.Collision_box(universal_names.hitbox, x, y, width, height)]
+   c = [sprite.Collision_box(universal_var.hitbox, x, y, width, height)]
    ground = megaman_object.Megaman_object('platform', x, y, sprites=None, coll_boxes=c,
                   width=100, height=100, display_layer=5)
    if objType == 'p':

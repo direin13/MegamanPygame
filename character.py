@@ -22,7 +22,7 @@ class Character(Megaman_object):
       self.all_timers.add_ID('grounded_sound', 0)
 
    def knock_back(self, speed):
-      if camera.camera_transitioning() != True and universal_names.game_pause != True:
+      if camera.camera_transitioning() != True and universal_var.game_pause != True:
          self.x_vel = speed
          if self.direction == True:
             self.x -= self.x_vel
@@ -55,15 +55,15 @@ class Character(Megaman_object):
 
 
    def check_ground_collision(self):
-      collision = self.check_collision_lst(Megaman_object.platforms, universal_names.feet, universal_names.hitbox, quota=1)
+      collision = self.check_collision_lst(Megaman_object.platforms, universal_var.feet, universal_var.hitbox, quota=1)
       if collision.is_empty() != True:
          platform = collision.pop()
-         self.push_vert(platform, universal_names.feet, universal_names.hitbox)
+         self.push_vert(platform, universal_var.feet, universal_var.hitbox)
          self.is_grounded = True
          self.gravity = False
 
          if self.all_timers.is_empty('grounded_sound') != True:
-            play_sound('grounded', universal_names.megaman_sounds, channel=0, volume=universal_names.sfx_volume)
+            play_sound('grounded', universal_var.megaman_sounds, channel=0, volume=universal_var.sfx_volume)
             self.all_timers.countdown('grounded_sound')
 
       else:
@@ -72,15 +72,15 @@ class Character(Megaman_object):
 
 
    def check_ceiling_collision(self):
-      collision = self.check_collision_lst(Megaman_object.platforms, universal_names.head, universal_names.hitbox, quota=1)
+      collision = self.check_collision_lst(Megaman_object.platforms, universal_var.head, universal_var.hitbox, quota=1)
       if collision.is_empty() != True:
          ceiling = collision.pop()
          self.gravity = True
-         self.push_vert(ceiling, universal_names.head, universal_names.hitbox)
+         self.push_vert(ceiling, universal_var.head, universal_var.hitbox)
 
 
    def check_wall_collision(self):
-      collisions = self.check_collision_lst(Megaman_object.platforms, universal_names.hitbox, universal_names.hitbox, quota=4)
+      collisions = self.check_collision_lst(Megaman_object.platforms, universal_var.hitbox, universal_var.hitbox, quota=4)
       if collisions.is_empty() != True:
          for wall in collisions:
-            self.push_hori(wall, universal_names.hitbox, universal_names.hitbox)
+            self.push_hori(wall, universal_var.hitbox, universal_var.hitbox)

@@ -1,6 +1,6 @@
 #!usr/bin/env python
 from sprite import *
-import universal_names
+import universal_var
 import timer
 import bar
 
@@ -21,7 +21,7 @@ class Camera(object):
       xdist = self.x - self.sprite_surf.x
       ydist = self.y - self.sprite_surf.y
 
-      if self.sprite_surf.x_vel == 0 and universal_names.debug != True:
+      if self.sprite_surf.x_vel == 0 and universal_var.debug != True:
          self.all_timers.replenish_timer('x_static')
       else:
          self.all_timers.countdown('x_static')
@@ -33,7 +33,7 @@ class Camera(object):
             if obj.ID != 'megaman':
                obj.spawn_point[0] += xdist
 
-      if universal_names.debug  == True:
+      if universal_var.debug  == True:
          for obj in Sprite_surface.all_sprite_surfaces:
             if ydist != 0 and isinstance(obj, bar.Bar) != True:
                obj.y += ydist
@@ -41,9 +41,9 @@ class Camera(object):
                   obj.spawn_point[1] += ydist
                
       if xdist != 0 and self.all_timers.is_empty('x_static'):
-         universal_names.world_location[0] -= xdist
-      if universal_names.debug == True:
-         universal_names.world_location[1] -= ydist
+         universal_var.world_location[0] -= xdist
+      if universal_var.debug == True:
+         universal_var.world_location[1] -= ydist
 
 
 
@@ -70,12 +70,12 @@ class Camera(object):
             if obj != self.sprite_surf:
                obj.spawn_point[0] += x
                obj.spawn_point[1] += y
-      universal_names.world_location[0] -= x
-      universal_names.world_location[1] -= y
+      universal_var.world_location[0] -= x
+      universal_var.world_location[1] -= y
 
    def update_position(self):
       if self.is_active != True:
-         self.x, self.y = universal_names.camera_x, universal_names.camera_y
+         self.x, self.y = universal_var.camera_x, universal_var.camera_y
 
       self.is_active = False
 #--------------------------------------
@@ -84,7 +84,7 @@ class Camera_box(Sprite_surface):
    all_camera_box = []
    
    def __init__(self, ID, x, y, width, height, display_layer=1, colour=(62, 48, 255)):
-      coll_boxes = [Collision_box(universal_names.hitbox, 300, 400, width, height, colour=colour)]
+      coll_boxes = [Collision_box(universal_var.hitbox, 300, 400, width, height, colour=colour)]
       super().__init__(ID, x, y, None, coll_boxes, display_layer)
       Camera_box.add_to_class_lst(self, Camera_box.all_camera_box, ID)
 
@@ -107,16 +107,16 @@ class Transition_box(Sprite_surface): #Use to transition the full screen in a di
          width = size
          height = 10
 
-      coll_boxes = [Collision_box(universal_names.hitbox, 300, 400, width, height, colour=(200, 255, 100))]
+      coll_boxes = [Collision_box(universal_var.hitbox, 300, 400, width, height, colour=(200, 255, 100))]
       super().__init__(ID, x, y, None, coll_boxes, display_layer)
       Transition_box.add_to_class_lst(self, Transition_box.all_transition_box, ID)
       self.all_timers = timer.Timer()
       self.original_direction = direction
       self.direction = direction
       if direction == 'left' or direction == 'right':
-         Transition_box.all_timers.add_ID(ID, universal_names.screen_width) #Timer for how long the transition should be
+         Transition_box.all_timers.add_ID(ID, universal_var.screen_width) #Timer for how long the transition should be
       else:
-         Transition_box.all_timers.add_ID(ID, universal_names.screen_height)
+         Transition_box.all_timers.add_ID(ID, universal_var.screen_height)
 
    def switch_dir(self):
       if self.direction == 'left':
@@ -138,13 +138,13 @@ class Transition_box(Sprite_surface): #Use to transition the full screen in a di
 #--Functions--
 
 def check_camerabox_collision(sprite_surf):
-   collisions = sprite_surf.check_collision_lst(Camera_box.all_camera_box, universal_names.hitbox, universal_names.hitbox, quota=1)
+   collisions = sprite_surf.check_collision_lst(Camera_box.all_camera_box, universal_var.hitbox, universal_var.hitbox, quota=1)
    return collisions.is_empty() != True
 
 
 
 def check_transitionbox_collision(sprite_surf):
-   collisions = sprite_surf.check_collision_lst(Transition_box.all_transition_box, universal_names.hitbox, universal_names.hitbox, quota=1) #returns stack of 1 collision
+   collisions = sprite_surf.check_collision_lst(Transition_box.all_transition_box, universal_var.hitbox, universal_var.hitbox, quota=1) #returns stack of 1 collision
    if collisions.is_empty() != True and Transition_box.in_transition_mode != True:
       tbox = collisions.pop()
       Transition_box.current_box = tbox
@@ -157,29 +157,29 @@ def transition_screen(camera):
    tbox = Transition_box.current_box
    if Transition_box.all_timers.is_empty('transition_start') != True:
       Transition_box.all_timers.countdown('transition_start') #Wait for a little pause before transitioning
-      universal_names.game_pause = True
+      universal_var.game_pause = True
 
    else:
       if Transition_box.all_timers.is_empty(tbox.ID) != True: #If timer is not empty keep transitioning
-         universal_names.game_pause = False
+         universal_var.game_pause = False
          camera.move(Transition_box.transition_speed, tbox.direction)
 
          if tbox.direction == 'right':  #move megaman
-            camera.sprite_surf.follow(x=tbox.collbox_dict[universal_names.hitbox].x + 30, x_vel=2)
+            camera.sprite_surf.follow(x=tbox.collbox_dict[universal_var.hitbox].x + 30, x_vel=2)
          elif tbox.direction == 'left':
-            camera.sprite_surf.follow(x=(tbox.collbox_dict[universal_names.hitbox].x - camera.sprite_surf.width - 30), x_vel=2)
+            camera.sprite_surf.follow(x=(tbox.collbox_dict[universal_var.hitbox].x - camera.sprite_surf.width - 30), x_vel=2)
          elif tbox.direction == 'up':
-            camera.sprite_surf.follow(y=(tbox.collbox_dict[universal_names.hitbox].y - camera.sprite_surf.height), y_vel=2)
+            camera.sprite_surf.follow(y=(tbox.collbox_dict[universal_var.hitbox].y - camera.sprite_surf.height), y_vel=2)
          else:
-            camera.sprite_surf.follow(y=tbox.collbox_dict[universal_names.hitbox].y + 25, y_vel=2)
+            camera.sprite_surf.follow(y=tbox.collbox_dict[universal_var.hitbox].y + 25, y_vel=2)
 
          Transition_box.all_timers.countdown(tbox.ID, countdown_speed=Transition_box.transition_speed)
       else:
          if Transition_box.all_timers.is_empty('transition_end') != True:
             Transition_box.all_timers.countdown('transition_end') #wait for a little pause again before finishing transition
-            universal_names.game_pause = True
+            universal_var.game_pause = True
          else:
-            universal_names.game_pause = False
+            universal_var.game_pause = False
             Transition_box.in_transition_mode = False
             tbox.switch_dir()
             Transition_box.all_timers.replenish_timer('transition_start')

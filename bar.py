@@ -2,15 +2,15 @@
 import pygame
 import sprite
 import megaman_object
-import universal_names
+import universal_var
 
 class Bar(megaman_object.Megaman_object):
    def __init__(self, ID, x, y, points, colour=(255,0,0)):
       self.scale_factor = [6, 3] #[0] = width, [1] = height
       width = 4
       height = 56
-      bar_outline = sprite.Sprite(universal_names.main_sprite, x, y, width * self.scale_factor[0], height * self.scale_factor[1], 
-                                 [(universal_names.main_sprite, [universal_names.effect_images['bar']], 1)])
+      bar_outline = sprite.Sprite(universal_var.main_sprite, x, y, width * self.scale_factor[0], height * self.scale_factor[1], 
+                                 [(universal_var.main_sprite, [universal_var.effect_images['bar']], 1)])
 
       super().__init__(ID, x, y, [bar_outline], None, True, width, height)
       self.display_layer = 5
@@ -33,7 +33,7 @@ class Bar(megaman_object.Megaman_object):
 
 
    def display(self, surf):
-      if universal_names.game_reset != True:
+      if universal_var.game_reset != True:
          if self.points <= 0: #If points has dropped to zero then I don't want it to go into minus
             self.points = 0
             self.rect_height = 0

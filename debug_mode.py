@@ -4,7 +4,7 @@ import pygame
 import sprite
 import bit_text
 import megaman_object
-import universal_names
+import universal_var
 
 all_timers = timer.Timer()
 all_timers.add_ID('speed_rate', 10)
@@ -19,7 +19,7 @@ def debug(screen):
    global point_dist
    global point_dist_active
 
-   universal_names.camera.sprite_surf = cursor
+   universal_var.camera.sprite_surf = cursor
    pygame.draw.rect(screen, (255,255,255), (300 - cursor.width//2, 300 - cursor.height//2, cursor.width, cursor.height), 2)
    pygame.draw.rect(screen, (255,255,255), (300, 300, cursor.width//2, cursor.height//2))
    hud_background.set_alpha(220)
@@ -27,8 +27,8 @@ def debug(screen):
    x = 0
    y = 470
    screen.blit(hud_background, (x, y))
-   bit_text.display_text(screen, (x + 10, y + 20), 'co-ordinates: {},{}'.format(universal_names.world_location[0] + 300, 
-                                                                                 universal_names.world_location[1] + 300), 2, 2, (0,0,0))
+   bit_text.display_text(screen, (x + 10, y + 20), 'co-ordinates: {},{}'.format(universal_var.world_location[0] + 300, 
+                                                                                 universal_var.world_location[1] + 300), 2, 2, (0,0,0))
    bit_text.display_text(screen, (x + 10, y + 50), 'cursor speed: {}'.format(cursor_speed), 2, 2, (0,0,0))
    bit_text.display_text(screen, (x + 10, y +80), 'point distance: {}, {}'.format(point_dist[0], 
                                                                               point_dist[1]), 2, 2, (0,0,0))
