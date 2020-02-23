@@ -4,10 +4,17 @@ def install(name):
     subprocess.call(['pip', 'install', name])
 
 import universal_var
-try:
-   import pygame
-except ModuleNotFoundError:
-   install('pygame')
+
+installed = False
+waiting_to_install = False
+while installed != True:
+   try:
+      import pygame
+      installed = True
+   except ModuleNotFoundError:
+      if waiting_to_install == False:
+         install('pygame')
+         waiting_to_install = True
 
 import game_setup
 from megaman import *
@@ -23,7 +30,7 @@ import timer
 import bar
 import bit_text
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
+#os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
 
 pygame.init()
 pygame.font.init()
