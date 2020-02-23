@@ -9,7 +9,7 @@ import gate
 background = [
               [(0,0), (2400, 600), (['map_1'], 30)], [(2399,0), (1800, 600), (['map_2'], 30)], [(3600,600), (600, 600), (['map_3'], 30)],
               [(2400,1200), (1800, 600), (['map_4'], 30)], [(2400,1800), (600, 1800), (['map_5'], 30)],
-               [(2400,3600), (3000, 600), (['map_6'], 30)]
+              [(2400,3600), (3000, 600), (['map_6'], 30)]
               ]
 
 coll_boxes = [
@@ -38,9 +38,12 @@ transition_boxes = [
                     ]
 
 enemies = [
-           [(400,290), 'met'], [(270,170), 'met'], [(1212,413), 'met'], [(3735,373), 'met'], [(4196,823), 'lasor', 66, -6],
-           [(3592-1400,1072), 'lasor', 173, 6], [(2392-1400,1950), 'lasor', 75, 6], [(3074,2187), 'lasor', 55, -6], 
-           [(2393-1400,2539), 'lasor', 15, 6], [(3074,2661), 'lasor', 65, -6], [(2393-1400,2783), 'lasor', 95, 6]
+           [(400,290), 'met', True, 100, 50], [(1212,413), 'met', False, 100, 50], [(3735,370), 'met', False, 130, 50], 
+           [(4196,823), 'lasor', 66, -6], [(3592-1400,1072), 'lasor', 173, 6], [(2392-1400,1950), 'lasor', 75, 6], [(3074,2187), 'lasor', 55, -6], 
+           [(2393-1400,2539), 'lasor', 15, 6], [(3074,2661), 'lasor', 65, -6], [(2393-1400,2783), 'lasor', 95, 6], [(2717,620), 'det', 30, 73, 150, 600],
+           [(2717,620), 'det', 130, 57, 150, 600], [(3059,620), 'det', 20, 70, 150, 600], [(3059,620), 'det', 130, 70, 150, 600],
+           [(3347,620), 'det', 25, 67, 170, 600], [(3347,620), 'det', 130, 77, 170, 600],
+           [(3289,3755), 'met', False, 160, 50]
            ]
 
 
@@ -70,7 +73,12 @@ for lst in enemies:
    objType = lst[1]
 
    if objType == 'met':
-      enemy.Met('met', x, y)
+      direction, trigger_width, trigger_height = lst[2], lst[3], lst[4]
+      enemy.Met('met', x, y, direction, trigger_width, trigger_height)
+
+   if objType == 'det':
+      start_time, time_to_apex, trigger_width, trigger_height = lst[2], lst[3], lst[4], lst[5]
+      enemy.Detarnayappa('Detarnayappa', x, y, start_time, time_to_apex, trigger_width, trigger_height)
 
    if objType == 'lasor':
       start_offset, x_vel = lst[2], lst[3]

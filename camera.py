@@ -3,6 +3,7 @@ from sprite import *
 import universal_var
 import timer
 import bar
+import projectile
 
 class Camera(object):
    def __init__(self, x, y, sprite_surf=None):
@@ -32,6 +33,8 @@ class Camera(object):
             obj.x += xdist
             if obj.ID != 'megaman':
                obj.spawn_point[0] += xdist
+            if isinstance(obj, projectile.Projectile):
+               obj.init_x += xdist
 
       if universal_var.debug  == True:
          for obj in Sprite_surface.all_sprite_surfaces:
@@ -70,6 +73,9 @@ class Camera(object):
             if obj != self.sprite_surf:
                obj.spawn_point[0] += x
                obj.spawn_point[1] += y
+            if isinstance(obj, projectile.Projectile):
+               obj.init_x += x
+               obj.init_y += y
       universal_var.world_location[0] -= x
       universal_var.world_location[1] -= y
 

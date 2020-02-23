@@ -7,12 +7,10 @@ class Timer(object):
       self.all_timers = {}
 
    def add_ID(self, ID, amount):
-      #--this will add a new ID into the dictionaries, be wary of ID name choices, as they can be overwritten
       self.all_timers[ID] = amount
       self.timer_states[ID] = amount
 
    def countdown(self, ID, amount=None, countdown_speed=1, loop=False):
-      #--will subtract 1 from the ID in the dictionary and return True if ID reaches 0 to imitate a real timer, can loop timer
       if ID not in self.all_timers:
          self.add_ID(ID, amount)
 

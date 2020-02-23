@@ -24,10 +24,12 @@ screen_width = 600
 
 screen_height = 600
 
-checkpoint = [0, 0] #change this to change checkpoint
-world_location = [0, 0] #This will basically tell the game how to get back to the checkpoint
+checkpoint = [0, 0]
+world_location = [0, 0]
 
 megaman_images = load_images('megaman_sprites')
+
+projectiles = load_images('projectiles')
 
 background_images = load_images('background')
 

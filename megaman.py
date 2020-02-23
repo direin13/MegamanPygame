@@ -14,6 +14,7 @@ import megaman_death_orb
 import camera
 
 class Megaman(Character):
+   all_sprite_surfaces = []
    def __init__(self, ID, x, y, controls=None):
 
       width = 90
@@ -23,7 +24,7 @@ class Megaman(Character):
       health_points = 100
       is_active = False
       gravity = False
-      m_run_speed = 37
+      m_run_speed = 32
       m_idle_speed = 150
       direction = True
 
@@ -88,6 +89,8 @@ class Megaman(Character):
       megaman_death_orb.init(self) #These orbs are shot out when megaman dies
       for i in range(0, 3): #--making p_shooter bullets
          P_shooter('p_shooter', 0, 0)
+
+      Megaman.add_to_class_lst(self, Megaman.all_sprite_surfaces, ID)
 
 
 
@@ -221,11 +224,11 @@ class Megaman(Character):
 
          #--right
          if self.direction == True:
-            P_shooter.fire(self.x + self.width - 15, self.y + self.height//4, P_shooter.x_vel)
+            P_shooter.set(self.x + self.width - 15, self.y + self.height//4, vel=50, angle=0)
 
          #--left
          else:
-            P_shooter.fire(self.x + 4, self.y + self.height//4, -P_shooter.x_vel)
+            P_shooter.set(self.x + 4, self.y + self.height//4, vel=50, angle=180)
 
 
    def check_key_pressed(self):

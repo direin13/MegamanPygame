@@ -35,6 +35,11 @@ class Sprite(object):
    def get_frame_speed(self, frame_name):
       return self.all_frame_speed[frame_name]
 
+   def set_animation(self, frame_name, resume=False):
+      self.current_animation = frame_name
+      if resume == False:
+         self.current_frame = 0
+
    def display_animation(self, surf, frame_name, x_offset=0, y_offset=0, flip=False, resume=False):
       #--displays animations from 'frame name' in self.active_frames--
       if self.active_frames != None:
@@ -210,8 +215,12 @@ class Sprite_surface(object):
          sprite = self.get_sprite(sprite)
          sprite.update(auto_reset)
 
-   def display_animation(self, sprite_obj, surf, frame_name, x_offset=0, y_offset=0, flip=False, resume=False):
-      self.get_sprite(sprite_obj).display_animation(surf, frame_name, x_offset, y_offset, flip, resume)
+   def display_animation(self, sprite_obj_ID, surf, frame_name, x_offset=0, y_offset=0, flip=False, resume=False):
+      self.get_sprite(sprite_obj_ID).display_animation(surf, frame_name, x_offset, y_offset, flip, resume)
+
+   def set_animation(self, sprite_obj_ID, frame_name, resume=False):
+      sprite = self.get_sprite(sprite_obj_ID)
+      sprite.set_animation(frame_name, resume)
 
 
    def get_sprite(self, sprite_obj, row=None):

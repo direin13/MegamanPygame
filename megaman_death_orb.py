@@ -4,6 +4,7 @@ from sprite import *
 from megaman_object import *
 import universal_var
 import timer
+import projectile
 
 all_orbs = []
 orb = {}

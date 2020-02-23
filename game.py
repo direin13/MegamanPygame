@@ -14,7 +14,7 @@ import timer
 import bar
 import bit_text
 
-#os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
 
 pygame.init()
 pygame.font.init()
@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 
 font = pygame.font.SysFont(None, 20)
 
-songs = music_player.Song_player('1', ['audio/Snake man.mp3'], volume=0.6)
+songs = music_player.Song_player('1', ['audio/Concrete man.mp3'], volume=0.6)
 
 screen = pygame.display.set_mode((universal_var.screen_width, universal_var.screen_height))
 
