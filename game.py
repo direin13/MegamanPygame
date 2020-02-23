@@ -1,5 +1,14 @@
+import subprocess
+
+def install(name):
+    subprocess.call(['pip', 'install', name])
+
 import universal_var
-import pygame
+try:
+   import pygame
+except ModuleNotFoundError:
+   install('pygame')
+
 import game_setup
 from megaman import *
 import music_player
@@ -14,7 +23,7 @@ import timer
 import bar
 import bit_text
 
-#os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
 
 pygame.init()
 pygame.font.init()
@@ -184,4 +193,4 @@ while game:
 
 
    pygame.display.update()
-   clock.tick(75)
+   clock.tick_busy_loop(75)

@@ -224,11 +224,11 @@ class Megaman(Character):
 
          #--right
          if self.direction == True:
-            P_shooter.set(self.x + self.width - 15, self.y + self.height//4, vel=50, angle=0)
+            P_shooter.set(self.x + self.width - 15, self.y + self.height//4, vel=60, angle=0)
 
          #--left
          else:
-            P_shooter.set(self.x + 4, self.y + self.height//4, vel=50, angle=180)
+            P_shooter.set(self.x + 4, self.y + self.height//4, vel=60, angle=180)
 
 
    def check_key_pressed(self):

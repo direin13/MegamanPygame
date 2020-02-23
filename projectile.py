@@ -34,7 +34,6 @@ class Projectile(sprite.Sprite_surface):
 
    def update(self):
       if self.launched and self.is_on_screen(universal_var.screen_width, universal_var.screen_height):
-         self.is_active = True
          if universal_var.game_pause != True and universal_var.game_reset != True:
             self.move(self.vel, self.angle, self.gravity)
             self.time_now += 15
