@@ -1,21 +1,19 @@
 import subprocess
+import sys
 
 def install(name):
-    subprocess.call(['pip', 'install', name])
+   if sys.platform == 'win32':
+      subprocess.check_call(['pip', 'install', name])
+   elif sys.platform == 'linux' or sys.platform == 'linux2':
+      subprocess.check_call(["sudo", "apt-get", "install" "python-{}".format(name)])
+
+try:
+   import pygame
+except ModuleNotFoundError:
+   install('pygame')
+   import pygame
 
 import universal_var
-
-installed = False
-waiting_to_install = False
-while installed != True:
-   try:
-      import pygame
-      installed = True
-   except ModuleNotFoundError:
-      if waiting_to_install == False:
-         install('pygame')
-         waiting_to_install = True
-
 import game_setup
 from megaman import *
 import music_player
