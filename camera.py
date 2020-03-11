@@ -42,6 +42,8 @@ class Camera(object):
                obj.y += ydist
                if obj.ID != 'megaman':
                   obj.spawn_point[1] += ydist
+               if isinstance(obj, projectile.Projectile):
+                  obj.init_y += ydist
                
       if xdist != 0 and self.all_timers.is_empty('x_static'):
          universal_var.world_location[0] -= xdist
@@ -196,9 +198,11 @@ def update(camera):
    if len(camera.sprite_surf.collbox_dict) != 0:
       if check_camerabox_collision(camera.sprite_surf) != True and Transition_box.in_transition_mode != True and camera.sprite_surf.is_active:
          camera.follow(camera.sprite_surf)
-      check_transitionbox_collision(camera.sprite_surf)
-      if Transition_box.current_box != None and Transition_box.in_transition_mode == True:
-         transition_screen(camera)
+
+      if universal_var.game_reset != True:
+         check_transitionbox_collision(camera.sprite_surf)
+         if Transition_box.current_box != None and Transition_box.in_transition_mode == True:
+            transition_screen(camera)
    else:
       camera.follow(camera.sprite_surf)
    camera.update_position()

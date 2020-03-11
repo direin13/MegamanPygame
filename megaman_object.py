@@ -24,6 +24,7 @@ class Megaman_object(Sprite_surface):
       self.colliding_hori = False
       self.colliding_vert = False
       self.row = 0 # for displaying the 0th row for default display function
+      self.sprite_loop = True
 
 
    def push_hori(self, other, coll_box_self, coll_box_other):
@@ -68,8 +69,6 @@ class Megaman_object(Sprite_surface):
       if -(self.y_vel) >= Megaman_object.gravity_speed:
          self.y += Megaman_object.gravity_speed
       else:
-         if self.y_vel >= 0:
-            self.y_vel = 0
 
          self.all_timers.countdown('y_accel_flag', 4, loop=True)
          if self.all_timers.is_empty('y_accel_flag') != True:
@@ -122,9 +121,10 @@ class Megaman_object(Sprite_surface):
 
 
 
-   def display(self, surf, loop=True, game_pause=True):
+   def display(self, surf, game_pause=True):
       if self.sprite_dict != None:
-         self.update_sprite(universal_var.main_sprite, auto_reset=loop, game_pause=game_pause)
+         if (game_pause and universal_var.game_pause != True) or (game_pause == False):
+            self.update_sprite(universal_var.main_sprite, auto_reset=self.sprite_loop)
          self.display_animation(universal_var.main_sprite, surf, self.get_sprite(universal_var.main_sprite, self.row)[0])
          #self.display_collboxes(surf)
 

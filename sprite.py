@@ -2,7 +2,6 @@
 import pygame
 from mega_stack import *
 import timer
-import universal_var
 
 class Sprite(object):
 
@@ -35,11 +34,6 @@ class Sprite(object):
    def get_frame_speed(self, frame_name):
       return self.all_frame_speed[frame_name]
 
-   def set_animation(self, frame_name, resume=False):
-      self.current_animation = frame_name
-      if resume == False:
-         self.current_frame = 0
-
    def display_animation(self, surf, frame_name, x_offset=0, y_offset=0, flip=False, resume=False):
       #--displays animations from 'frame name' in self.active_frames--
       if self.active_frames != None:
@@ -54,8 +48,6 @@ class Sprite(object):
          if flip == True:
             frame = pygame.transform.flip(frame, True, False)
          surf.blit(frame, (self.x + x_offset, self.y + y_offset))
-      else:
-         print('you need "active_frames" to use display_animation()')
 
    def update(self, auto_reset=True):
       #--used to cycle through the sprite's animations
@@ -72,8 +64,6 @@ class Sprite(object):
                self.current_frame = 0
             else:
                self.current_frame = len(self.all_frames[self.current_animation]) - 1
-      else:
-         print('you need "active_frames" to use update()')
 
 #--------------------------------------------------------------------
 
@@ -194,8 +184,7 @@ class Sprite_surface(object):
       #if quota = n, then function will return break and true when n collisions are found, if quota = None, every element in list will be check
       all_collisions = Stack()
       for sprite_surf in lst:
-         if (sprite_surf.is_on_screen(universal_var.screen_width, universal_var.screen_height) 
-            and sprite_surf != self and sprite_surf.is_active == True 
+         if (sprite_surf != self and sprite_surf.is_active == True 
             and self.collision(sprite_surf, coll_box_self, coll_box_other) == True):
 
             all_collisions.push(sprite_surf)
@@ -210,10 +199,9 @@ class Sprite_surface(object):
 
 
 
-   def update_sprite(self, sprite, auto_reset=True, game_pause=True): # Use to move onto next sprite frame
-      if not(game_pause and universal_var.game_pause):
-         sprite = self.get_sprite(sprite)
-         sprite.update(auto_reset)
+   def update_sprite(self, sprite, auto_reset=True): # Use to move onto next sprite frame
+      sprite = self.get_sprite(sprite)
+      sprite.update(auto_reset)
 
    def display_animation(self, sprite_obj_ID, surf, frame_name, x_offset=0, y_offset=0, flip=False, resume=False):
       self.get_sprite(sprite_obj_ID).display_animation(surf, frame_name, x_offset, y_offset, flip, resume)
@@ -251,22 +239,11 @@ class Sprite_surface(object):
          pass
 
 
-   def is_on_screen(self, screen_width, screen_height):
-      if ((self.x < screen_width -10 and self.x + self.width > 10) and
-         (self.y < screen_height -10 and self.y + self.height > 10)):
+   def is_on_screen(self, screen_width, screen_height, x_clip_offset=0, y_clip_offset=0):
+      if ((self.x < screen_width + x_clip_offset and self.x + self.width > -x_clip_offset) and
+         (self.y < screen_height + y_clip_offset and self.y + self.height > -y_clip_offset)):
          return True
-      else: #check if main coll box on screen
-         try:
-            x = self.collbox_dict[universal_var.hitbox].x
-            y = self.collbox_dict[universal_var.hitbox].y
-            width = self.collbox_dict[universal_var.hitbox].width
-            height = self.collbox_dict[universal_var.hitbox].height
-
-            if (x - width//2 < screen_width and x + width//2 > 0) and (y - height//2 < screen_height and y + height//2 > 0):
-               return True
-         except KeyError:
-            pass
-
-      return False
+      else:
+         return False
       
 #----------------------------------------------------------------

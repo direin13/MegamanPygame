@@ -44,7 +44,7 @@ class Bar(megaman_object.Megaman_object):
             self.rect_height = self.height
             height_accum = 0
 
-         else: #This formula will give me the height the rectangle(health bar energy) has to be to match the original points - current points percentage
+         else: #This formula gives the height the rectangle(health bar energy) has to be to match the original points - current points percentage
             points_diff = self.original_points - self.points
             height_accum = round(points_diff / self.bar_decrate)
             self.rect_height = self.height - height_accum

@@ -1,10 +1,10 @@
 README;
 ========================================================
--I'm trying to make an entire megaman level from scratch!
+-I'm making an entire megaman level from scratch!
 
 -Update: enemies and projectile class added
 
--Open 'game.py' to run and see the results so far.
+-Open 'Game.py' to run and see the results so far.
 
 -controls:right = rightArrow
 	  left = leftArrow
@@ -12,7 +12,5 @@ README;
 	  jump = x
 	  pause/unpause = p/o
 	  debug/nodebug = v/c
-
--Feedback and criticism is much appreciated!
 
 ========================================================

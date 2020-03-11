@@ -18,7 +18,7 @@ class P_shooter(projectile.Projectile):
       height = 16
       p_sprite = Sprite(universal_var.main_sprite, x, y, width, height, [('p_shooter', [universal_var.projectiles['p_shooter']], 1)])
       main_coll_box = Collision_box(universal_var.hitbox, x, y, width, height)
-      super().__init__('p_shooter', x, y, [p_sprite], [main_coll_box], width=width, height=height)
+      super().__init__('p_shooter', x, y, [p_sprite], [main_coll_box], width=width, height=height, display_layer=5)
       self.damage_points = 10
       self.reflected = False
       P_shooter.all_p_stack.push(self)

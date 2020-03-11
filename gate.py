@@ -29,7 +29,7 @@ class Gate(megaman_object.Megaman_object):
 
 
    def display(self, surf):
-      self.update_sprite(universal_var.main_sprite, auto_reset=False, game_pause=False)
+      self.update_sprite(universal_var.main_sprite, auto_reset=False)
       if camera.Transition_box.current_box == self.transition_collbox and camera.camera_transitioning():
          if camera.transition_start():
             self.display_animation(universal_var.main_sprite, surf, "gate_open")

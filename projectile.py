@@ -8,16 +8,17 @@ import universal_var
 
 class Projectile(sprite.Sprite_surface):
 
-   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=False, width=0, height=0, display_layer=3, gravity=0, angle=0, vel=0):
+   def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=False, width=0, height=0, display_layer=3):
       super().__init__(ID, x, y, sprites, coll_boxes, is_active, width, height, display_layer)
       self.init_x = x
       self.init_y = y
-      self.angle = angle
-      self.gravity = gravity
-      self.vel = vel
+      self.angle = 0
+      self.gravity = 0
+      self.vel = 0
       self.launched = False
       self.time_start = 0
       self.time_now = 0
+      self.row = 0
 
    def set(self, x, y, vel=0, angle=0, gravity=0):
       self.x = x
@@ -33,8 +34,8 @@ class Projectile(sprite.Sprite_surface):
       sprite.Sprite_surface.update(self)
 
    def update(self):
-      if self.launched and self.is_on_screen(universal_var.screen_width, universal_var.screen_height):
-         if universal_var.game_pause != True and universal_var.game_reset != True:
+      if self.is_on_screen(universal_var.screen_width, universal_var.screen_height):
+         if self.launched and universal_var.game_pause != True and universal_var.game_reset != True:
             self.move(self.vel, self.angle, self.gravity)
             self.time_now += 15
 
@@ -43,6 +44,12 @@ class Projectile(sprite.Sprite_surface):
          self.launched = False
 
       sprite.Sprite_surface.update(self)
+
+   def display(self, surf, loop=True, game_pause=True):
+      if self.sprite_dict != None:
+         if (game_pause and universal_var.game_pause != True) or (game_pause == False):
+            self.update_sprite(universal_var.main_sprite, auto_reset=loop)
+         self.display_animation(universal_var.main_sprite, surf, self.get_sprite(universal_var.main_sprite, self.row)[0])
 
 
    def move(self, velocity, angle, gravity): #code link: https://stackoverflow.com/questions/59267501/how-to-make-bullet-like-projectile-motion/59277125#59277125
@@ -59,6 +66,12 @@ class Projectile(sprite.Sprite_surface):
 
          # reposition sprite
          self.x, self.y = self.init_x + int(displacement_x), self.init_y - int(displacement_y)
+
+   def is_alive(self):
+      return self.is_active
+
+
+#-------------------------------------------------------------------------------
 
 
 class Enemy_projectile_1(Projectile, megaman_object.Megaman_object):
@@ -84,10 +97,13 @@ class Enemy_projectile_1(Projectile, megaman_object.Megaman_object):
          Projectile.set(p, x, y, vel, angle=angle, gravity=gravity)
 
    def display(self, surf):
-      self.update_sprite(universal_var.main_sprite, game_pause=True)
+      if universal_var.game_pause != True:
+         self.update_sprite(universal_var.main_sprite)
       self.display_animation(universal_var.main_sprite, surf, 'enemy_projectile_1')
 
    def update(self):
       if self.is_active == False and self not in Enemy_projectile_1.all_p_stack.lst:
          Enemy_projectile_1.all_p_stack.push(self)
       Projectile.update(self)
+
+#----------------------------------------------------------------------

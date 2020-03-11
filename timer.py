@@ -38,7 +38,10 @@ class Timer(object):
       return self.timer_states[ID]
 
    def is_empty(self, ID):
-      return self.timer_states[ID] == 0
+      return self.timer_states[ID] <= 0
+
+   def is_almost_finished(self, ID, n):
+      return (self.timer_states[ID] - n) <= 0
 
    def is_full(self, ID):
       return self.all_timers[ID] == self.timer_states[ID]

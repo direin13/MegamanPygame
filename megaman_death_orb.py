@@ -12,107 +12,53 @@ orb_timers = timer.Timer()
 spawned = True
 
 
+class Death_orb(projectile.Projectile):
+   all_orbs = []
+
+   def __init__(self, x, y, start_time):
+      width = 50
+      height = 50
+      display_layer = 5
+      is_active = False
+      orb_animation = [universal_var.effect_images['explosion_1'], universal_var.effect_images['explosion_2'], universal_var.effect_images['explosion_3'],
+              universal_var.effect_images['explosion_4'], universal_var.effect_images['explosion_5']]
+
+      orb_sprite = Sprite(universal_var.main_sprite, x, y, width, height, [('orb', orb_animation, 20)])
+      super().__init__('Death_orb', x, y, [orb_sprite], None, is_active, width, height, display_layer)
+      self.spawned = False
+      self.all_timers = timer.Timer()
+      self.all_timers.add_ID('start_time', start_time)
+      Death_orb.add_to_class_lst(self, Death_orb.all_orbs, self.ID)
+
+   def update(self):
+      if self.spawned == True and self.all_timers.is_empty('start_time'):
+         self.set(self.x, self.y, 15, self.angle)
+         self.spawned = False
+         self.all_timers.replenish_timer('start_time')
+      elif self.spawned == True:
+         self.all_timers.countdown('start_time')
+      projectile.Projectile.update(self)
+
+#-----------------------------------------------------------------------
+
 def init(sprite_surf):
-   global all_orbs
-   global orb_timers
+   start_time = [0, 15, 35]
+   for i in range(3):
+      Death_orb(sprite_surf.x, sprite_surf.y, start_time[i])
+      Death_orb(sprite_surf.x, sprite_surf.y, start_time[i])
+      Death_orb(sprite_surf.x, sprite_surf.y, start_time[i])
+      Death_orb(sprite_surf.x, sprite_surf.y, start_time[i])
 
-   orb_animation = [universal_var.effect_images['death_orb_1'], universal_var.effect_images['death_orb_2'], universal_var.effect_images['death_orb_3'],
-              universal_var.effect_images['death_orb_4']]
-   for i in range(0, 12):
-      orb_sprite = Sprite(universal_var.main_sprite, 200, 200, 40, 40, [('orb', orb_animation, 20)])
-      orb = Megaman_object('orb', sprite_surf.x, sprite_surf.y, sprites=[orb_sprite], width=40, height=40, display_layer=4, is_active=False)
-      all_orbs.append(orb)
-   orb_timers.add_ID('wave_1', 30)
-   orb_timers.add_ID('wave_2', 60)
-
-
-
-def spawn_orbs(sprite_surf):
-   global spawned
-
-   if spawned == True:
-      for orb in all_orbs:
-         orb.teleport(sprite_surf.x + 25, sprite_surf.y + 22)
-   spawned = False
-
-
-
-def set_orb_active():
-   global all_orbs
-
-   for orb in all_orbs:
-      orb.is_active = True
-
+def set_orb_active(x, y):
+   angles = [0, 90, 180, 270, 45, 135, 225, 315, 0, 90, 180, 270]
+   for i in range(len(Death_orb.all_orbs)):
+      orb = Death_orb.all_orbs[i]
+      orb.x, orb.y = x, y
+      orb.angle = angles[i]
+      orb.spawned = True
 
 def reset():
-   global all_orbs
-   global orb_timers
-   global spawned
-
-   for orb in all_orbs:
+   for orb in Death_orb.all_orbs:
       orb.is_active = False
-   spawned = True
-   for timer in orb_timers:
-      orb_timers.replenish_timer(timer)
-
-
-
-
-def move_orbs():
-   global orb_timers
-   global all_orbs
-
-   angle = 360
-   x_vel, y_vel = 2, 2
-   for i in range(0, 4):
-      orb = all_orbs[i]
-      move_orb(orb, angle, x_vel, y_vel)
-      angle -= 90
-
-   if orb_timers.is_empty('wave_1'):
-      angle = 350
-      for i in range(4, 8):
-         orb = all_orbs[i]
-         move_orb(orb, angle, x_vel, y_vel)
-         angle -= 90
-   else:
-      orb_timers.countdown('wave_1')
-
-   if orb_timers.is_empty('wave_2'):
-      angle = 360
-      for i in range(8, 12):
-         orb = all_orbs[i]
-         move_orb(orb, angle, x_vel, y_vel)
-         angle -= 90
-   else:
-      orb_timers.countdown('wave_2')
-
-def move_orb(orb, angle, x_vel, y_vel):
-   speed = get_trajectory(angle, x_vel, y_vel)
-   orb.move(speed[0], speed[1])
-
-
-def get_trajectory(angle, x, y):
-   if angle == 0 or angle == 360:
-      y = 0
-   elif angle == 90:
-      x = 0
-   elif angle == 180:
-      x, y = -x, 0
-
-   elif angle == 270:
-      y, x = -y, 0
-
-   elif angle <= 90:
-      pass
-
-   elif angle > 90 and angle <= 180:
-      x = -x
-
-   elif angle > 180 and angle <= 270:
-      x, y = -x, -y
-
-   elif angle > 270 and angle <= 360:
-      y = -y
-
-   return (x, y)
+      orb.launched = False
+      orb.spawned = False

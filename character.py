@@ -15,7 +15,7 @@ class Character(Megaman_object):
       self.stun = False
       self.knock_back_time = 10
       self.all_timers.add_ID('knock_back', self.knock_back_time)
-      self.all_timers.add_ID('invincibility', 180)
+      self.all_timers.add_ID('invincibility', 160)
       self.all_timers.add_ID('invincibility_frame', 3)
       self.all_timers.add_ID('spark_effect', 30)
       self.all_timers.add_ID('stun', 50)
@@ -54,11 +54,11 @@ class Character(Megaman_object):
          self.is_active = False
 
 
-   def check_ground_collision(self):
-      collision = self.check_collision_lst(Megaman_object.platforms, universal_var.feet, universal_var.hitbox, quota=1)
+   def check_ground_collision(self, coll_box):
+      collision = self.check_collision_lst(Megaman_object.platforms, coll_box, universal_var.hitbox, quota=1)
       if collision.is_empty() != True:
          platform = collision.pop()
-         self.push_vert(platform, universal_var.feet, universal_var.hitbox)
+         self.push_vert(platform, coll_box, universal_var.hitbox)
          self.is_grounded = True
          self.gravity = False
 
@@ -71,16 +71,16 @@ class Character(Megaman_object):
          self.all_timers.replenish_timer('grounded_sound', 1)
 
 
-   def check_ceiling_collision(self):
-      collision = self.check_collision_lst(Megaman_object.platforms, universal_var.head, universal_var.hitbox, quota=1)
+   def check_ceiling_collision(self, coll_box):
+      collision = self.check_collision_lst(Megaman_object.platforms, coll_box, universal_var.hitbox, quota=1)
       if collision.is_empty() != True:
          ceiling = collision.pop()
          self.gravity = True
-         self.push_vert(ceiling, universal_var.head, universal_var.hitbox)
+         self.push_vert(ceiling, coll_box, universal_var.hitbox)
 
 
-   def check_wall_collision(self):
-      collisions = self.check_collision_lst(Megaman_object.platforms, universal_var.hitbox, universal_var.hitbox, quota=4)
+   def check_wall_collision(self, coll_box):
+      collisions = self.check_collision_lst(Megaman_object.platforms, coll_box, universal_var.hitbox, quota=4)
       if collisions.is_empty() != True:
          for wall in collisions:
-            self.push_hori(wall, universal_var.hitbox, universal_var.hitbox)
+            self.push_hori(wall, coll_box, universal_var.hitbox)

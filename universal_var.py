@@ -37,13 +37,9 @@ effect_images = load_images('effects')
 
 prop_images = load_images('props')
 
-enemies = load_images('enemies')
-
 megaman_sounds = load_sounds('audio/fx')
 
 sfx_volume = 0.6
-
-m7 = load_images('m7')
 
 camera_x, camera_y = 250, 200
 camera = Camera(camera_x, camera_y)

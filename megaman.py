@@ -30,6 +30,7 @@ class Megaman(Character):
 
       megaman_walk = [universal_var.megaman_images['walk_2'], universal_var.megaman_images['walk_1'], universal_var.megaman_images['walk_2'],
                       universal_var.megaman_images['walk_3']]
+
       megaman_idle = [universal_var.megaman_images['idle'], universal_var.megaman_images['idle'], universal_var.megaman_images['idle'],
                       universal_var.megaman_images['idle'], universal_var.megaman_images['idle'], universal_var.megaman_images['idle_2']]
 
@@ -207,9 +208,9 @@ class Megaman(Character):
    def check_all_collisions(self):
       #This will check all the sprite surfaces and there relation with self and act accordingly
       if camera.camera_transitioning() != True:
-         self.check_ground_collision()
-         self.check_ceiling_collision()
-         self.check_wall_collision()
+         self.check_ground_collision(universal_var.feet)
+         self.check_ceiling_collision(universal_var.head)
+         self.check_wall_collision(universal_var.hitbox)
          if self.invincibility == False:
             self.check_hazard_collision()
 
@@ -265,6 +266,8 @@ class Megaman(Character):
       if self.gravity is False and self.is_pressing(5):
          self.rise()
       else:
+         if self.y_vel > 0:
+            self.y_vel = 0
          self.gravity = True
 
       if self.is_pressing(5) != True and self.is_grounded is True:
@@ -380,7 +383,7 @@ class Megaman(Character):
       else:
          s = ''
 
-      if self.is_alive():
+      if self.is_alive() and universal_var.game_pause != True:
          self.update_sprite(universal_var.main_sprite)
 
       if self.invincibility is True:
@@ -446,19 +449,17 @@ class Megaman(Character):
             universal_var.game_pause = False
             self.is_active = False
             if self.all_timers.is_empty('death_sound') is not True:
-               megaman_death_orb.set_orb_active()
+               megaman_death_orb.set_orb_active(self.x + 20, self.y + 20)
                play_sound('death', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume + 0.1)
                self.all_timers.countdown('death_sound')
 
          else:
             self.all_timers.countdown('death')
-            megaman_death_orb.spawn_orbs(self)
             universal_var.game_pause = True
 
-         megaman_death_orb.move_orbs()
-
-
    def respawn(self):
+      if self.respawn_obj.is_active == False:
+         self.respawn_obj.y = self.spawn_point[1] - universal_var.screen_height  # set sprite_surf's falling spawn animation above screen
       if self.respawn_obj.y < self.spawn_point[1] - 15:
          self.respawn_obj.row = 0
          self.respawn_obj.x = self.spawn_point[0]
@@ -482,6 +483,7 @@ class Megaman(Character):
             self.x_vel = 0
             self.y_vel = 0
             Sprite_surface.update(self)
+            megaman_death_orb.reset()
             self.all_timers.replenish_timer('startup_flag', 0)
             self.all_timers.replenish_timer('shooting_flag', 0)
             self.all_timers.replenish_timer('grounded_sound', 0)
