@@ -10,7 +10,7 @@ class Bar(megaman_object.Megaman_object):
       width = 4
       height = 56
       bar_outline = sprite.Sprite(universal_var.main_sprite, x, y, width * self.scale_factor[0], height * self.scale_factor[1], 
-                                 [(universal_var.main_sprite, [universal_var.effect_images['bar']], 1)])
+                                 [(universal_var.main_sprite, [universal_var.misc_images['bar']], 1)])
 
       super().__init__(ID, x, y, [bar_outline], None, True, width, height)
       self.display_layer = 5

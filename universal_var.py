@@ -33,7 +33,7 @@ projectiles = load_images('projectiles')
 
 background_images = load_images('background')
 
-effect_images = load_images('effects')
+misc_images = load_images('misc')
 
 prop_images = load_images('props')
 
