@@ -6,6 +6,8 @@ README;
 
 -Open 'Game.py' to run and see the results so far.
 
+-made with Python 3.7.3
+
 -controls:right = rightArrow
 	  left = leftArrow
 	  shoot = z
