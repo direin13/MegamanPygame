@@ -52,7 +52,7 @@ class Megaman(Character):
                                                              ('shoot_jump', megaman_shoot_jump, m_run_speed),
                                                              ('damage', megaman_damage, m_idle_speed)])
 
-      effects = Sprite('effects', x, y, width, height, [('spark_effect', [universal_var.effect_images['spark']], 1)])
+      effects = Sprite('effects', x, y, width, height, [('spark_effect', [universal_var.misc_images['spark']], 1)])
 
       #--collision boxes
       megaman_hit_box = Collision_box(universal_var.hitbox, x, y, 55, 59, (240, 240, 0), x_offset=17)
@@ -72,11 +72,12 @@ class Megaman(Character):
       self.acc_speed = 3
       self.decc_speed = 3
       self.can_jump = False
+      self.lives = 3
       self.health_points_copy = self.health_points
       self.health_bar = Bar('megaman_health', x=30, y=20, points=self.health_points, colour=(255, 223, 131))
 
-      respawn_sprite = Sprite(universal_var.main_sprite, 0, 0, self.width, self.height, [('drop_down', [universal_var.effect_images['spawn_1']], 15),
-                              ('spawn', [universal_var.effect_images['spawn_2'], universal_var.effect_images['spawn_3'], universal_var.effect_images['spawn_1']], 15)])
+      respawn_sprite = Sprite(universal_var.main_sprite, 0, 0, self.width, self.height, [('drop_down', [universal_var.misc_images['spawn_1']], 15),
+                              ('spawn', [universal_var.misc_images['spawn_2'], universal_var.misc_images['spawn_3'], universal_var.misc_images['spawn_1']], 15)])
       self.respawn_obj = megaman_object.Megaman_object('respawn', 0, 0, [respawn_sprite], None, is_active=False, display_layer=3)
       self.all_timers.add_ID('respawn_animation', 15)
 
@@ -449,8 +450,9 @@ class Megaman(Character):
             universal_var.game_pause = False
             self.is_active = False
             if self.all_timers.is_empty('death_sound') is not True:
+               self.lives -= 1
                megaman_death_orb.set_orb_active(self.x + 20, self.y + 20)
-               play_sound('death', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume + 0.1)
+               play_sound('death', universal_var.megaman_sounds, channel=5, volume=universal_var.sfx_volume + 0.1)
                self.all_timers.countdown('death_sound')
 
          else:

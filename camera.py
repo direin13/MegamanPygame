@@ -195,7 +195,7 @@ def transition_screen(camera):
 
 
 def update(camera):
-   if len(camera.sprite_surf.collbox_dict) != 0:
+   if camera.sprite_surf != None:
       if check_camerabox_collision(camera.sprite_surf) != True and Transition_box.in_transition_mode != True and camera.sprite_surf.is_active:
          camera.follow(camera.sprite_surf)
 
@@ -203,8 +203,7 @@ def update(camera):
          check_transitionbox_collision(camera.sprite_surf)
          if Transition_box.current_box != None and Transition_box.in_transition_mode == True:
             transition_screen(camera)
-   else:
-      camera.follow(camera.sprite_surf)
+            
    camera.update_position()
 
 

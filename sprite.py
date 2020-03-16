@@ -5,7 +5,7 @@ import timer
 
 class Sprite(object):
 
-   def __init__(self, ID, x, y, width, height, active_frames=None, current_frame=0):
+   def __init__(self, ID, x, y, width, height, active_frames, current_frame=0, change_rgb_value=False, rgb=(10,10,10,0)):
       self.ID = ID
       self.x = x
       self.y = y
@@ -17,19 +17,34 @@ class Sprite(object):
       self.active_frames = active_frames
       self.all_frames = {}
       self.all_frame_speed = {}
-
-      if active_frames != None:
-         for t in self.active_frames:
-            self.all_frames[t[0]] = t[1]
-            self.all_frame_speed[t[0]] = t[2]
-
-         self.current_frame = current_frame
-         self.current_animation = self.active_frames[0][0]
-         self.flag = 0
       self.all_timers = timer.Timer()
+
+      if change_rgb_value:
+         self.change_sprite_rgb_value(rgb)
+
+      for t in self.active_frames:
+         self.all_frames[t[0]] = t[1]
+         self.all_frame_speed[t[0]] = t[2]
+
+      self.current_frame = current_frame
+      self.current_animation = self.active_frames[0][0]
+
 
    def get_frames(self, frame_name):
       return self.all_frames[frame_name]
+
+
+   def change_sprite_rgb_value(self, rgb):
+      for t in self.active_frames:
+         new_imgs = [img.copy() for img in t[1]]
+
+         for img in new_imgs:
+            new_surf = pygame.Surface((img.get_width(), img.get_height()), flags=pygame.SRCALPHA)
+            new_surf.fill(rgb)
+            img.blit(new_surf, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+
+         for i in range(len(new_imgs)):
+            t[1][i] = new_imgs[i]
 
    def get_frame_speed(self, frame_name):
       return self.all_frame_speed[frame_name]
@@ -44,7 +59,9 @@ class Sprite(object):
             self.current_animation = frame_name 
             self.current_frame = 0
 
-         frame = pygame.transform.scale(self.get_frames(frame_name)[self.current_frame], (self.width, self.height))
+         image = self.get_frames(frame_name)[self.current_frame]
+         frame = pygame.transform.scale(image, (self.width, self.height))
+
          if flip == True:
             frame = pygame.transform.flip(frame, True, False)
          surf.blit(frame, (self.x + x_offset, self.y + y_offset))
@@ -124,7 +141,7 @@ class Collision_box(object):
 #---------------------------------------------------
 
 class Sprite_surface(object):
-   #--this is an object that has a sprite and set of of collision boxes attached to it
+   #--this is an object that has a set of sprite and set of of collision boxes attached to it
    all_sprite_surfaces = []
    all_name_count = {}
 
@@ -140,9 +157,7 @@ class Sprite_surface(object):
       self.display_layer = display_layer
       self.collbox_dict = {}
       self.sprite_dict = {}
-      if coll_boxes == None:
-            pass
-      else:
+      if coll_boxes != None:
          for coll_box in coll_boxes: #adding all the coll boxes and sprites to respective dictionaries
             self.collbox_dict[coll_box.ID] = coll_box
 

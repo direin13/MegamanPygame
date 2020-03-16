@@ -2,7 +2,7 @@ README;
 ========================================================
 -I'm making an entire megaman level from scratch!
 
--Update: enemies and projectile class added
+-Update: items added
 
 -Open 'Game.py' to run and see the results so far.
 

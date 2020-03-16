@@ -11,6 +11,7 @@ import display_layer
 import timer
 import bar
 import bit_text
+from items import Item
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
 
@@ -37,6 +38,12 @@ checkpoint_1 = [(3594,1200), (340,367)]
 
 checkpoint_2 = [(4200,3600), (250,359)]
 
+start = False
+fps = 75
+game = True
+
+level_objs = game_setup.level_dict['concrete_man']
+game_setup.load_megaman_objects(level_objs[0], level_objs[1], level_objs[2], level_objs[3], spawn_megaman=True, m_x=250, m_y=410)
 
 def jump_to_start(sprite_surf):
    global game_timers
@@ -84,6 +91,13 @@ def jump_to_start(sprite_surf):
    game_timers.countdown('jump_to_start')
 
 
+def game_over():
+   global game
+   global screen
+   screen.fill((0,0,0))
+   game = False
+
+
 #--------------------------------------------------------------------------------GAME-----------------------------------------------------------------------------
 
 for sprite_surf in sprite.Sprite_surface.all_sprite_surfaces: 
@@ -91,11 +105,9 @@ for sprite_surf in sprite.Sprite_surface.all_sprite_surfaces:
          megaman = sprite_surf
          universal_var.camera.sprite_surf = megaman
 
-start = False
-fps = 75
-game = True
 
 while game:
+   #print(Item.drop_list)
    screen.fill((0,0,0))
    for e in pygame.event.get():
       if e.type == pygame.QUIT:
@@ -125,7 +137,6 @@ while game:
       fps = 75
 
    #print(universal_var.world_location)
-   
    for sprite_surf in sprite.Sprite_surface.all_sprite_surfaces: #Updating every sprite in the game
       if sprite_surf.is_on_screen(universal_var.screen_width, universal_var.screen_height) or universal_var.debug:
          display_layer.push_onto_layer(sprite_surf, sprite_surf.display_layer)
@@ -156,7 +167,10 @@ while game:
 
          if game_timers.is_empty('reset'):
             megaman_death_orb.reset()
-            jump_to_start(megaman)
+            if megaman.lives != 0:
+               jump_to_start(megaman)
+            else:
+               game_over()
 
          elif reset_time < 100: #when the screen turns black
             screen.fill((0,0,0))

@@ -20,8 +20,8 @@ class Death_orb(projectile.Projectile):
       height = 50
       display_layer = 5
       is_active = False
-      orb_animation = [universal_var.effect_images['explosion_1'], universal_var.effect_images['explosion_2'], universal_var.effect_images['explosion_3'],
-              universal_var.effect_images['explosion_4'], universal_var.effect_images['explosion_5']]
+      orb_animation = [universal_var.misc_images['explosion_1'], universal_var.misc_images['explosion_2'], universal_var.misc_images['explosion_3'],
+              universal_var.misc_images['explosion_4'], universal_var.misc_images['explosion_5']]
 
       orb_sprite = Sprite(universal_var.main_sprite, x, y, width, height, [('orb', orb_animation, 20)])
       super().__init__('Death_orb', x, y, [orb_sprite], None, is_active, width, height, display_layer)

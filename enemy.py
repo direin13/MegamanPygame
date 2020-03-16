@@ -10,6 +10,7 @@ import p_shooter
 import projectile
 import mega_stack
 from misc_function import load_images
+from items import Item
 
 class Enemy(Character):
    all_sprite_surfaces = []
@@ -25,18 +26,19 @@ class Enemy(Character):
       self.explosion_timers = timer.Timer()
       self.explosion_dict = {}
       self.all_timers.add_ID('explosion_animation', 14)
+      self.all_timers.add_ID('no_display', 7)
       self.all_explosion_ID_index = 0
 
    def add_explosion_animation(self, time_offset=0, width=0, height=0, x_offset=0, y_offset=0):
       ID = 'explosion-{}'.format(self.all_explosion_ID_index)
       self.all_explosion_ID_index += 1
       self.explosion_timers.add_ID(ID, time_offset)
-      explosion_img = [universal_var.effect_images['explosion_1'], universal_var.effect_images['explosion_2'], 
-                       universal_var.effect_images['explosion_3'], universal_var.effect_images['explosion_4'], 
-                       universal_var.effect_images['explosion_5'], universal_var.effect_images['blank']]
+      explosion_img = [universal_var.misc_images['explosion_1'], universal_var.misc_images['explosion_2'], 
+                       universal_var.misc_images['explosion_3'], universal_var.misc_images['explosion_4'], 
+                       universal_var.misc_images['explosion_5'], universal_var.misc_images['blank']]
 
       sprite = Sprite(universal_var.main_sprite, self.x, self.y, width, height, [('explosion', explosion_img, 12)])
-      sprite_surf = Megaman_object(ID, self.x, self.y, [sprite], None, width=width, height=height, is_active=False)
+      sprite_surf = Megaman_object(ID, self.x, self.y, [sprite], None, width=width, height=height, is_active=False, display_layer=3)
       sprite_surf.sprite_loop = False
       self.explosion_dict[ID] = [sprite_surf, (x_offset, y_offset)]
 
@@ -59,14 +61,16 @@ class Enemy(Character):
             all_finished = False
          else:
             sprite_surf = self.explosion_dict[timer][0]
+            x_offset, y_offset = self.explosion_dict[timer][1][0], self.explosion_dict[timer][1][1]
+            sprite_surf.x, sprite_surf.y = self.x + x_offset, self.y + y_offset
+            Sprite_surface.update(sprite_surf)
+
             sprite = sprite_surf.get_sprite(universal_var.main_sprite)
             if sprite.current_frame != len(sprite.get_frames(sprite.current_animation)) - 1:
                if self.is_active == False:
                   sprite_surf.is_active = False
                else:
                   sprite_surf.is_active = True
-               x_offset, y_offset = self.explosion_dict[timer][1][0], self.explosion_dict[timer][1][1]
-               sprite_surf.x, sprite_surf.y = self.x + x_offset, self.y + y_offset
                all_finished = False
 
       if all_finished:
@@ -89,10 +93,33 @@ class Enemy(Character):
          self.health_points = self.health_points_copy
          self.can_spawn = False
 
-   def check_bullet_contact(self, quota=None):
-      collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=quota)
-      #print(collisions)
-      return collisions
+   def check_pshooter_contact(self, reflect=False, drop_item=True, randint_drop_offset=0):
+      collision = False
+      pshooter_collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=1)
+
+      if pshooter_collisions.is_empty() != True and self.is_alive():
+         collision = True
+         p = pshooter_collisions.pop()
+         if p.reflected == False and reflect == False:
+            self.reduce_hp(p.damage_points)
+            p.is_active = False
+            p.launched = False
+            play_sound('impact_p', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.1)
+            if self.is_alive() and self.all_timers.is_empty('no_display'):
+                  self.all_timers.replenish_timer('no_display')
+            elif drop_item == True and self.is_alive() == False:
+               Item.drop_item(self.x+self.width//2, self.y+self.height//2, randint_drop_offset)
+
+
+         elif p.reflected == False:
+            if p.x < self.x:
+               projectile.Projectile.set(p, p.x, p.y, vel=90, angle=130)
+            else:
+               projectile.Projectile.set(p, p.x, p.y, vel=90, angle=70)
+            p.reflected = True
+            play_sound('p_reflected', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume + 0.1)
+
+      return collision
 
    def update(self):
       if camera.camera_transitioning() == True or universal_var.game_reset:
@@ -142,12 +169,9 @@ class Met(Enemy):
       x_clip_offset, y_clip_offset = 0, 0
       idle_animation = [Met.sprite_img['met_1']]
       shoot_animation = [Met.sprite_img['met_2']]
-      explosion_enemy = [universal_var.effect_images['explosion_1'], universal_var.effect_images['explosion_2'], 
-                         universal_var.effect_images['explosion_3'], universal_var.effect_images['explosion_4'], universal_var.effect_images['explosion_5']]
 
       met = Sprite(universal_var.main_sprite, 200, 200, width, height, [('idle', idle_animation, 1),
-                                                                        ('shoot', shoot_animation, 1),
-                                                                        ('explosion', explosion_enemy, 12)])
+                                                                        ('shoot', shoot_animation, 1)])
 
       main_collbox = Collision_box(universal_var.hitbox, 400, 290, 34, 30, (240, 240, 0), x_offset=4)
       trigger_box = Collision_box('trigger_box', 0, 0, trigger_width * 2, trigger_height * 2, (240, 140, 20), x_offset=-trigger_width + (width//2),
@@ -231,21 +255,10 @@ class Met(Enemy):
             else:
                self.all_timers.replenish_timer('shoot')
 
-         pshooter_collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=1)
-         if pshooter_collisions.is_empty() != True and self.is_alive():
-            p = pshooter_collisions.pop()
-            if self.shooting_phase and p.reflected == False:
-               self.reduce_hp(p.damage_points)
-               p.is_active = False
-               p.launched = False
-               play_sound('impact_p', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.1)
-            elif wait_interval and p.reflected == False:
-               if p.x < self.x:
-                  projectile.Projectile.set(p, p.x, p.y, vel=90, angle=130)
-               else:
-                  projectile.Projectile.set(p, p.x, p.y, vel=90, angle=70)
-               p.reflected = True
-               play_sound('p_reflected', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume + 0.1)
+         if wait_interval:
+            self.check_pshooter_contact(True, True)
+         elif self.shooting_phase:
+            self.check_pshooter_contact(False, True, 70)
 
       Enemy.update(self)
 
@@ -259,7 +272,7 @@ class Lasor(Megaman_object):
    def __init__(self, ID, x, y, start_offset, x_vel):
       width = 1400
       height = 42
-      img = Sprite(universal_var.main_sprite, 0, 0, width, height, [('idle', [universal_var.effect_images['lasor']], 1)])
+      img = Sprite(universal_var.main_sprite, 0, 0, width, height, [('idle', [universal_var.misc_images['lasor']], 1)])
       is_active = False
       main_collbox = Collision_box(universal_var.hitbox, 0, 0, width, height, (240, 240, 0))
 
@@ -326,12 +339,10 @@ class Detarnayappa(Enemy):
 
       idle_animation = [Detarnayappa.sprite_img['Detarnayappa_2'], Detarnayappa.sprite_img['Detarnayappa_1']]
       shoot_animation = [Detarnayappa.sprite_img['Detarnayappa_2'], Detarnayappa.sprite_img['Detarnayappa_3']]
-      explosion_enemy = [universal_var.effect_images['explosion_1'], universal_var.effect_images['explosion_2'], 
-                         universal_var.effect_images['explosion_3'], universal_var.effect_images['explosion_4'], universal_var.effect_images['explosion_5']]
 
       sprites = Sprite(universal_var.main_sprite, 200, 200, width, height, [('idle', idle_animation, 20),
-                                                                            ('shoot', shoot_animation, 15),
-                                                                            ('explosion', explosion_enemy, 12)])
+                                                                            ('shoot', shoot_animation, 15)
+                                                                           ])
 
       main_coll_box = Collision_box(universal_var.hitbox, 0, 0, width, height, (240, 240, 0))
       trigger_box = Collision_box('trigger_box', 0, 0, trigger_width * 2, trigger_height * 2, (240, 140, 20), x_offset=-trigger_width + (width//2),
@@ -374,14 +385,7 @@ class Detarnayappa(Enemy):
 
 
    def update(self):
-      pshooter_collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=1)
-      if pshooter_collisions.is_empty() != True and self.is_alive(): #if shot
-         p = pshooter_collisions.pop()
-         if p.reflected == False:
-            self.reduce_hp(p.damage_points)
-            p.is_active = False
-            p.launched = False
-            play_sound('impact_p', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.1)
+      self.check_pshooter_contact(False, True, 80)
 
       init, apex_reached = False, False
       if self.is_alive() and universal_var.game_pause != True:
@@ -538,16 +542,9 @@ class Hoohoo(Enemy):
                self.boulder.set(self.boulder.x, self.boulder.y, 40, 270, 0)
                self.boulder_drop = True
 
-      pshooter_collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=1)
-      if pshooter_collisions.is_empty() != True and self.is_alive() and self.is_on_screen(universal_var.screen_width, universal_var.screen_height):
-         p = pshooter_collisions.pop()
-         if p.reflected == False:
-            self.reduce_hp(p.damage_points)
-            self.boulder.reduce_hp(p.damage_points)
-            self.boulder.launched = False
-            p.is_active = False
-            p.launched = False
-            play_sound('impact_p', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.1)
+      if self.is_active and self.check_pshooter_contact(False, True, 80):
+         self.boulder.reduce_hp(self.boulder.health_points)
+         self.boulder.launched = False
 
       Enemy.update(self)
 
@@ -571,10 +568,10 @@ class Hoohoo_boulder(Enemy, projectile.Projectile):
       x_clip_offset, y_clip_offset = 0, 0
       max_x_vel = 0
 
-      explosion_enemy = [universal_var.effect_images['explosion_1'], universal_var.effect_images['explosion_2'], 
-                         universal_var.effect_images['explosion_3'], universal_var.effect_images['explosion_4'], universal_var.effect_images['explosion_5']]
-      boulder_sprite = Sprite(universal_var.main_sprite, x, y, width, height, [('boulder', [universal_var.projectiles['boulder_1']], 1),
-                                                                               ('explosion', explosion_enemy, 12)])
+      boulder_sprite = Sprite(universal_var.main_sprite, x, y, width, height, [
+                                                                                 ('boulder', [universal_var.projectiles['boulder_1']], 1)
+                                                                              ])
+
       main_collbox = Collision_box(universal_var.hitbox, 0, 0, width, height, (60, 240, 0))
 
       super().__init__('boulder', x, y, [boulder_sprite], [main_collbox], is_active, width, height, display_layer, gravity, direction, max_x_vel,
@@ -631,23 +628,17 @@ class Hoohoo_boulder(Enemy, projectile.Projectile):
 
 
    def update(self):
-      pshooter_collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=1)
-      if pshooter_collisions.is_empty() != True and self.is_alive():
-         p = pshooter_collisions.pop()
-         if p.reflected == False:
-            self.reduce_hp(p.damage_points)
-            p.is_active = False
-            p.launched = False
+      if self.is_active:
+         if self.check_pshooter_contact(False, True, 80):
             self.launched = False
-            play_sound('impact_p', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.1)
 
-      if self.launched:
-         ground_collision = self.check_collision_lst(Megaman_object.platforms, universal_var.hitbox, universal_var.hitbox, quota=1)
-         if ground_collision.is_empty() != True:
-            self.health_points -= self.health_points
-            play_sound('boulder_break', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.3)
-            self.split()
-            self.launched = False
+         if self.launched:
+            ground_collision = self.check_collision_lst(Megaman_object.platforms, universal_var.hitbox, universal_var.hitbox, quota=1)
+            if ground_collision.is_empty() != True:
+               self.health_points -= self.health_points
+               play_sound('boulder_break', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.3)
+               self.split()
+               self.launched = False
 
       Enemy.update(self)
       projectile.Projectile.update(self)
@@ -784,7 +775,7 @@ class Paozo(Enemy):
 
          if self.all_timers.is_almost_finished('phase_3_begin', 30):
             if self.vacuum_sound == False:
-               play_sound('paozo_vacuum', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.3)
+               play_sound('paozo_vacuum', universal_var.megaman_sounds, channel=3, volume=universal_var.sfx_volume - 0.3)
                self.vacuum_sound = True
             m = megaman.Megaman.all_sprite_surfaces[0]
             m.x -= 2
@@ -802,20 +793,8 @@ class Paozo(Enemy):
                if timer != "no_display":
                   self.all_timers.replenish_timer(timer)
 
-
-         pshooter_collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=1)
-         if pshooter_collisions.is_empty() != True and self.is_alive():
-            p = pshooter_collisions.pop()
-            if p.reflected == False:
-               self.reduce_hp(p.damage_points)
-               p.is_active = False
-               p.launched = False
-               self.launched = False
-               play_sound('impact_p', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.1)
-               if self.is_alive() and self.all_timers.is_empty('no_display'):
-                  self.all_timers.replenish_timer('no_display')
-               elif self.is_alive() != True:
-                  play_sound('big_explosion', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.3)
+         if self.check_pshooter_contact(False, True, 30) and self.is_alive() == False:
+            play_sound('big_explosion', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.3)
 
       self.all_timers.countdown('no_display')
       Enemy.update(self)
@@ -868,16 +847,7 @@ class Paozo_Ball(projectile.Projectile, Enemy):
 
    def update(self):
       if self.is_alive():
-         pshooter_collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=1)
-         if pshooter_collisions.is_empty() != True and self.is_alive():
-            p = pshooter_collisions.pop()
-            if p.reflected == False:
-               if p.x < self.x:
-                  projectile.Projectile.set(p, p.x, p.y, vel=90, angle=130)
-               else:
-                  projectile.Projectile.set(p, p.x, p.y, vel=90, angle=70)
-               p.reflected = True
-               play_sound('p_reflected', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume + 0.1)
+         self.check_pshooter_contact(True, False)
 
          projectile.Projectile.update(self)
       elif self.is_on_screen(universal_var.screen_width, universal_var.screen_height) != True:
@@ -895,7 +865,7 @@ class Big_stomper(Enemy):
       height = 130
       display_layer = 3
       is_active = False
-      health_points = 130
+      health_points = 110
       direction = False
       max_x_vel = 2
       gravity = True
@@ -947,7 +917,7 @@ class Big_stomper(Enemy):
          if universal_var.game_pause != True:
             self.update_sprite(universal_var.main_sprite)
 
-         if self.all_timers.is_empty('prepare_to_jmp') != True:
+         if self.all_timers.is_empty('prepare_to_jmp') == False:
 
             if self.all_timers.is_almost_finished('prepare_to_jmp', 15):
                self.display_animation(universal_var.main_sprite, surf, 'closed_low', resume=True)
@@ -971,7 +941,7 @@ class Big_stomper(Enemy):
          self.y_vel = 0
          self.all_timers.replenish_timer('y_accel_flag')
 
-      if self.grounded == False and self.y_vel <= 0 and ceiling_collision.is_empty(): #ground
+      if self.grounded == False and self.y_vel <= 0 and ceiling_collision.is_empty(): #touched ground
          ground_collision = self.check_collision_lst(Megaman_object.platforms, 'ground_collbox', universal_var.hitbox, quota=1)
          if ground_collision.is_empty() != True:
             platform = ground_collision.pop()
@@ -979,7 +949,7 @@ class Big_stomper(Enemy):
             self.all_timers.replenish_timer('prepare_to_jmp')
             self.all_timers.replenish_timer('wait')
             self.grounded = True
-            play_sound('big_stomper_landing', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.1)
+            play_sound('big_stomper_landing', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.1)
 
       wall_collision = self.check_collision_lst(Megaman_object.platforms, universal_var.hitbox, universal_var.hitbox, quota=1)
       if wall_collision.is_empty() != True:
@@ -998,19 +968,8 @@ class Big_stomper(Enemy):
             self.x -= self.max_x_vel
          self.y -= self.y_vel
 
-      pshooter_collisions = self.check_collision_lst(p_shooter.P_shooter.all_p_lst, universal_var.hitbox, universal_var.hitbox, quota=1)
-      if pshooter_collisions.is_empty() != True and self.is_alive():
-         p = pshooter_collisions.pop()
-         if p.reflected == False:
-            self.reduce_hp(p.damage_points)
-            p.is_active = False
-            p.launched = False
-            self.launched = False
-            play_sound('impact_p', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.1)
-            if self.is_alive() and self.all_timers.is_empty('no_display'):
-               self.all_timers.replenish_timer('no_display')
-            elif self.is_alive() != True:
-               play_sound('big_explosion', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.3)
+      if self.check_pshooter_contact(False, True, 30) and self.is_alive() == False:
+         play_sound('big_explosion', universal_var.megaman_sounds, channel=1, volume=universal_var.sfx_volume - 0.3)
                
 
    def update(self):

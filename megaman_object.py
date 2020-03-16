@@ -57,7 +57,8 @@ class Megaman_object(Sprite_surface):
          dist_betw_edges = self.collbox_dict[coll_box_self].bottom_edge - other.collbox_dict[coll_box_other].top_edge
          self.y -= dist_betw_edges
 
-      self.colliding_vert = True
+      #self.colliding_vert = True
+
       self.y_vel = 0
       Sprite_surface.update(self)
 
@@ -114,19 +115,15 @@ class Megaman_object(Sprite_surface):
       self.x += x_vel
       self.y += y_vel
 
-
-   def teleport(self, x, y):
-      self.x = x
-      self.y = y
-
-
-
    def display(self, surf, game_pause=True):
       if self.sprite_dict != None:
-         if (game_pause and universal_var.game_pause != True) or (game_pause == False):
-            self.update_sprite(universal_var.main_sprite, auto_reset=self.sprite_loop)
          self.display_animation(universal_var.main_sprite, surf, self.get_sprite(universal_var.main_sprite, self.row)[0])
          #self.display_collboxes(surf)
+
+   def update(self):
+      if self.is_active and self.sprite_dict != None:
+         self.update_sprite(universal_var.main_sprite, auto_reset=self.sprite_loop)
+      Sprite_surface.update(self)
 
    def follow(self, x=None, y=None, x_vel=0, y_vel=0):
       if self.x != x and x != None:

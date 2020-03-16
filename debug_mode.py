@@ -10,7 +10,7 @@ all_timers = timer.Timer()
 all_timers.add_ID('speed_rate', 10)
 hud_background = pygame.Surface((470, 130))
 cursor = megaman_object.Megaman_object('cursor', -50, -100, None, None, True, 15, 15)
-cursor_speed = 9
+cursor_speed = 19
 point_dist_active = False
 point_dist = [0, 0]
 
@@ -58,7 +58,7 @@ def debug(screen):
    #to check for change of speed
    for i in range(48, 58): #48-57==key 0-9
       if keys[i]:
-         cursor_speed = i - 48
+         cursor_speed = i - 48 + 10
 
    #to activate point distance calculator
    if keys[pygame.K_x]:
