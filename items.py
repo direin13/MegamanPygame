@@ -12,19 +12,6 @@ class Item(Megaman_object):
    item_images = load_images('misc')
    randint_offset = 0
 
-   def __init__(self, ID, x, y, width, height, sprites=None, coll_boxes=None, is_drop=False, display_layer=2):
-
-      if is_drop == False:
-         is_active = True
-      else:
-         is_active = False
-         index = random.randint(0, Item.randint_offset)
-         Item.drop_list.insert(index, self)
-
-      super().__init__(ID, x, y, sprites, coll_boxes, width=width, height=height, is_active=is_active, gravity=True, display_layer=display_layer)
-      self.all_timers.add_ID('time_till_vanish', 700)
-      self.is_drop = is_drop
-
    @staticmethod
    def drop_list_init():
       for i in range(80):
@@ -41,6 +28,21 @@ class Item(Megaman_object):
       for i in range(9):
          s = Health_capsule(0, 0, False, is_drop=True)
          Item.randint_offset += 1
+
+
+   def __init__(self, ID, x, y, width, height, sprites=None, coll_boxes=None, is_drop=False, display_layer=2):
+
+      if is_drop == False:
+         is_active = True
+      else:
+         is_active = False
+         index = random.randint(0, Item.randint_offset)
+         Item.drop_list.insert(index, self)
+
+      super().__init__(ID, x, y, sprites, coll_boxes, width=width, height=height, is_active=is_active, gravity=True, display_layer=display_layer)
+      self.all_timers.add_ID('time_till_vanish', 700)
+      self.is_drop = is_drop
+
 
    @staticmethod
    def drop_item(x, y, randint_offset=0):
