@@ -24,12 +24,13 @@ class Camera(object):
 
       if self.sprite_surf.x_vel == 0 and universal_var.debug != True:
          self.all_timers.replenish_timer('x_static')
+         xdist = 0
       else:
          self.all_timers.countdown('x_static')
 
 
       for obj in Sprite_surface.all_sprite_surfaces:
-         if xdist != 0 and self.all_timers.is_empty('x_static') and isinstance(obj, bar.Bar) != True:
+         if isinstance(obj, bar.Bar) != True:
             obj.x += xdist
             if obj.ID != 'megaman':
                obj.spawn_point[0] += xdist
@@ -101,8 +102,8 @@ class Camera_box(Sprite_surface):
 class Transition_box(Sprite_surface): #Use to transition the full screen in a direction
    all_transition_box = []
    all_timers = timer.Timer()
-   all_timers.add_ID('transition_start', 30)
-   all_timers.add_ID('transition_end', 40)
+   all_timers.add_ID('transition_start', 20)
+   all_timers.add_ID('transition_end', 20)
    in_transition_mode = False #If the screen is currently in transition
    current_box = None #Whichever box activated the transition
    transition_speed = 10
@@ -195,7 +196,7 @@ def transition_screen(camera):
 
 
 def update(camera):
-   if camera.sprite_surf != None:
+   if camera.sprite_surf != None and universal_var.debug != True and universal_var.hitbox in camera.sprite_surf.collbox_dict:
       if check_camerabox_collision(camera.sprite_surf) != True and Transition_box.in_transition_mode != True and camera.sprite_surf.is_active:
          camera.follow(camera.sprite_surf)
 
@@ -203,6 +204,9 @@ def update(camera):
          check_transitionbox_collision(camera.sprite_surf)
          if Transition_box.current_box != None and Transition_box.in_transition_mode == True:
             transition_screen(camera)
+
+   elif universal_var.debug:
+      camera.follow(camera.sprite_surf)
             
    camera.update_position()
 

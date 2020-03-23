@@ -236,7 +236,7 @@ class Sprite_surface(object):
 
 
    def update(self): #Makes sure all attached collision boxes and sprite images follow the sprite_surface
-      try:
+      if len(self.collbox_dict) != 0:
          for coll_box in self.collbox_dict.values():
             coll_box.x = self.x + (coll_box.width // 2) + coll_box.x_offset
             coll_box.y = self.y + (coll_box.height // 2) + coll_box.y_offset
@@ -244,14 +244,11 @@ class Sprite_surface(object):
             coll_box.right_edge = coll_box.x + (coll_box.width // 2)
             coll_box.top_edge = coll_box.y - (coll_box.height // 2)
             coll_box.bottom_edge = coll_box.y + (coll_box.height // 2)
-      except ValueError:
-         pass
-      try:
+
+      if self.sprite_dict != None:
          for sprite in self.sprite_dict.values():
             sprite.x = self.x
             sprite.y = self.y
-      except AttributeError:
-         pass
 
 
    def is_on_screen(self, screen_width, screen_height, x_clip_offset=0, y_clip_offset=0):

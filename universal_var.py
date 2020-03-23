@@ -2,7 +2,7 @@
 from misc_function import *
 import pygame
 from camera import *
-pygame.mixer.pre_init(22100, -16, 2, 64)
+from music_player import Song_player
 
 #--various variable that are used throughout game--
 
@@ -26,6 +26,9 @@ screen_height = 600
 
 checkpoint = [0, 0]
 world_location = [0, 0]
+
+songs = Song_player('1', ['audio/Concrete man.mp3', 'audio/Game Over.mp3', 'audio/Game Over Screen.mp3', 
+                          'audio/Level intro sequence.mp3', 'audio/Title.mp3'], volume=0.7)
 
 megaman_images = load_images('megaman_sprites')
 

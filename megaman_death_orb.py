@@ -6,11 +6,6 @@ import universal_var
 import timer
 import projectile
 
-all_orbs = []
-orb = {}
-orb_timers = timer.Timer()
-spawned = True
-
 
 class Death_orb(projectile.Projectile):
    all_orbs = []

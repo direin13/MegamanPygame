@@ -121,7 +121,7 @@ class Megaman_object(Sprite_surface):
          #self.display_collboxes(surf)
 
    def update(self):
-      if self.is_active and self.sprite_dict != None:
+      if self.is_active and self.sprite_dict != None and universal_var.game_pause != True:
          self.update_sprite(universal_var.main_sprite, auto_reset=self.sprite_loop)
       Sprite_surface.update(self)
 

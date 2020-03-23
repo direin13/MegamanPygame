@@ -44,7 +44,7 @@ class Megaman(Character):
       megaman_damage = [universal_var.megaman_images['damage']]
 
       megaman_sprite = Sprite(universal_var.main_sprite, x, y, width, height, [('walk', megaman_walk, m_run_speed),
-                                                             ('idle', megaman_idle, m_idle_speed),
+                                                               ('idle', megaman_idle, m_idle_speed),
                                                              ('step', megaman_step, m_run_speed),
                                                              ('shoot_walk', megaman_shoot, m_run_speed),
                                                              ('shoot_idle', megaman_idle_shoot, m_run_speed),
@@ -72,7 +72,7 @@ class Megaman(Character):
       self.acc_speed = 3
       self.decc_speed = 3
       self.can_jump = False
-      self.lives = 3
+      self.lives = 2
       self.health_points_copy = self.health_points
       self.health_bar = Bar('megaman_health', x=30, y=20, points=self.health_points, colour=(255, 223, 131))
 
@@ -444,13 +444,16 @@ class Megaman(Character):
          self.colliding_hori = False
          self.colliding_vert = False
 
+         if self.y > universal_var.screen_height + 550:
+            self.health_points -= self.health_points #death
+            self.health_bar.points -= self.health_bar.points
+
       elif self.is_alive() != True:
          self.keys_pressed = None
          if self.all_timers.is_empty('death'):
             universal_var.game_pause = False
             self.is_active = False
             if self.all_timers.is_empty('death_sound') is not True:
-               self.lives -= 1
                megaman_death_orb.set_orb_active(self.x + 20, self.y + 20)
                play_sound('death', universal_var.megaman_sounds, channel=5, volume=universal_var.sfx_volume + 0.1)
                self.all_timers.countdown('death_sound')
@@ -461,6 +464,7 @@ class Megaman(Character):
 
    def respawn(self):
       if self.respawn_obj.is_active == False:
+         megaman_death_orb.reset()
          self.respawn_obj.y = self.spawn_point[1] - universal_var.screen_height  # set sprite_surf's falling spawn animation above screen
       if self.respawn_obj.y < self.spawn_point[1] - 15:
          self.respawn_obj.row = 0

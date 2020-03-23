@@ -9,6 +9,38 @@ import gate
 from megaman import Megaman
 import items
 import concrete_man
+from projectile import Enemy_projectile_1
+from megaman_death_orb import Death_orb
+from p_shooter import P_shooter
+import intro_sequence
+from title_screen import Title_screen
+from timer import Timer
+
+level_dict = {'concrete_man': [concrete_man.props, concrete_man.coll_boxes, concrete_man.enemies, concrete_man.all_items]}
+game_timers = Timer()
+game_timers.add_ID('time_till_game_start', 550)
+game_timers.add_ID('init_star_background', 120)
+Title_screen.init()
+
+def clear_all_lists():
+   sprite.Sprite_surface.all_sprite_surfaces.clear()
+   sprite.Sprite_surface.all_name_count.clear()
+   megaman_object.Megaman_object.all_sprite_surfaces.clear()
+   megaman_object.Megaman_object.platforms.clear()
+   megaman_object.Megaman_object.hazards.clear()
+   enemy.Enemy.all_sprite_surfaces.clear()
+   camera.Camera_box.all_camera_box.clear()
+   camera.Transition_box.all_transition_box.clear()
+   Megaman.all_sprite_surfaces.clear()
+   items.Item.drop_list.clear()
+   enemy.Hoohoo_boulder.mini_boulder_1_stack.clear()
+   enemy.Hoohoo_boulder.mini_boulder_2_stack.clear()
+   Enemy_projectile_1.all_p_stack.clear()
+   Enemy_projectile_1.all_p_lst.clear()
+   Death_orb.all_orbs.clear()
+   P_shooter.all_p_stack.clear()
+   P_shooter.all_p_lst.clear()
+
 
 def load_megaman_objects(props=None, coll_boxes=None, enemies=None, all_items=None, spawn_megaman=False, m_x=0, m_y=0):
    # making all the game objects at once
@@ -102,7 +134,18 @@ def load_megaman_objects(props=None, coll_boxes=None, enemies=None, all_items=No
             x, y, damage_points = lst[0][0], lst[0][1], lst[2]
             enemy.Big_stomper(x, y, damage_points)
 
-   if all_items != None:
-      items.Item.drop_list_init()
+   items.Item.drop_list_init()
 
-level_dict = {'concrete_man': [concrete_man.props, concrete_man.coll_boxes, concrete_man.enemies, concrete_man.all_items]}
+
+def boss_intro_sequence(boss_name):
+   global game_timers
+   if game_timers.is_full('time_till_game_start'):
+      clear_all_lists()
+      intro_sequence.Stage_rectangle(300, boss_name)
+      universal_var.songs.play_list(10, song_number=3)
+
+   if game_timers.is_almost_finished('init_star_background', 1) != True:
+      game_timers.countdown('init_star_background')
+   elif intro_sequence.Star.init != True:
+      intro_sequence.Star.init_star_background()
+   game_timers.countdown('time_till_game_start')

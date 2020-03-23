@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import pygame
-
 class Song_player(object):
    #This class is used to play songs in a list
 
@@ -13,27 +12,24 @@ class Song_player(object):
       self.paused = False
 
 
-   def play_list(self, song_length, fade_time=0, song_number=False):
+   def play_list(self, song_length, fade_time=0, song_number=None):
       #--begins playing the list of songs in self.songs. If song number specified then that song in the list will be played.
       #--song length refers to how long the current song should be played
       #--fade time refers to the songs fadeout in seconds. E.g if fade_time=2 then the fadeout from song_lenght will be 2 seconds.
       pygame.mixer.music.set_volume(self.volume)
 
-      if song_number:
+      if song_number != None and song_number != self.current_song:
+         self.stop()
          self.current_song = song_number
+         pygame.mixer.music.load(self.songs[self.current_song])
+         pygame.mixer.music.play()
       else:
          pass
 
       if self.paused == False:
          if pygame.mixer.music.get_busy() == False:
-            if self.current_song >= len(self.songs):
-               self.current_song = 0
             pygame.mixer.music.load(self.songs[self.current_song])
             pygame.mixer.music.play()
-            self.current_song += 1
-         else:
-            if pygame.mixer.music.get_pos() > (song_length * 1000):
-               pygame.mixer.music.fadeout(fade_time * 1000)
       else:
          pass
 

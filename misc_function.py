@@ -6,8 +6,6 @@ def display_text(font, s, surf, colour, co_ordinates):
    text = font.render(s, False, colour) 
    return surf.blit(text, co_ordinates)
 
-pygame.mixer.init()
-
 def load_images(directory):
    directory_images = {}
 
