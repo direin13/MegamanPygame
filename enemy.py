@@ -588,8 +588,9 @@ class Hoohoo_boulder(Enemy, projectile.Projectile):
          mini_boulder_1.damage_points = 12
          Hoohoo_boulder.mini_boulder_1_stack.push(mini_boulder_1)
          Hoohoo_boulder.add_to_class_lst(mini_boulder_1, Megaman_object.hazards, mini_boulder_1.ID)
+
       for i in range(3):
-         mini_boulder_2_sprite = Sprite(universal_var.main_sprite, self.x, self.y, 10, 10, [('mini_boulder_2', [universal_var.projectiles['boulder_3']], 1)])
+         mini_boulder_2_sprite = Sprite(universal_var.main_sprite, self.x, self.y, 10, 10, [('mini_boulder_2', [universal_var.projectiles['boulder_4']], 1)])
          mini_boulder_2 = projectile.Projectile('mini_boulder_2', self.x, self.y, [mini_boulder_2_sprite], width=10, height=10)
          Hoohoo_boulder.mini_boulder_2_stack.push(mini_boulder_2)
 

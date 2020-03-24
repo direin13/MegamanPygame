@@ -10,6 +10,7 @@ import display_layer
 import timer
 import bar
 from bit_text import Bit_text
+from misc_function import play_sound
 from title_screen import Title_screen
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
@@ -132,20 +133,20 @@ def game_over():
 
       if k[pygame.K_UP]:
          if option != 'continue':
-            play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.1)
+            play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.2)
          option = 'continue'
          arrow.x, arrow.y = continue_text.x - 40, continue_text.y
 
       elif k[pygame.K_DOWN]:
          if option != 'exit':
-            play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.1)
+            play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.2)
          option = 'exit'
          arrow.x, arrow.y = exit_text.x - 40, exit_text.y
 
       elif k[pygame.K_x]:
-         songs.stop()
-         play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.1)
-         if option == 'exit':
+         universal_var.songs.stop()
+         play_sound('select', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.2)
+         if option == 'pause':
             game = False
          else:
             load_level()
@@ -170,10 +171,7 @@ def check_game_pause():
       universal_var.debug = True
    elif k[pygame.K_c]:
       universal_var.debug = False
-   if k[pygame.K_b]:
-      fps = 10
-   else:
-      fps = 75
+
 
 def check_checkpoint():
    global megaman
@@ -235,6 +233,11 @@ def check_megaman_alive():
 #--------------------------------------------------------------------------------GAME-----------------------------------------------------------------------------
 
 while game:
+   k = pygame.key.get_pressed()
+   if k[pygame.K_b]:
+      fps = 10
+   else:
+      fps = 75
    screen.fill((0,0,0))
    for e in pygame.event.get():
       if e.type == pygame.QUIT:

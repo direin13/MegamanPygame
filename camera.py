@@ -24,13 +24,12 @@ class Camera(object):
 
       if self.sprite_surf.x_vel == 0 and universal_var.debug != True:
          self.all_timers.replenish_timer('x_static')
-         xdist = 0
       else:
          self.all_timers.countdown('x_static')
 
 
       for obj in Sprite_surface.all_sprite_surfaces:
-         if isinstance(obj, bar.Bar) != True:
+         if xdist != 0 and self.all_timers.is_empty('x_static') and isinstance(obj, bar.Bar) != True:
             obj.x += xdist
             if obj.ID != 'megaman':
                obj.spawn_point[0] += xdist

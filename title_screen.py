@@ -19,6 +19,7 @@ class Title_screen(object):
    def init():
       for timer in Title_screen.all_timers:
          Title_screen.all_timers.replenish_timer(timer)
+         
       title_logo_img = [universal_var.misc_images['title']]
       width, height = 500, 300
       title_logo_sprite = Sprite(universal_var.main_sprite, 50, 600, width, height, [('title', title_logo_img, 1)])
@@ -34,7 +35,10 @@ class Title_screen(object):
    @classmethod
    def run(cls):
       k = pygame.key.get_pressed()
-      if cls.all_timers.is_empty('show_text'):
+      if cls.all_timers.is_empty('show_text') != True:
+         cls.all_timers.countdown('show_text')
+
+      else:
          if k[pygame.K_x] and cls.confirmation == False:
             play_sound('select', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.1)
             cls.confirmation = True
@@ -61,5 +65,3 @@ class Title_screen(object):
             cls.all_timers.countdown('blackout_screen')
          else:
             cls.is_running = False
-
-      cls.all_timers.countdown('show_text')
