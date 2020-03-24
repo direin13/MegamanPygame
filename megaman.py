@@ -192,7 +192,7 @@ class Megaman(Character):
          self.damage_megaman(hazard)
 
    def damage_megaman(self, hazard):
-      if hazard.is_alive() == True:
+      if hazard.is_alive() and hazard.is_active:
          self.reduce_hp(hazard.damage_points)
          self.health_bar.points -= hazard.damage_points
          if self.is_alive() == False:
@@ -444,7 +444,7 @@ class Megaman(Character):
          self.colliding_hori = False
          self.colliding_vert = False
 
-         if self.y > universal_var.screen_height + 550:
+         if self.y > universal_var.screen_height + 550 and universal_var.debug != True:
             self.health_points -= self.health_points #death
             self.health_bar.points -= self.health_bar.points
 
