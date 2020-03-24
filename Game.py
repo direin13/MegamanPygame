@@ -145,7 +145,7 @@ def game_over():
 
       elif k[pygame.K_x]:
          universal_var.songs.stop()
-         play_sound('select', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.2)
+         play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.2)
          if option == 'pause':
             game = False
          else:

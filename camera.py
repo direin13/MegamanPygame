@@ -35,6 +35,7 @@ class Camera(object):
                obj.spawn_point[0] += xdist
             if isinstance(obj, projectile.Projectile):
                obj.init_x += xdist
+            Sprite_surface.update(obj)
 
       if universal_var.debug  == True:
          for obj in Sprite_surface.all_sprite_surfaces:
@@ -44,6 +45,7 @@ class Camera(object):
                   obj.spawn_point[1] += ydist
                if isinstance(obj, projectile.Projectile):
                   obj.init_y += ydist
+               Sprite_surface.update(obj)
                
       if xdist != 0 and self.all_timers.is_empty('x_static'):
          universal_var.world_location[0] -= xdist
