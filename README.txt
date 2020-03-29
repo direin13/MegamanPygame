@@ -1,6 +1,6 @@
 README;
 ========================================================
--An entire megaman level from scratch using a game engine I've built
+-A megaman level from scratch using a game engine I've built
 
 -Run 'Game.exe' to play.
 
