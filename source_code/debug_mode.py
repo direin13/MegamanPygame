@@ -28,8 +28,8 @@ class Debug(object):
       x = 0
       y = 470
       screen.blit(cls.hud_background, (x, y))
-      Bit_text.display_text(screen, (x + 10, y + 20), 'co-ordinates: {},{}'.format(universal_var.world_location[0] + 300, 
-                                                                                    universal_var.world_location[1] + 300), 2, 2, (0,0,0))
+      Bit_text.display_text(screen, (x + 10, y + 20), 'co-ordinates: {},{}'.format(World_camera.world_location[0] + 300, 
+                                                                                    World_camera.world_location[1] + 300), 2, 2, (0,0,0))
       Bit_text.display_text(screen, (x + 10, y + 50), 'cursor speed: {}'.format(cls.cursor_speed), 2, 2, (0,0,0))
       Bit_text.display_text(screen, (x + 10, y +80), 'point distance: {}, {}'.format(cls.point_dist[0], 
                                                                                  cls.point_dist[1]), 2, 2, (0,0,0))
