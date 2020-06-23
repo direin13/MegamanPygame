@@ -30,9 +30,11 @@ class Boss_room(Megaman_object):
             return True
       return False
 
+
    def spawn_boss(self):
       if self.all_timers.is_finished('time_till_start') != True:
          self.all_timers.countdown('time_till_start')
+         self.music_lock = False
 
       else:
          self.boss.health_bar.is_active = True
@@ -48,6 +50,7 @@ class Boss_room(Megaman_object):
             elif self.boss.health_bar.is_full() != True:
                self.boss.health_bar.refill(11)
 
+
    def end_level(self):
       if self.all_timers.is_finished('time_till_end') != True:
          self.all_timers.countdown('time_till_end')
@@ -57,7 +60,8 @@ class Boss_room(Megaman_object):
       if self.all_timers.is_finished('time_till_end_song') != True:
          self.all_timers.countdown('time_till_end_song')
       if self.all_timers.get_ID('time_till_end_song')['curr_state'] == 1:
-         universal_var.songs.play_song('resources/audio/Victory theme.mp3')
+         universal_var.songs.play_list(song_number=6)
+
 
    def update(self):
       if len(Megaman.all_sprite_surfaces) != 0:
@@ -68,7 +72,6 @@ class Boss_room(Megaman_object):
                self.spawn_boss()
             elif self.battle_has_init and self.battle_has_end != True:
                m.enable_keys()
-
 
             if self.battle_has_end:
                m.disable_keys()

@@ -15,6 +15,7 @@ class Title_screen(object):
    is_running = False
    confirmation = False
    screen = None
+   music_lock = False
 
    def init():
       for timer in Title_screen.all_timers:
@@ -47,7 +48,9 @@ class Title_screen(object):
             cls.begin_game.display(cls.screen, 'flash')
             Bit_text.display_text(cls.screen, (20, 530), '©capcom co.,  ltd', 3, 3)
             Bit_text.display_text(cls.screen, (20, 560), 'a short pygame project', 3, 3)
-            universal_var.songs.play_list(song_number=4)
+            if Title_screen.music_lock != True:
+               universal_var.songs.play_list(song_number=4, loop=True)
+               Title_screen.music_lock = True
 
       
       if cls.confirmation != True:

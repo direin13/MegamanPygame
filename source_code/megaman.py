@@ -23,7 +23,7 @@ class Megaman(Character):
       height = 80
       display_layer = 3
       max_x_vel = 3
-      health_points = 100 #100
+      health_points = 100
       is_active = False
       gravity = False
       m_run_speed = 32

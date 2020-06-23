@@ -157,7 +157,7 @@ def boss_intro_sequence(boss_name):
       clear_all_lists()
       stage_name = ' '.join(boss_name.split('_'))
       intro_sequence.Stage_rectangle(300, stage_name)
-      universal_var.songs.play_song('resources/audio/Level intro sequence.mp3')
+      universal_var.songs.play_list(song_number=3)
 
    if game_timers.is_finished('init_star_background') != True:
       game_timers.countdown('init_star_background')
