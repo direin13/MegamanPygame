@@ -43,29 +43,17 @@
    'C:\\Users\\Daniel '
    'Irein\\Documents\\python-files\\my_scripts\\MegamanPygame-master\\MegamanPygame-master\\Game.py',
    'PYSOURCE'),
-  ('VCRUNTIME140.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\VCRUNTIME140.dll',
-   'BINARY'),
   ('python37.dll',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\python37.dll',
    'BINARY'),
-  ('libslsqp_op.CVAJHOQHKECBN7VLKMGEOZQ54GU3YWV7.gfortran-win32.dll',
+  ('VCRUNTIME140.dll',
    'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libslsqp_op.CVAJHOQHKECBN7VLKMGEOZQ54GU3YWV7.gfortran-win32.dll',
+   'irein\\appdata\\local\\programs\\python\\python37-32\\VCRUNTIME140.dll',
    'BINARY'),
-  ('libspecfun.I7OMDT5L33XVQM2MTW5AACQJUBYEOUFN.gfortran-win32.dll',
+  ('libd_odr.VCIGLUQ47ITWGKC64XGXMUYOLD2TZNBR.gfortran-win32.dll',
    'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libspecfun.I7OMDT5L33XVQM2MTW5AACQJUBYEOUFN.gfortran-win32.dll',
-   'BINARY'),
-  ('libbanded5x.OTQGTGOWDVOSJDN556X4GUSI6OEQTLFJ.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libbanded5x.OTQGTGOWDVOSJDN556X4GUSI6OEQTLFJ.gfortran-win32.dll',
-   'BINARY'),
-  ('libdcosqb.3VZOXZKO53O75NWVYHOUJGPASB2ZKGJ5.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdcosqb.3VZOXZKO53O75NWVYHOUJGPASB2ZKGJ5.gfortran-win32.dll',
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libd_odr.VCIGLUQ47ITWGKC64XGXMUYOLD2TZNBR.gfortran-win32.dll',
    'BINARY'),
   ('libvode.3WG7J4FXPCNUB4LM3L2S3J2WIYR5IZZ6.gfortran-win32.dll',
    'c:\\users\\daniel '
@@ -75,45 +63,9 @@
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\numpy\\.libs\\libopenblas.JKAMQ5EVHIVCPXP2XZJB2RQPIN47S32M.gfortran-win32.dll',
    'BINARY'),
-  ('libdcosqb.BSF6YTIPIV6BF3DZBNWD4YMH3UDU6DI7.gfortran-win32.dll',
+  ('libdcsrch.CTD6WPTKUW4MYYPI2KYOJ4427ZGGSXEQ.gfortran-win32.dll',
    'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdcosqb.BSF6YTIPIV6BF3DZBNWD4YMH3UDU6DI7.gfortran-win32.dll',
-   'BINARY'),
-  ('libdgamln.ZASUXBSO7FVE6RDOLRHY4PRC33KW2K3V.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdgamln.ZASUXBSO7FVE6RDOLRHY4PRC33KW2K3V.gfortran-win32.dll',
-   'BINARY'),
-  ('libansari.Q4BAGRNANLWD2YZJOKYPOAUIOLXW2LXK.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libansari.Q4BAGRNANLWD2YZJOKYPOAUIOLXW2LXK.gfortran-win32.dll',
-   'BINARY'),
-  ('lib_blas_su.ODPMMEVPHUEZXPT6C76ZYIONJW7E2IUE.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\lib_blas_su.ODPMMEVPHUEZXPT6C76ZYIONJW7E2IUE.gfortran-win32.dll',
-   'BINARY'),
-  ('liblbfgsb.VL5BPDGXE7BVJ5SDUWXHMGIZ23DLHL47.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\liblbfgsb.VL5BPDGXE7BVJ5SDUWXHMGIZ23DLHL47.gfortran-win32.dll',
-   'BINARY'),
-  ('libdet.54PIL56SC4PWH4OJDIF47MU7MUQ2Q25W.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdet.54PIL56SC4PWH4OJDIF47MU7MUQ2Q25W.gfortran-win32.dll',
-   'BINARY'),
-  ('libwrap_dum.2G4A2DEEJQX6YSCH42YTLQ2FI57IBKS6.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libwrap_dum.2G4A2DEEJQX6YSCH42YTLQ2FI57IBKS6.gfortran-win32.dll',
-   'BINARY'),
-  ('libwrap_dum.RVNL4W7577HF2V4QDALLKHXD3JAS4VHU.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libwrap_dum.RVNL4W7577HF2V4QDALLKHXD3JAS4VHU.gfortran-win32.dll',
-   'BINARY'),
-  ('lib_test_fo.6QS7HUU6UWQ3ZZ2H5HU3YC3T72Y24U6T.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\lib_test_fo.6QS7HUU6UWQ3ZZ2H5HU3YC3T72Y24U6T.gfortran-win32.dll',
-   'BINARY'),
-  ('libchkder.23IDUBONJEDQJXE3WT2KTJUEFGPJBH5V.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libchkder.23IDUBONJEDQJXE3WT2KTJUEFGPJBH5V.gfortran-win32.dll',
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdcsrch.CTD6WPTKUW4MYYPI2KYOJ4427ZGGSXEQ.gfortran-win32.dll',
    'BINARY'),
   ('libmvndst.UEXYY5YZLETRZLLV7GKDGWYVIASLDNJ6.gfortran-win32.dll',
    'c:\\users\\daniel '
@@ -123,17 +75,53 @@
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libbispeu.OAANPWJKKXZRFOCA7BPAXPEXKORTJQMF.gfortran-win32.dll',
    'BINARY'),
-  ('libblkdta00.54I3HX6FZWA5HBFZL6T6FGETXPA3Z62W.gfortran-win32.dll',
+  ('libwrap_dum.2G4A2DEEJQX6YSCH42YTLQ2FI57IBKS6.gfortran-win32.dll',
    'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libblkdta00.54I3HX6FZWA5HBFZL6T6FGETXPA3Z62W.gfortran-win32.dll',
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libwrap_dum.2G4A2DEEJQX6YSCH42YTLQ2FI57IBKS6.gfortran-win32.dll',
+   'BINARY'),
+  ('lib_blas_su.ODPMMEVPHUEZXPT6C76ZYIONJW7E2IUE.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\lib_blas_su.ODPMMEVPHUEZXPT6C76ZYIONJW7E2IUE.gfortran-win32.dll',
+   'BINARY'),
+  ('libdop853.ZDB77F5S63EPO7WWG3LICXZSBW2LFM2N.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdop853.ZDB77F5S63EPO7WWG3LICXZSBW2LFM2N.gfortran-win32.dll',
+   'BINARY'),
+  ('libdet.54PIL56SC4PWH4OJDIF47MU7MUQ2Q25W.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdet.54PIL56SC4PWH4OJDIF47MU7MUQ2Q25W.gfortran-win32.dll',
+   'BINARY'),
+  ('libdqag.DFBF4LATN5PNJT56UKJVPJNRKLLPKFJO.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdqag.DFBF4LATN5PNJT56UKJVPJNRKLLPKFJO.gfortran-win32.dll',
+   'BINARY'),
+  ('libgetbreak.NUDYNUJU3LWOH35DGTV6RS6R7GIDVS7J.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libgetbreak.NUDYNUJU3LWOH35DGTV6RS6R7GIDVS7J.gfortran-win32.dll',
+   'BINARY'),
+  ('libwrap_dum.RVNL4W7577HF2V4QDALLKHXD3JAS4VHU.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libwrap_dum.RVNL4W7577HF2V4QDALLKHXD3JAS4VHU.gfortran-win32.dll',
    'BINARY'),
   ('libdfft_sub.H7E5IG7S2VYW5BLNPY6N4CGXYYTSOOCL.gfortran-win32.dll',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdfft_sub.H7E5IG7S2VYW5BLNPY6N4CGXYYTSOOCL.gfortran-win32.dll',
    'BINARY'),
-  ('libdcsrch.CTD6WPTKUW4MYYPI2KYOJ4427ZGGSXEQ.gfortran-win32.dll',
+  ('libchkder.23IDUBONJEDQJXE3WT2KTJUEFGPJBH5V.gfortran-win32.dll',
    'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdcsrch.CTD6WPTKUW4MYYPI2KYOJ4427ZGGSXEQ.gfortran-win32.dll',
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libchkder.23IDUBONJEDQJXE3WT2KTJUEFGPJBH5V.gfortran-win32.dll',
+   'BINARY'),
+  ('libspecfun.I7OMDT5L33XVQM2MTW5AACQJUBYEOUFN.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libspecfun.I7OMDT5L33XVQM2MTW5AACQJUBYEOUFN.gfortran-win32.dll',
+   'BINARY'),
+  ('libdgamln.ZASUXBSO7FVE6RDOLRHY4PRC33KW2K3V.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdgamln.ZASUXBSO7FVE6RDOLRHY4PRC33KW2K3V.gfortran-win32.dll',
+   'BINARY'),
+  ('libdcosqb.3VZOXZKO53O75NWVYHOUJGPASB2ZKGJ5.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdcosqb.3VZOXZKO53O75NWVYHOUJGPASB2ZKGJ5.gfortran-win32.dll',
    'BINARY'),
   ('libdfitpack.EXJWQURDNSA2B5QGBXJD4H5UREUPFPDG.gfortran-win32.dll',
    'c:\\users\\daniel '
@@ -143,29 +131,41 @@
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libcobyla2.MZIYBZPTVTYIHRT7JCIZN4FNMM5IPWLD.gfortran-win32.dll',
    'BINARY'),
-  ('libnnls.GX3LBH56JRQ7JMAOG7UBTDQJYFS6BPRN.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libnnls.GX3LBH56JRQ7JMAOG7UBTDQJYFS6BPRN.gfortran-win32.dll',
-   'BINARY'),
-  ('libdop853.ZDB77F5S63EPO7WWG3LICXZSBW2LFM2N.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdop853.ZDB77F5S63EPO7WWG3LICXZSBW2LFM2N.gfortran-win32.dll',
-   'BINARY'),
-  ('libdqag.DFBF4LATN5PNJT56UKJVPJNRKLLPKFJO.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdqag.DFBF4LATN5PNJT56UKJVPJNRKLLPKFJO.gfortran-win32.dll',
-   'BINARY'),
-  ('libd_odr.VCIGLUQ47ITWGKC64XGXMUYOLD2TZNBR.gfortran-win32.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libd_odr.VCIGLUQ47ITWGKC64XGXMUYOLD2TZNBR.gfortran-win32.dll',
-   'BINARY'),
   ('lib_arpack-.T4BQQIUIMNSYQAWYM6F3TWT2H2FRWTGP.gfortran-win32.dll',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\lib_arpack-.T4BQQIUIMNSYQAWYM6F3TWT2H2FRWTGP.gfortran-win32.dll',
    'BINARY'),
-  ('libgetbreak.NUDYNUJU3LWOH35DGTV6RS6R7GIDVS7J.gfortran-win32.dll',
+  ('libslsqp_op.CVAJHOQHKECBN7VLKMGEOZQ54GU3YWV7.gfortran-win32.dll',
    'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libgetbreak.NUDYNUJU3LWOH35DGTV6RS6R7GIDVS7J.gfortran-win32.dll',
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libslsqp_op.CVAJHOQHKECBN7VLKMGEOZQ54GU3YWV7.gfortran-win32.dll',
+   'BINARY'),
+  ('liblbfgsb.VL5BPDGXE7BVJ5SDUWXHMGIZ23DLHL47.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\liblbfgsb.VL5BPDGXE7BVJ5SDUWXHMGIZ23DLHL47.gfortran-win32.dll',
+   'BINARY'),
+  ('libblkdta00.54I3HX6FZWA5HBFZL6T6FGETXPA3Z62W.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libblkdta00.54I3HX6FZWA5HBFZL6T6FGETXPA3Z62W.gfortran-win32.dll',
+   'BINARY'),
+  ('libansari.Q4BAGRNANLWD2YZJOKYPOAUIOLXW2LXK.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libansari.Q4BAGRNANLWD2YZJOKYPOAUIOLXW2LXK.gfortran-win32.dll',
+   'BINARY'),
+  ('libbanded5x.OTQGTGOWDVOSJDN556X4GUSI6OEQTLFJ.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libbanded5x.OTQGTGOWDVOSJDN556X4GUSI6OEQTLFJ.gfortran-win32.dll',
+   'BINARY'),
+  ('libnnls.GX3LBH56JRQ7JMAOG7UBTDQJYFS6BPRN.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libnnls.GX3LBH56JRQ7JMAOG7UBTDQJYFS6BPRN.gfortran-win32.dll',
+   'BINARY'),
+  ('lib_test_fo.6QS7HUU6UWQ3ZZ2H5HU3YC3T72Y24U6T.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\lib_test_fo.6QS7HUU6UWQ3ZZ2H5HU3YC3T72Y24U6T.gfortran-win32.dll',
+   'BINARY'),
+  ('libdcosqb.BSF6YTIPIV6BF3DZBNWD4YMH3UDU6DI7.gfortran-win32.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\scipy\\extra-dll\\libdcosqb.BSF6YTIPIV6BF3DZBNWD4YMH3UDU6DI7.gfortran-win32.dll',
    'BINARY'),
   ('select',
    'c:\\users\\daniel '
@@ -387,21 +387,21 @@
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\DLLs\\libssl-1_1.dll',
    'BINARY'),
-  ('SDL.dll',
+  ('libpng16-16.dll',
    'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\SDL.dll',
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libpng16-16.dll',
    'BINARY'),
   ('libjpeg-8.dll',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libjpeg-8.dll',
    'BINARY'),
+  ('SDL.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\SDL.dll',
+   'BINARY'),
   ('SDL_image.dll',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\SDL_image.dll',
-   'BINARY'),
-  ('libpng16-16.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libpng16-16.dll',
    'BINARY'),
   ('SDL_mixer.dll',
    'c:\\users\\daniel '
@@ -415,6 +415,10 @@
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libfreetype-6.dll',
    'BINARY'),
+  ('zlib1.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\zlib1.dll',
+   'BINARY'),
   ('libgcc_s_sjlj-1.dll',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libgcc_s_sjlj-1.dll',
@@ -427,10 +431,6 @@
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libtiff-5.dll',
    'BINARY'),
-  ('zlib1.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\zlib1.dll',
-   'BINARY'),
   ('libmpg123-0.dll',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libmpg123-0.dll',
@@ -439,65 +439,65 @@
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libvorbisfile-3.dll',
    'BINARY'),
-  ('libvorbis-0.dll',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libvorbis-0.dll',
-   'BINARY'),
   ('libogg-0.dll',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libogg-0.dll',
+   'BINARY'),
+  ('libvorbis-0.dll',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\pygame\\libvorbis-0.dll',
    'BINARY'),
   ('base_library.zip',
    'C:\\Users\\Daniel '
    'Irein\\Documents\\python-files\\my_scripts\\MegamanPygame-master\\MegamanPygame-master\\build\\Game\\base_library.zip',
    'DATA'),
-  ('importlib_metadata-1.6.0-py3.7.egg-info\\RECORD',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\RECORD',
-   'DATA'),
   ('lib2to3\\Grammar3.7.3.final.0.pickle',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\lib2to3\\Grammar3.7.3.final.0.pickle',
-   'DATA'),
-  ('importlib_metadata-1.6.0-py3.7.egg-info\\LICENSE',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\LICENSE',
-   'DATA'),
-  ('importlib_metadata-1.6.0-py3.7.egg-info\\INSTALLER',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\INSTALLER',
-   'DATA'),
-  ('importlib_metadata-1.6.0-py3.7.egg-info\\top_level.txt',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\top_level.txt',
-   'DATA'),
-  ('lib2to3\\PatternGrammar.txt',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\lib2to3\\PatternGrammar.txt',
-   'DATA'),
-  ('importlib_metadata-1.6.0-py3.7.egg-info\\WHEEL',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\WHEEL',
-   'DATA'),
-  ('lib2to3\\tests\\data\\README',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\lib2to3\\tests\\data\\README',
-   'DATA'),
-  ('Include\\pyconfig.h',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\Include\\pyconfig.h',
-   'DATA'),
-  ('lib2to3\\Grammar.txt',
-   'c:\\users\\daniel '
-   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\lib2to3\\Grammar.txt',
    'DATA'),
   ('importlib_metadata-1.6.0-py3.7.egg-info\\METADATA',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\METADATA',
    'DATA'),
+  ('lib2to3\\PatternGrammar.txt',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\lib2to3\\PatternGrammar.txt',
+   'DATA'),
+  ('lib2to3\\tests\\data\\README',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\lib2to3\\tests\\data\\README',
+   'DATA'),
+  ('importlib_metadata-1.6.0-py3.7.egg-info\\RECORD',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\RECORD',
+   'DATA'),
+  ('importlib_metadata-1.6.0-py3.7.egg-info\\INSTALLER',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('importlib_metadata-1.6.0-py3.7.egg-info\\WHEEL',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\WHEEL',
+   'DATA'),
+  ('Include\\pyconfig.h',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\Include\\pyconfig.h',
+   'DATA'),
+  ('importlib_metadata-1.6.0-py3.7.egg-info\\LICENSE',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\LICENSE',
+   'DATA'),
   ('lib2to3\\PatternGrammar3.7.3.final.0.pickle',
    'c:\\users\\daniel '
    'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\lib2to3\\PatternGrammar3.7.3.final.0.pickle',
+   'DATA'),
+  ('lib2to3\\Grammar.txt',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\lib2to3\\Grammar.txt',
+   'DATA'),
+  ('importlib_metadata-1.6.0-py3.7.egg-info\\top_level.txt',
+   'c:\\users\\daniel '
+   'irein\\appdata\\local\\programs\\python\\python37-32\\lib\\site-packages\\importlib_metadata-1.6.0.dist-info\\top_level.txt',
    'DATA'),
   ('Game.exe.manifest',
    'C:\\Users\\Daniel '

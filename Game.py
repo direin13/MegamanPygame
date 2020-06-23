@@ -9,7 +9,6 @@ from debug_mode import Debug
 import sprite
 import enemy
 import camera
-import display_layer
 import timer
 import bar
 from bit_text import Bit_text
@@ -20,7 +19,6 @@ import boss_room
 #os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
 
 pygame.init()
-display_layer.init()
 
 game_timers = timer.Timer()
 game_timers.add_ID('ready', 14)
@@ -209,7 +207,7 @@ def check_megaman_alive():
    else:
       if universal_var.debug == True:
          megaman.is_active = True
-         Debug.debug_mode(screen)
+         Debug.debug_mode()
       else:
          camera.World_camera.target_focus = megaman
          if megaman.is_alive() and game_has_started == True:
