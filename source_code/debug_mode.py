@@ -19,7 +19,8 @@ class Debug(object):
       Debug.point_dist = [0, 0]
 
    @classmethod
-   def debug_mode(cls, screen):
+   def debug_mode(cls):
+      screen = pygame.display.get_surface()
       World_camera.target_focus = cls.cursor
       pygame.draw.rect(screen, (255,255,255), (300 - cls.cursor.width//2, 300 - cls.cursor.height//2, cls.cursor.width, cls.cursor.height), 2)
       pygame.draw.rect(screen, (255,255,255), (300, 300, cls.cursor.width//2, cls.cursor.height//2))

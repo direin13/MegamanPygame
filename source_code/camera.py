@@ -51,7 +51,7 @@ class World_camera(object):
             #obj.display_collboxes(Sprite_surface.display_screen)
             pass
          if universal_var.debug:
-            obj.display_collboxes(Sprite_surface.display_screen, collbox_alpha)
+            obj.display_collboxes(Sprite_surface.display_screen)
 
 
       if universal_var.debug == True:
