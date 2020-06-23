@@ -32,7 +32,8 @@ ready_text = Bit_text('ready', 240, 250, 3, 3, pattern_interval=14)
 
 clock = pygame.time.Clock()
 
-screen = pygame.display.set_mode((universal_var.screen_width, universal_var.screen_height), pygame.FULLSCREEN, pygame.NOFRAME)
+screen = pygame.display.set_mode((600, 600), pygame.FULLSCREEN, pygame.NOFRAME)
+sprite.Sprite_surface.display_screen = screen
 
 pygame.mouse.set_visible(False)
 
@@ -52,6 +53,7 @@ def load_level(level):
    global game_has_started
    global game_timers
    global megaman
+   game_setup.clear_all_lists()
 
    game_has_started = False
    level_objs = game_setup.level_dict[level]
@@ -68,6 +70,7 @@ def load_level(level):
    camera.World_camera.world_location = [0, 0]
    Debug.debug_init()
    boss_room.Boss_room.battle_has_end = False
+   sprite.Sprite_surface.all_sprite_surfaces.sort(key=lambda x: x.display_layer)
 
 
 def jump_to_start(sprite_surf):
@@ -246,13 +249,11 @@ while game:
          game = False
 
    for sprite_surf in sprite.Sprite_surface.all_sprite_surfaces:
-      if sprite_surf.is_on_screen(universal_var.screen_width, universal_var.screen_height) or universal_var.debug:
-         display_layer.push_onto_layer(sprite_surf, sprite_surf.display_layer)
       sprite_surf.update()
 
-   camera.World_camera.update() #adjusts all sprite surf according to the comera's position
+   camera.World_camera.update() #adjusts all sprite surf according to the camera's position 
+                                #and displays sprite_surf
 
-   display_layer.display_all_sprite_surf(screen, display_collboxes=universal_var.debug)
 
    if Title_screen.is_running:
       Title_screen.run()
@@ -263,7 +264,6 @@ while game:
    else:
       if intro_has_ended == False:
          intro_has_ended = True
-         game_setup.clear_all_lists()
          load_level('concrete_man')
 
       elif boss_room.Boss_room.battle_has_end != True:
