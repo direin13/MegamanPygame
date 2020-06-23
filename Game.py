@@ -32,7 +32,9 @@ ready_text = Bit_text('ready', 240, 250, 3, 3, pattern_interval=14)
 
 clock = pygame.time.Clock()
 
-screen = pygame.display.set_mode((universal_var.screen_width, universal_var.screen_height))
+screen = pygame.display.set_mode((universal_var.screen_width, universal_var.screen_height), pygame.FULLSCREEN, pygame.NOFRAME)
+
+pygame.mouse.set_visible(False)
 
 Title_screen.screen = screen
 
@@ -44,7 +46,6 @@ megaman = None
 
 intro_has_ended = False
 game_has_started = False
-fps = 75
 game = True
 
 def load_level(level):
@@ -75,7 +76,7 @@ def jump_to_start(sprite_surf):
    global ready_text
 
    if game_timers.is_full('jump_to_start'): #reset everything back to the previous checkpoint
-      universal_var.songs.play_list(song_number=0)
+      universal_var.songs.play_list(song_number=0, loop=True, restart_pos=9.0)
       screen.fill((0,0,0))
       universal_var.game_reset = True
       xdist = camera.World_camera.world_location[0] - universal_var.checkpoint[0] #distance to checkpoint and current location
@@ -112,8 +113,6 @@ def jump_to_start(sprite_surf):
 
 
 def check_game_pause():
-   global fps
-
    k = pygame.key.get_pressed()
    if k[pygame.K_p] and game_has_started == True and megaman.is_alive() and not(camera.camera_transitioning()): #pause game
       if universal_var.game_pause == False:
@@ -162,19 +161,19 @@ def game_over():
 
       if k[pygame.K_UP]:
          if option != 'play_again':
-            play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.2)
+            play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume)
          option = 'play_again'
          arrow.x, arrow.y = play_again_text.x - 40, play_again_text.y
 
       elif k[pygame.K_DOWN]:
          if option != 'exit':
-            play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.2)
+            play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume)
          option = 'exit'
          arrow.x, arrow.y = exit_text.x - 40, exit_text.y
 
       elif k[pygame.K_x]:
          universal_var.songs.stop()
-         play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume + 0.2)
+         play_sound('pause', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume)
          if option == 'exit':
             game = False
          else:
@@ -214,7 +213,7 @@ def check_megaman_alive():
             pass
 
          elif game_has_started == True: #When megaman dies
-            if universal_var.game_reset == False:
+            if universal_var.game_reset != True:
                universal_var.songs.stop()
 
             reset_time = game_timers.get_ID('reset')['curr_state']
@@ -241,10 +240,6 @@ def check_megaman_alive():
 
 while game:
    k = pygame.key.get_pressed()
-   if k[pygame.K_b]:
-      fps = 10
-   else:
-      fps = 75
    screen.fill((0,0,0))
    for e in pygame.event.get():
       if e.type == pygame.QUIT:
@@ -279,4 +274,6 @@ while game:
       else:
          game_over()
    pygame.display.update()
-   clock.tick(fps)
+   clock.tick(75)
+
+universal_var.songs.stop()

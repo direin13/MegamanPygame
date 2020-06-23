@@ -10,7 +10,6 @@ README;
 	  shoot = z
 	  jump = x
 	  pause/unpause = p/o
-	  debug/nodebug = vb/c
 
 - n.b Made on Windows 10. I have not tested on linux although it should still run
 
