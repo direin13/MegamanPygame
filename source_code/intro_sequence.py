@@ -101,7 +101,7 @@ class Star(Megaman_object):
          y += self.height
 
    def update(self):
-      if self.is_on_screen(universal_var.screen_width, universal_var.screen_width):
+      if self.is_on_screen():
          self.is_active = True
       else:
          if self.x < 0:

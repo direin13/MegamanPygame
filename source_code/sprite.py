@@ -155,6 +155,7 @@ class Sprite_surface(object):
    #--this is an object that has a set of sprite and set of of collision boxes attached to it
    all_sprite_surfaces = []
    all_name_count = {}
+   display_screen = None
 
    def __init__(self, ID, x, y, sprites=None, coll_boxes=None, is_active=True, width=0, height=0, display_layer=1, display_offset=[0,0]):
       Sprite_surface.add_to_class_lst(self, Sprite_surface.all_sprite_surfaces, ID)
@@ -263,7 +264,8 @@ class Sprite_surface(object):
             sprite.y = self.y
 
 
-   def is_on_screen(self, screen_width, screen_height, x_clip_offset=0, y_clip_offset=0):
+   def is_on_screen(self, x_clip_offset=0, y_clip_offset=0):
+      screen_width, screen_height = Sprite_surface.display_screen.get_size()
       if ((self.x < screen_width + x_clip_offset and self.x + self.width > -x_clip_offset) and
          (self.y < screen_height + y_clip_offset and self.y + self.height > -y_clip_offset)):
          return True

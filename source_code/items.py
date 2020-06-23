@@ -59,7 +59,7 @@ class Item(Megaman_object):
       else:
          item.is_active = True
          item.x, item.y = x, y
-         item.y_vel = -2
+         item.y_vel = 1
          Sprite_surface.update(item)
       return item
 
@@ -75,7 +75,7 @@ class Item(Megaman_object):
                self.apply_gravity()
 
          if self.is_drop:
-            if (self.is_active and (self.is_on_screen(universal_var.screen_width, universal_var.screen_height) and 
+            if (self.is_active and (self.is_on_screen() and 
                self.all_timers.is_finished('time_till_vanish') == False)):
 
                if universal_var.game_pause == False:

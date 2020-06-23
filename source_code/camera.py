@@ -32,6 +32,7 @@ class World_camera(object):
          ydist = cls.y - cls.target_focus.y
 
       for obj in Sprite_surface.all_sprite_surfaces:
+         #readjust position 
          if isinstance(obj, bar.Energy_bar) != True:
             obj.x += xdist
             obj.display_offset = [cls.x_offset, cls.y_offset]
@@ -41,6 +42,17 @@ class World_camera(object):
             if isinstance(obj, projectile.Projectile):
                obj.init_x += xdist
             Sprite_surface.update(obj)
+
+         #display onto screen
+         try:
+            if obj.is_on_screen() and obj.is_active:
+               obj.display(Sprite_surface.display_screen)
+         except AttributeError:
+            #obj.display_collboxes(Sprite_surface.display_screen)
+            pass
+         if universal_var.debug:
+            obj.display_collboxes(Sprite_surface.display_screen, collbox_alpha)
+
 
       if universal_var.debug == True:
          for obj in Sprite_surface.all_sprite_surfaces:

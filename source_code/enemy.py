@@ -53,6 +53,7 @@ class Enemy(Character):
          self.add_explosion_animation(time_offset=explosion_time_offsets[i] + time_offset, width=width, height=height, 
                                       x_offset=xy_offsets[i][0] + x_offset, y_offset=xy_offsets[i][1] + y_offset)
 
+
    def display_explosions(self, surf):
       all_finished = True
       for timer in self.explosion_timers:
@@ -104,7 +105,7 @@ class Enemy(Character):
             self.reduce_hp(p.damage_points)
             p.is_active = False
             p.launched = False
-            play_sound('impact_p', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.1)
+            play_sound('impact_p', universal_var.megaman_sounds, channel=2, volume=universal_var.sfx_volume - 0.2)
             if self.is_alive() and self.all_timers.is_finished('no_display'):
                   self.all_timers.replenish_timer('no_display')
             elif drop_item == True and self.is_alive() == False:
@@ -129,7 +130,7 @@ class Enemy(Character):
       elif universal_var.game_pause == True:
          pass
       else:
-         if (self.is_on_screen(universal_var.screen_width, universal_var.screen_height, self.x_clip_offset, self.y_clip_offset) 
+         if (self.is_on_screen(self.x_clip_offset, self.y_clip_offset) 
             and universal_var.game_reset != True):
             if self.is_alive():
                self.is_active = True
@@ -553,7 +554,7 @@ class Hoohoo(Enemy):
                self.boulder.set(self.boulder.x, self.boulder.y, 20, 270, 9.8)
                self.boulder_drop = True
 
-      if self.is_on_screen(universal_var.screen_width, universal_var.screen_height) and self.is_active and self.check_pshooter_contact(False, True, 80):
+      if self.is_on_screen() and self.is_active and self.check_pshooter_contact(False, True, 80):
          self.boulder.reduce_hp(self.boulder.health_points)
          self.boulder.launched = False
 
@@ -731,7 +732,7 @@ class Paozo(Enemy):
          self.display_explosions(surf)
 
    def respawn(self):
-      if universal_var.game_pause != True and universal_var.game_reset != True and self.is_on_screen(universal_var.screen_width, universal_var.screen_height):
+      if universal_var.game_pause != True and universal_var.game_reset != True and self.is_on_screen():
          if self.respawn_obj.is_active != True:
             self.respawn_obj.y = self.spawn_point[1] - 600
             self.respawn_obj.is_active = True
@@ -862,7 +863,7 @@ class Paozo_Ball(Enemy):
          self.check_pshooter_contact(True, False)
 
          projectile.Projectile.update(self)
-      elif self.is_on_screen(universal_var.screen_width, universal_var.screen_height) != True:
+      elif self.is_on_screen() != True:
          self.is_active = False
 
 

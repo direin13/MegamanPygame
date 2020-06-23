@@ -5,6 +5,7 @@ from timer import Timer
 from megaman import Megaman
 import camera
 
+
 class Boss_room(Megaman_object):
    battle_has_end = False
    def __init__(self, boss, x, y, width, height):
