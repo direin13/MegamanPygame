@@ -47,13 +47,14 @@ class Song_player(object):
 
    def play_thread(self, loop=False, restart_pos=0.0):
       while self.playing:
+         song_finished = pygame.mixer.music.get_busy() == False
          if self.paused == False:
-            if pygame.mixer.music.get_busy() == False and loop:
+            if song_finished and loop:
                pygame.mixer.music.rewind()
                pygame.mixer.music.play()
                pygame.mixer.music.set_pos(restart_pos)
 
-            elif pygame.mixer.music.get_busy() == False and loop != True:
+            elif song_finished and loop != True:
                self.playing = False
 
       if pygame.mixer.music.get_busy():

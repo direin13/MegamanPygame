@@ -496,11 +496,11 @@ class Megaman(Character):
                start_times = [0, 15, 35]
                angles = [0, 90, 180, 270, 45, 135, 225, 315, 0, 90, 180, 270]
                i = 0
-               for j in range(3):
-                  Death_orb.set_orb_active(self.x + 20, self.y + 20, start_times[j], angles[i], 15)
-                  Death_orb.set_orb_active(self.x + 20, self.y + 20, start_times[j], angles[i+1], 15)
-                  Death_orb.set_orb_active(self.x + 20, self.y + 20, start_times[j], angles[i+2], 15)
-                  Death_orb.set_orb_active(self.x + 20, self.y + 20, start_times[j], angles[i+3], 15)
+               for time in start_times:
+                  Death_orb.set_orb_active(self.x + 20, self.y + 20, time, angles[i], 15)
+                  Death_orb.set_orb_active(self.x + 20, self.y + 20, time, angles[i+1], 15)
+                  Death_orb.set_orb_active(self.x + 20, self.y + 20, time, angles[i+2], 15)
+                  Death_orb.set_orb_active(self.x + 20, self.y + 20, time, angles[i+3], 15)
                   i += 4
                play_sound('death', universal_var.megaman_sounds, channel=5, volume=universal_var.sfx_volume + 0.1)
                self.all_timers.countdown('death_sound')

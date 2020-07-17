@@ -19,12 +19,10 @@ class Energy_bar(Megaman_object):
       self.points = points
       self.original_points = points
 
-      self.rect_width = width  #rect refers to energy bar that's coloured
-      self.rect_height = height
+      self.energy_rect_width = width  #rect refers to energy bar that's coloured
+      self.energy_rect_height = height
       self.colour1 = colour1
       self.colour2 = colour2
-
-      self.bar_decrate = round(points/height) #This is the rate at which I add or minus a bar of energy. e.g If rate was 5, then every +-5 points I add or minus a bar
       self.all_timers.add_ID('time_till_increment', 2)
       self.all_timers.add_ID('play_sound', 3)
 
@@ -33,22 +31,23 @@ class Energy_bar(Megaman_object):
       if self.is_active:
          if self.points <= 0: #If points has dropped to zero then I don't want it to go into minus
             self.points = 0
-            self.rect_height = 0
+            self.energy_rect_height = 0
             height_accum = self.original_points
 
          elif self.points >= self.original_points:
             self.points = self.original_points
-            self.rect_height = self.height
+            self.energy_rect_height = self.height
             height_accum = 0
 
          else: #This formula gives the height the rectangle(health bar energy) has to be to match the original points - current points percentage
             points_diff = self.original_points - self.points
-            height_accum = round(points_diff / self.bar_decrate)
-            self.rect_height = self.height - height_accum
+            bar_decrate = round(self.original_points/self.height)
+            height_accum = round(points_diff / bar_decrate)
+            self.energy_rect_height = self.height - height_accum
 
          rect_y = self.y + (height_accum * self.scale_factor[1])
-         width = self.rect_width * self.scale_factor[0]
-         height = self.rect_height * self.scale_factor[1]
+         width = self.energy_rect_width * self.scale_factor[0]
+         height = self.energy_rect_height * self.scale_factor[1]
 
          pygame.draw.rect(surf, (0, 0, 0), (self.x, self.y, self.width * self.scale_factor[0], self.height * self.scale_factor[1])) # black box in at the back
          if height_accum < self.original_points:
@@ -73,7 +72,8 @@ class Energy_bar(Megaman_object):
       if self.is_full() != True and self.all_timers.is_full('time_till_increment'):
          self.points += amount
          return True
-      return False
+      else:
+         return False
 
 
    def is_full(self):

@@ -2,16 +2,21 @@
 import time
 
 class Timer(object):
+   """used to replicate time within a loop"""
    def __init__(self):
       self.all_timers = {}
       self.loop_states = {}
 
    def add_ID(self, ID, amount):
+      """adds a reference to ID to keep track of timer.
+         Amount is the amount of frames the ID can be active for"""
       self.all_timers[ID] = {'origin': amount, 'curr_state': amount}
       self.loop_states[ID] = {'origin': 1, 'curr_state':1}
       return self
 
-   def increment_loop_state(self, ID, loop_amount=-1):
+   def _increment_loop_state(self, ID, loop_amount=-1):
+      """Increments loop state. Shouldn't be done manually unless
+         you want manually skip a loop"""
       if loop_amount == -1: #loop infiniteley
          self.all_timers[ID]['curr_state'] = self.all_timers[ID]['origin']
 
@@ -26,6 +31,10 @@ class Timer(object):
       
 
    def countdown(self, ID, amount=None, countdown_speed=1, loop=False, loop_amount=-1):
+      """Counts down an ID. Amount is the number of frames to countdown until timer ID is
+         finished. If ID doesn't exist, it will be added automatically.
+         Loop parameter will automatically restart the counter upon finish. If loop is True
+         then by default it will loop forever."""
       if ID not in self.all_timers:
          self.add_ID(ID, amount)
 
@@ -43,37 +52,50 @@ class Timer(object):
          if loop == False:
             self.all_timers[ID]['curr_state'] = 0
          else:
-            self.increment_loop_state(ID, loop_amount)
+            self._increment_loop_state(ID, loop_amount)
 
       return self
 
-   def replenish_timer(self, ID, n=None):
-      if n == None:
+
+   def replenish_timer(self, ID, new_amount=None):
+      if new_amount == None:
          self.all_timers[ID]['curr_state'] = self.all_timers[ID]['origin']
       else:
-         self.all_timers[ID]['origin'] = n
-         self.all_timers[ID]['curr_state'] = n
+         self.all_timers[ID]['origin'] = new_amount
+         self.all_timers[ID]['curr_state'] = new_amount
       self.loop_states[ID]['curr_state'] = 1
 
       return self
 
+
    def get_ID(self, ID):
+      """returns dict of info about ID"""
       return self.all_timers[ID]
+
 
    def get_loop_states(self, ID):
       return self.loop_states[ID]
 
+
    def is_finished(self, ID, include_loop=False):
+      """returns true if the ID has counted down to 0.
+         If include_loop is True, the function will only
+         return true if ID has looped completely as well."""
       if include_loop:
          return self.all_timers[ID]['curr_state'] <= 0 and self.loop_states[ID]['curr_state'] >= self.loop_states[ID]['origin']
       else:
          return self.all_timers[ID]['curr_state'] <= 0
 
+
    def is_almost_finished(self, ID, n):
+      """Will return true if the state of an ID timer
+         has reached or is less than n"""
       return (self.all_timers[ID]['curr_state'] - n) <= 0
+
 
    def is_full(self, ID):
       return self.all_timers[ID]['origin'] == self.all_timers[ID]['curr_state']
+
 
    def print_ID(self, ID):
       print('{}: timer_state = {}::{}, loop_state = {}::{}'.format(ID, 

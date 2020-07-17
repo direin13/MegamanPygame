@@ -2,18 +2,20 @@
 import pygame
 from mega_stack import *
 import timer
+import os
 
 class Sprite(object):
+   """Base class for making sprite animations"""
 
-   def __init__(self, ID, x, y, width, height, active_frames, current_frame=0, change_rgb_value=False, rgb=(10,10,10,0)):
+   def __init__(self, ID, x, y, width, height, active_frames, change_rgb_value=False, rgb=(10,10,10,0)):
+      """Initialise a sprite. ID is a string.
+         active_framea is a list of tuples containing animations
+         e.g [(animation_name, [loaded_images], int_animation_speed)]"""
       self.ID = ID
       self.x = x
       self.y = y
       self.width = width
       self.height = height
-      #--make sure the active frames are in the order you want in a list--
-      #--active_frames should contain a list of tuples. For each tuple, tuple[0] is the string name of the set of animations and tuple[1] are the images themselves, tuple[2] is the speed at which the set of frames should be played--
-      #--e.g active_frame = [('random_animation_1', [picture_1, picture_2, picture_3], some_speed), ('random_animation_2', [picture_4], some_other_speed)]
       self.active_frames = active_frames
       self.all_frames = {}
       self.all_frame_speed = {}
@@ -26,12 +28,27 @@ class Sprite(object):
          self.all_frames[t[0]] = t[1]
          self.all_frame_speed[t[0]] = t[2]
 
-      self.current_frame = current_frame
+      self.current_frame = 0
       self.current_animation = self.active_frames[0][0]
       self.all_timers.add_ID('time_till_next_frame', 0)
 
 
+   @staticmethod
+   def load_images(directory):
+      directory_images = {}
+
+      for image in os.listdir(directory):
+         try:
+            directory_images[image.split('.')[0]] = pygame.image.load('{}/{}'.format(directory, image))
+         except:
+            pass
+
+      return directory_images
+         #--the name of the file(without the file extension) return to the loaded image itself e.g all_images[name] will return the loaded image of name.png--
+
+
    def get_frames(self, frame_name):
+      """return the original list of surfaces that make up the animation"""
       return self.all_frames[frame_name]
 
 
@@ -46,12 +63,15 @@ class Sprite(object):
 
          for i in range(len(new_imgs)):
             t[1][i] = new_imgs[i]
+            
 
    def get_frame_speed(self, frame_name):
+      """returns the number of total frames given to play specified animation"""
       return self.all_frame_speed[frame_name]
 
+
    def display_animation(self, surf, frame_name, x_offset=0, y_offset=0, flip=False, resume=False):
-      #--displays animations from 'frame name' in self.active_frames--
+      """displays animations from 'frame_name' in self.active_frames"""
       if self.active_frames != None:
          if self.current_animation == frame_name or resume == True and self.current_frame <= len(self.get_frames(frame_name)):
             self.current_animation = frame_name 
@@ -69,8 +89,10 @@ class Sprite(object):
 
          surf.blit(frame, (self.x + x_offset, self.y + y_offset))
 
+
    def update(self, auto_reset=True, loop_amount=-1):
-      #--used to cycle through the sprite's current animation list
+      """used to cycle through the current animation list of the sprite.
+         should be used once per frame, per animation."""
       if self.active_frames != None:
          frame_speed = self.all_frame_speed[self.current_animation]
          number_of_frames = len(self.all_frames[self.current_animation])
@@ -152,7 +174,7 @@ class Collision_box(object):
 #---------------------------------------------------
 
 class Sprite_surface(object):
-   #--this is an object that has a set of sprite and set of of collision boxes attached to it
+   """base class for objects that have a set of sprite(s) and set of of collision box(es) attached to it"""
    all_sprite_surfaces = []
    all_name_count = {}
    display_screen = None
@@ -182,7 +204,7 @@ class Sprite_surface(object):
 
    @classmethod
    def add_to_class_lst(cls, self, lst, ID):
-      #will add self to specified lst
+      """will add self to specified lst"""
 
       if cls == Sprite_surface:
          if ID in Sprite_surface.all_name_count: #--trying add sprite surface while avoiding duplicates
@@ -208,47 +230,54 @@ class Sprite_surface(object):
       return self.get_collbox(coll_box_self).collision(other.get_collbox(coll_box_other))
 
    def check_collision_lst(self, lst, coll_box_self, coll_box_other, quota=None):
-      #will check specified collision with every sprite_surface in the lst
-      #if quota = n, then function will return break and true when n collisions are found, if quota = None, every element in list will be check
+      """will check collision between 2 boxes with every sprite_surface in the lst
+         if quota = n, then function will return break and true when n collisions are found, if quota = None, every element in list will be check"""
       all_collisions = Stack()
-      for sprite_surf in lst:
+      i = 0
+      quota_reached = False
+      while  i < len(lst) and quota_reached == False:
+         sprite_surf = lst[i]
          if (sprite_surf != self and sprite_surf.is_active == True 
             and self.collision(sprite_surf, coll_box_self, coll_box_other) == True):
 
             all_collisions.push(sprite_surf)
-            if quota == None:
-               pass
-            else:
+            if quota != None:
                quota -= 1
                if quota <= 0:
-                  break
+                  quota_reached = True
+         i += 1
 
       return all_collisions
 
 
 
-   def update_sprite(self, sprite, auto_reset=True, loop_amount=-1): # Use to move onto next sprite frame
+   def update_sprite(self, sprite, auto_reset=True, loop_amount=-1):
+      """calls update from Sprite class"""
       sprite = self.get_sprite(sprite)
       sprite.update(auto_reset, loop_amount)
 
    def display_animation(self, sprite_obj_ID, surf, frame_name, x_offset=0, y_offset=0, flip=False, resume=False):
+      """calls display_animation from Sprite class"""
       self.get_sprite(sprite_obj_ID).display_animation(surf, frame_name, x_offset + self.display_offset[0], y_offset + self.display_offset[1], flip, resume)
 
    def set_animation(self, sprite_obj_ID, frame_name, resume=False):
+      """calls set_animation from Sprite class"""
       sprite = self.get_sprite(sprite_obj_ID)
       sprite.set_animation(frame_name, resume)
 
 
    def get_sprite(self, sprite_obj, row=None):
-      #returns specified sprite group, if row is specified then self.active_frames will be searched by index
+      """returns specified sprite in sprite_dict, if row is specified then 
+         sprite.active_frames[row] will be returned"""
 
-      if row == None: #row is specified row in list of all frames
+      if row == None:
          return self.sprite_dict[sprite_obj]
       else:
          return self.sprite_dict[sprite_obj].active_frames[row]
 
 
-   def update(self): #Makes sure all attached collision boxes and sprite images follow the sprite_surface
+   def update(self): 
+      """Makes sure all attached collision boxes and sprite images follow the sprite_surface"""
       if len(self.collbox_dict) != 0:
          for coll_box in self.collbox_dict.values():
             coll_box.x = self.x + (coll_box.width // 2) + coll_box.x_offset

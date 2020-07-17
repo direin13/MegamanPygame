@@ -62,9 +62,12 @@ class Concrete_man(Megaman_object):
       self.battle_has_init = False
       self.grounded = False
       self.health_bar = Energy_bar('health_bar', x=70, y=20, points=self.health_points, colour1=(242, 138, 0), colour2=(255, 255, 255))
-      self.health_bar.points = 0
-      self.current_action = 'introduction'
+      self.health_bar.points = 0 #upon introduction it will change to self.health_points
       self.action_list = ['idle', 'charge', 'introduction', 'shoot', 'stomp']
+                        #these are all the actions he can do. The list and it's elements will change
+                        #depending on the current action but they are all here just to know.
+
+      self.current_action = 'introduction'
       self.all_timers = Timer()
       self.all_timers.add_ID('idle_time', 25)
       self.all_timers.add_ID('damage_taken', 0)
@@ -114,28 +117,23 @@ class Concrete_man(Megaman_object):
          if universal_var.game_pause != True:
             self.all_timers.countdown('damage_taken', loop=True, loop_amount=7)
 
-      if self.direction == True:
-         flip = True
-      else:
-         flip = False
-
       no_sprite_flicker = self.all_timers.is_almost_finished('damage_taken', self.all_timers.get_ID('damage_taken')['origin']//2)
 
       if no_sprite_flicker:
          if self.current_action == 'introduction':
-            self.display_intro_animation(surf, flip)
+            self.display_intro_animation(surf)
 
          elif self.current_action == 'idle':
-            self.display_idle_animation(surf, flip)
+            self.display_idle_animation(surf)
 
          elif self.current_action == 'charge':
-            self.display_charge_animation(surf, flip)
+            self.display_charge_animation(surf)
 
          elif self.current_action == 'shoot':
-            self.display_shoot_animation(surf, flip)
+            self.display_shoot_animation(surf)
 
          elif self.current_action == 'stomp':
-            self.display_stomp_animation(surf, flip)
+            self.display_stomp_animation(surf)
 
 
    def carry_out_action(self):
@@ -173,7 +171,7 @@ class Concrete_man(Megaman_object):
          if self.is_alive() != True and self.is_active:
             self.explode()
 
-      Sprite_surface.update(self)
+      #Sprite_surface.update(self)
 
 
 #--collision detection functions--
@@ -392,52 +390,52 @@ class Concrete_man(Megaman_object):
 
 
 #--display action methods--
-   def display_idle_animation(self, surf, flip=False):
+   def display_idle_animation(self, surf):
       if self.grounded != True:
-         self.display_animation(universal_var.main_sprite, surf, 'falling', flip=flip)
+         self.display_animation(universal_var.main_sprite, surf, 'falling', flip=self.direction)
       else:
-         self.display_animation(universal_var.main_sprite, surf, 'idle', flip=flip)
+         self.display_animation(universal_var.main_sprite, surf, 'idle', flip=self.direction)
 
 
-   def display_intro_animation(self, surf, flip=False):
+   def display_intro_animation(self, surf):
       if self.grounded != True:
-         self.display_animation(universal_var.main_sprite, surf, 'falling', flip=flip)
+         self.display_animation(universal_var.main_sprite, surf, 'falling', flip=self.direction)
          self.update_sprite(universal_var.main_sprite)
       else:
-         self.display_animation(universal_var.main_sprite, surf, 'introduction', flip=flip)
+         self.display_animation(universal_var.main_sprite, surf, 'introduction', flip=self.direction)
          if universal_var.game_pause != True:
             self.update_sprite(universal_var.main_sprite, auto_reset=False, loop_amount=2)
 
 
-   def display_charge_animation(self, surf, flip=False):
+   def display_charge_animation(self, surf):
       if self.grounded != True:
-         self.display_animation(universal_var.main_sprite, surf, 'falling', flip=flip)
+         self.display_animation(universal_var.main_sprite, surf, 'falling', flip=self.direction)
       else:
-         self.display_animation(universal_var.main_sprite, surf, 'charge', flip=flip)
+         self.display_animation(universal_var.main_sprite, surf, 'charge', flip=self.direction)
 
       if universal_var.game_pause != True:
          self.update_sprite(universal_var.main_sprite)
 
-   def display_shoot_animation(self, surf, flip=False):
-      self.display_animation(universal_var.main_sprite, surf, 'shoot', flip=flip)
+   def display_shoot_animation(self, surf):
+      self.display_animation(universal_var.main_sprite, surf, 'shoot', flip=self.direction)
 
 
-   def display_stomp_animation(self, surf, flip=False):
+   def display_stomp_animation(self, surf):
       if self.all_timers.is_finished('time_till_jump') != True:
-         self.display_animation(universal_var.main_sprite, surf, 'prepare_jump', flip=flip)
+         self.display_animation(universal_var.main_sprite, surf, 'prepare_jump', flip=self.direction)
       else:
 
          if self.falling != True:
-            self.display_animation(universal_var.main_sprite, surf, 'jump', flip=flip)
+            self.display_animation(universal_var.main_sprite, surf, 'jump', flip=self.direction)
          else:
 
             if self.grounded != True:
-               self.display_animation(universal_var.main_sprite, surf, 'falling', flip=flip)
+               self.display_animation(universal_var.main_sprite, surf, 'falling', flip=self.direction)
 
             else:
                if universal_var.game_pause != True:
                   self.update_sprite(universal_var.main_sprite, auto_reset=False, loop_amount=1)
-               self.display_animation(universal_var.main_sprite, surf, 'landing', flip=flip)
+               self.display_animation(universal_var.main_sprite, surf, 'landing', flip=self.direction)
 
 #=====================================================
 

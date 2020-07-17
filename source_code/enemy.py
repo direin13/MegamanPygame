@@ -147,7 +147,7 @@ class Enemy(Character):
             elif (x < 0 or x > universal_var.screen_width) or (y < 0 or y > universal_var.screen_height): #if spawn point is off screen
                self.can_spawn = True
 
-      Sprite_surface.update(self)
+      #Sprite_surface.update(self)
 
 
 
@@ -203,16 +203,10 @@ class Met(Enemy):
       if universal_var.game_pause != True:
          self.update_sprite(universal_var.main_sprite)
       if self.is_alive() and self.shooting_phase:
-         if self.direction == False:
-            self.display_animation(universal_var.main_sprite, surf, 'shoot')
-         else:
-            self.display_animation(universal_var.main_sprite, surf, 'shoot', flip=True)
+          self.display_animation(universal_var.main_sprite, surf, 'shoot', flip=self.direction)
 
       elif self.is_alive():
-         if self.direction == False:
-            self.display_animation(universal_var.main_sprite, surf, 'idle')
-         else:
-            self.display_animation(universal_var.main_sprite, surf, 'idle', flip=True)
+         self.display_animation(universal_var.main_sprite, surf, 'idle', flip=self.direction)
 
       else:
          self.display_explosions(surf)
@@ -495,16 +489,11 @@ class Hoohoo(Enemy):
          self.update_sprite(universal_var.main_sprite, auto_reset=True)
 
       if self.is_alive():
-         if self.direction == True:
-            flip = True
-         else:
-            flip = False
-            
          if self.boulder_drop and self.all_timers.is_finished('drop_boulder_animation') != True:
-            self.display_animation(universal_var.main_sprite, surf, 'boulder_drop', flip=flip)
+            self.display_animation(universal_var.main_sprite, surf, 'boulder_drop', flip=self.direction)
             self.all_timers.countdown('drop_boulder_animation')
          else:
-            self.display_animation(universal_var.main_sprite, surf, 'flying', flip=flip)
+            self.display_animation(universal_var.main_sprite, surf, 'flying', flip=self.direction)
       else:
          self.display_explosions(surf)
 
@@ -842,6 +831,7 @@ class Paozo_Ball(Enemy):
       self.launched = False
       self.thrown = False
       self.x, self.y = self.spawn_point[0], self.spawn_point[1]
+      Sprite_surface.update(self)
 
    def display(self, surf):
       if universal_var.game_pause != True:

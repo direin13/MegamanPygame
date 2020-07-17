@@ -45,8 +45,6 @@ class Projectile(sprite.Sprite_surface):
       if self.is_on_screen():
          if self.launched and universal_var.game_pause != True and universal_var.game_reset != True:
             Projectile.move(self)
-         else:
-            sprite.Sprite_surface.update(self)
 
       else:
          self.is_active = False
