@@ -7,11 +7,15 @@ README;
 -Controls:
 	  right = rightArrow
 	  left = leftArrow
+	  up = upArrow
+	  down = downArrow
 	  shoot = z
 	  jump = x
 	  pause/unpause = p/o
 
-- n.b Made on Windows 10. I have not tested on linux although it should still run
+- n.b Made on Windows 10. I have not tested on linux although Game.py should still run.
 
-made with python 3.7.3 and pygame 1.9.6
+Made with python 3.7.3 and pygame 1.9.6
+Made as an educational project for non-profit.
+©CAPCOM CO., LTD. 2020 ALL RIGHTS RESERVED.
 ========================================================
