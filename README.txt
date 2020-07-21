@@ -1,5 +1,5 @@
 ========================================================
-A Megaman level from scratch using my first game engine (if you can call it that) built.
+A Megaman level from scratch using my first game engine built.
 
 Instructions
 ---------------
