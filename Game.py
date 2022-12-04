@@ -16,7 +16,7 @@ from misc_function import play_sound
 from title_screen import Title_screen
 import boss_room 
 
-#os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,50)
 
 pygame.init()
 
@@ -30,7 +30,7 @@ ready_text = Bit_text('ready', 240, 250, 3, 3, pattern_interval=14)
 
 clock = pygame.time.Clock()
 
-screen = pygame.display.set_mode((600, 600), pygame.FULLSCREEN, pygame.NOFRAME)
+screen = pygame.display.set_mode((600, 600))
 sprite.Sprite_surface.display_screen = screen
 
 pygame.mouse.set_visible(False)
