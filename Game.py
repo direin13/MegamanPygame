@@ -272,6 +272,6 @@ while game:
       else:
          game_over()
    pygame.display.update()
-   clock.tick(75)
+   clock.tick(70)
 
 universal_var.songs.stop()
