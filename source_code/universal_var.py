@@ -26,7 +26,7 @@ screen_height = 600
 
 checkpoint = [0, 0]
 
-songs = Song_player('1', ['resources/audio/Concrete man.mp3', 'resources/audio/Game Over.mp3', 'resources/audio/Game Over Screen.mp3', 
+songs = Song_player('1', ['resources/audio/Concrete Man.mp3', 'resources/audio/Game Over.mp3', 'resources/audio/Game Over Screen.mp3', 
                           'resources/audio/Level intro sequence.mp3', 'resources/audio/Title.mp3', 'resources/audio/Boss theme.mp3', 
                           'resources/audio/Victory theme.mp3'], volume=0.7)
 
