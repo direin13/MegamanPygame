@@ -861,7 +861,7 @@ class Paozo_Ball(Enemy):
 
 
 class Big_stomper(Enemy):
-   sprite_img = load_images('resources/enemies/big_Stomper')
+   sprite_img = load_images('resources/enemies/big_stomper')
 
    def __init__(self, x, y, damage_points=20):
       width = 65
